@@ -1,0 +1,53 @@
+Header add Access-Control-Allow-Origin "*"
+Header add Access-Control-Allow-Headers "origin, x-requested-with, content-type"
+Header add Access-Control-Allow-Methods "GET,POST"
+
+#AddHandler php-script .pls
+<Files "*.pls">
+	#SetHandler php-script
+	SetHandler application/x-httpd-php
+</Files>
+
+RewriteEngine on
+# http://site/webservice/<type>/countries
+RewriteRule ^webservice/json/countries/(.*)$ completion/countries.php?term=$1
+RewriteRule ^webservice/json/countries$ completion/countries.php
+
+# http://site/webservice/<type>/countries
+RewriteRule ^webservice/json/states/(.*)/(.*)$ completion/subcountries.php?term=$2&country=$1
+RewriteRule ^webservice/json/states/(.*)$ completion/subcountries.php?term=$1
+RewriteRule ^webservice/json/states$ completion/subcountries.php
+
+# http://site/webservice/<type>/languages
+RewriteRule ^webservice/json/languages/(.*)$ completion/languages.php?term=$1
+RewriteRule ^webservice/json/languages$ completion/languages.php
+
+# http://site/webservice/<type>/tags
+RewriteRule ^webservice/json/tags/(.*)$ completion/tags.php?term=$1
+RewriteRule ^webservice/json/tags$ completion/tags.php
+
+RewriteRule ^webservice/add$ /?action=add
+RewriteRule ^webservice/edit$ /?action=edit
+
+# http://site/webservice/<type>/stations
+RewriteRule ^webservice/(.*)/stations/topvote/(.*)$ /?format=$1&limit=$2&action=data_search_topvote
+RewriteRule ^webservice/(.*)/stations/topvote$ /?format=$1&action=data_search_topvote
+RewriteRule ^webservice/(.*)/stations/topclick/(.*)$ /?format=$1&limit=$2&action=data_search_topclick
+RewriteRule ^webservice/(.*)/stations/topclick$ /?format=$1&action=data_search_topclick
+RewriteRule ^webservice/(.*)/stations/lastclick/(.*)$ /?format=$1&limit=$2&action=data_search_lastclick
+RewriteRule ^webservice/(.*)/stations/lastclick$ /?format=$1&action=data_search_lastclick
+
+RewriteRule ^webservice/(.*)/stations/byid/(.*)$ /?format=$1&term=$2&action=data_search_byid
+RewriteRule ^webservice/(.*)/stations/bycountry/(.*)$ /?format=$1&term=$2&action=data_search_bycountry
+RewriteRule ^webservice/(.*)/stations/bylanguage/(.*)$ /?format=$1&term=$2&action=data_search_bylanguage
+RewriteRule ^webservice/(.*)/stations/bytag/(.*)$ /?format=$1&term=$2&action=data_search_bytag
+RewriteRule ^webservice/(.*)/stations/(.*)$ /?format=$1&term=$2&action=data_search
+RewriteRule ^webservice/(.*)/stations$ /?format=$1&action=data_search
+
+# http://site/webservice/<type>/stats
+RewriteRule ^webservice/(.*)/stats$ /?format=$1&action=stats
+
+# http://site/webservice/<type>/url/<stationid>
+RewriteRule ^webservice/(.*)/url/(.*)$ /get_station_url.php?format=$1&stationid=$2
+# http://site/webservice/<type>/url/<stationid>
+RewriteRule ^webservice/(.*)/vote/(.*)$ /?id=$2&action=vote&format=$1
