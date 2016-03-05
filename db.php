@@ -38,7 +38,7 @@ function print_stations_last_click_data()
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
 
-    $result = mysql_query('SELECT * from StationClick LEFT Join Station ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL ORDER BY StationClick.ClickTimestamp DESC LIMIT '.$limit);
+    $result = mysql_query('SELECT * from Station LEFT Join StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL ORDER BY StationClick.ClickTimestamp DESC LIMIT '.$limit);
     if (!$result) {
         echo str(mysql_error());
     } else {
