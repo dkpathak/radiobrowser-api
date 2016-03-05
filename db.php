@@ -23,7 +23,7 @@ function print_tags($search_term)
                     print_output_item_arr_sep($format);
                 }
                 echo '{';
-                echo '"name":"'.htmlspecialchars($row['TagName'], ENT_COMPAT).'",';
+                echo '"name":"'.htmlspecialchars($row['TagName'], ENT_COMPAT).'"';
                 echo '}';
                 ++$i;
             }
