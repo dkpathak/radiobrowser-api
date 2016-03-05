@@ -1,7 +1,5 @@
 <?php
 
-$rows_by_page = 20;
-
 function print_tags($search_term)
 {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
