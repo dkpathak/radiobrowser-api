@@ -1,8 +1,46 @@
+/*
+    #558C89 dark
+    #74AFAD light
+    #D9853B orange
+    #ECECEA grey
+j*/
+
 body {
-  margin: 30px;
+  background-color: #74AFAD;
+}
+h1 {
+  font-family: 'Cutive Mono';
+}
+h2 {
+  font-family: 'Cutive Mono';
+}
+.content {
+  position: relative;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 30px;
+  width: 1000px;
+  background-color: #558C89;
+  border: 1px black solid;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .header_sub {
   text-decoration: underline;
-  font-style: italic;
   margin-top: 12px;
+  font-family: 'Nova Mono';
+}
+.syntax {
+  font-family: 'VT323';
+}
+a {
+  text-decoration: none;
+  color: #ECECEA;
+}
+a:hover {
+  text-decoration: underline;
 }
