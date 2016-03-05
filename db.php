@@ -42,25 +42,7 @@ function print_stations_last_click_data()
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_output_header($format);
-        if ($format == 'xml') {
-            while ($row = mysql_fetch_assoc($result)) {
-                print_station_xml($row);
-            }
-        }
-        if ($format == 'json') {
-            $i = 0;
-            while ($row = mysql_fetch_assoc($result)) {
-                if ($i > 0) {
-                    print_output_item_arr_sep($format);
-                }
-
-                print_station_json($row);
-                ++$i;
-            }
-        }
-
-        print_output_footer($format);
+        print_result_stations($format,$result);
     }
 }
 
@@ -73,25 +55,7 @@ function print_stations_last_change_data()
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_output_header($format);
-        if ($format == 'xml') {
-            while ($row = mysql_fetch_assoc($result)) {
-                print_station_xml($row);
-            }
-        }
-        if ($format == 'json') {
-            $i = 0;
-            while ($row = mysql_fetch_assoc($result)) {
-                if ($i > 0) {
-                    print_output_item_arr_sep($format);
-                }
-
-                print_station_json($row);
-                ++$i;
-            }
-        }
-
-        print_output_footer($format);
+        print_result_stations($format,$result);
     }
 }
 
@@ -104,26 +68,7 @@ function print_stations_top_click_data()
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_output_header($format);
-
-        if ($format == 'xml') {
-            while ($row = mysql_fetch_assoc($result)) {
-                print_station_xml($row);
-            }
-        }
-        if ($format == 'json') {
-            $i = 0;
-            while ($row = mysql_fetch_assoc($result)) {
-                if ($i > 0) {
-                    print_output_item_arr_sep($format);
-                }
-
-                print_station_json($row);
-                ++$i;
-            }
-        }
-
-        print_output_footer($format);
+        print_result_stations($format,$result);
     }
 }
 
@@ -136,25 +81,7 @@ function print_stations_top_vote_data()
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_output_header($format);
-
-        if ($format == 'xml') {
-            while ($row = mysql_fetch_assoc($result)) {
-                print_station_xml($row);
-            }
-        }
-        if ($format == 'json') {
-            $i = 0;
-            while ($row = mysql_fetch_assoc($result)) {
-                if ($i > 0) {
-                    print_output_item_arr_sep($format);
-                }
-                print_station_json($row);
-                ++$i;
-            }
-        }
-
-        print_output_footer($format);
+        print_result_stations($format,$result);
     }
 }
 
@@ -224,25 +151,29 @@ function print_stations_list_data($column)
         exit;
     }
 
-    print_output_header($format);
+    print_result_stations($format,$result);
+}
 
-    if ($format == 'xml') {
-        while ($row = mysql_fetch_assoc($result)) {
-            print_station_xml($row);
-        }
-    }
-    if ($format == 'json') {
-        $i = 0;
-        while ($row = mysql_fetch_assoc($result)) {
-            if ($i > 0) {
-                print_output_item_arr_sep($format);
-            }
-            print_station_json($row);
-            ++$i;
-        }
-    }
+function print_result_stations($format, $result){
+  print_output_header($format);
 
-    print_output_footer($format);
+  if ($format == 'xml') {
+      while ($row = mysql_fetch_assoc($result)) {
+          print_station_xml($row);
+      }
+  }
+  if ($format == 'json') {
+      $i = 0;
+      while ($row = mysql_fetch_assoc($result)) {
+          if ($i > 0) {
+              print_output_item_arr_sep($format);
+          }
+          print_station_json($row);
+          ++$i;
+      }
+  }
+
+  print_output_footer($format);
 }
 
 function print_stations_list_data_exact($column)
@@ -258,25 +189,7 @@ function print_stations_list_data_exact($column)
         exit;
     }
 
-    print_output_header($format);
-
-    if ($format == 'xml') {
-        while ($row = mysql_fetch_assoc($result)) {
-            print_station_xml($row);
-        }
-    }
-    if ($format == 'json') {
-        $i = 0;
-        while ($row = mysql_fetch_assoc($result)) {
-            if ($i > 0) {
-                print_output_item_arr_sep($format);
-            }
-            print_station_json($row);
-            ++$i;
-        }
-    }
-
-    print_output_footer($format);
+    print_result_stations($format,$result);
 }
 
 function print_output_item_dict_sep($format)
@@ -582,25 +495,7 @@ function print_station_by_id($id)
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_output_header($format);
-        if ($format == 'xml') {
-            while ($row = mysql_fetch_assoc($result)) {
-                print_station_xml($row);
-            }
-        }
-        if ($format == 'json') {
-            $i = 0;
-            while ($row = mysql_fetch_assoc($result)) {
-                if ($i > 0) {
-                    print_output_item_arr_sep($format);
-                }
-
-                print_station_json($row);
-                ++$i;
-            }
-        }
-
-        print_output_footer($format);
+        print_result_stations($format,$result);
     }
 }
 ?>
