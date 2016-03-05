@@ -4,6 +4,7 @@ require 'db.php';
 if (isset($_REQUEST['action'])) {
     openDB();
     if ($_REQUEST['action'] == 'tags') {
+        print_tags($_REQUEST['term']);
     }
     if ($_REQUEST['action'] == 'stats') {
         print_stats();

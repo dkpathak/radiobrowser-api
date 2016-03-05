@@ -1,5 +1,37 @@
 <?php
+
 $rows_by_page = 20;
+
+function print_tags($search_term)
+{
+    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
+
+    $result = mysql_query("SELECT TagName FROM TagCache WHERE TagName LIKE '%".escape_string($search_term)."%' ORDER BY TagName");
+    if (!$result) {
+        echo str(mysql_error());
+    } else {
+        print_output_header($format);
+        if ($format == 'xml') {
+            while ($row = mysql_fetch_assoc($result)) {
+                echo '<tag name="'.htmlspecialchars($row['TagName'], ENT_QUOTES).'"/>';
+            }
+        }
+        if ($format == 'json') {
+            $i = 0;
+            while ($row = mysql_fetch_assoc($result)) {
+                if ($i > 0) {
+                    print_output_item_arr_sep($format);
+                }
+                echo '{';
+                echo '"name":"'.htmlspecialchars($row['TagName'], ENT_COMPAT).'",';
+                echo '}';
+                ++$i;
+            }
+        }
+
+        print_output_footer($format);
+    }
+}
 
 function print_stations_last_click_data()
 {
@@ -238,10 +270,11 @@ function print_output_header_dict($format)
 {
     if ($format == 'xml') {
         header('content-type: text/xml');
-        echo '<?xml version="1.0" encoding="UTF-8"?>';
+        /*echo '<?xml version="1.0" encoding="UTF-8"?>';*/
         echo '<result>';
     }
     if ($format == 'json') {
+        header('content-type: application/json');
         echo '{';
     }
 }
