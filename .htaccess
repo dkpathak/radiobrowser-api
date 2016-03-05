@@ -23,8 +23,8 @@ RewriteRule ^webservice/json/languages/(.*)$ completion/languages.php?term=$1
 RewriteRule ^webservice/json/languages$ completion/languages.php
 
 # http://site/webservice/<type>/tags
-RewriteRule ^webservice/json/tags/(.*)$ completion/tags.php?term=$1
-RewriteRule ^webservice/json/tags$ completion/tags.php
+RewriteRule ^webservice/(.*)/tags/(.*)$ /?format=$1&action=tags&term=$2
+RewriteRule ^webservice/(.*)/tags$ /?format=$1&action=tags
 
 RewriteRule ^webservice/add$ /?action=add
 RewriteRule ^webservice/edit$ /?action=edit
