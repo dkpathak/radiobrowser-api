@@ -26,6 +26,9 @@ RewriteRule ^webservice/json/languages$ completion/languages.php
 RewriteRule ^webservice/(.*)/tags/(.*)$ /?format=$1&action=tags&term=$2
 RewriteRule ^webservice/(.*)/tags$ /?format=$1&action=tags
 
+RewriteRule ^webservice$ /docs.html
+RewriteRule ^webservice/$ /docs.html
+
 RewriteRule ^webservice/add$ /?action=add
 RewriteRule ^webservice/edit$ /?action=edit
 
