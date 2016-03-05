@@ -412,51 +412,6 @@ function IPVoteChecker($id)
     return false;
 }
 
-function SongAddedChecker($singerid, $song)
-{
-    $result = mysql_query('SELECT MusicID FROM Music WHERE SingerID='.$singerid." AND Title='".escape_string($song)."'");
-    if (!mysql_num_rows($result)) {
-        mysql_query('INSERT INTO Music(SingerID,Title) VALUES('.$singerid.",'".escape_string($song)."')");
-
-        return mysql_insert_id();
-    } else {
-        $row = mysql_fetch_row($result);
-
-        return $row[0];
-    }
-}
-
-function SingerAddedChecker($singer)
-{
-    $result = mysql_query("SELECT SingerID FROM Singer WHERE Name='".escape_string($singer)."'");
-    if (!mysql_num_rows($result)) {
-        mysql_query("INSERT INTO Singer(Name) VALUES('".escape_string($singer)."')");
-
-        return mysql_insert_id();
-    } else {
-        $row = mysql_fetch_row($result);
-
-        return $row[0];
-    }
-}
-
-function MusicAddedChecker($title)
-{
-    $arr = split('-', $title);
-    if (count($arr) == 2) {
-        $singer = $str = mb_convert_case(trim($arr[0]), MB_CASE_TITLE, 'UTF-8');
-        $song = $str = mb_convert_case(trim($arr[1]), MB_CASE_TITLE, 'UTF-8');
-        $singerid = SingerAddedChecker($singer);
-        if ($singerid != -1) {
-            $songid = SongAddedChecker($singerid, $song);
-
-            return $songid;
-        }
-    }
-
-    return -1;
-}
-
 function clickedStationID($id)
 {
     mysql_query('INSERT INTO StationClick(StationID) VALUES('.$id.')');
