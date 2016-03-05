@@ -18,6 +18,9 @@ if (isset($_REQUEST['action'])) {
     if ($_REQUEST['action'] == 'data_search_lastclick') {
         print_stations_last_click_data();
     }
+    if ($_REQUEST['action'] == 'data_search_lastchange') {
+        print_stations_last_change_data();
+    }
     if ($_REQUEST['action'] == 'data_search') {
         print_stations_list_data('Name');
     }

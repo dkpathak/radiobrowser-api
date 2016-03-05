@@ -64,6 +64,37 @@ function print_stations_last_click_data()
     }
 }
 
+function print_stations_last_change_data()
+{
+    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
+    $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
+
+    $result = mysql_query('SELECT * from Station WHERE Station.Source IS NULL ORDER BY Creation DESC LIMIT '.$limit);
+    if (!$result) {
+        echo str(mysql_error());
+    } else {
+        print_output_header($format);
+        if ($format == 'xml') {
+            while ($row = mysql_fetch_assoc($result)) {
+                print_station_xml($row);
+            }
+        }
+        if ($format == 'json') {
+            $i = 0;
+            while ($row = mysql_fetch_assoc($result)) {
+                if ($i > 0) {
+                    print_output_item_arr_sep($format);
+                }
+
+                print_station_json($row);
+                ++$i;
+            }
+        }
+
+        print_output_footer($format);
+    }
+}
+
 function print_stations_top_click_data()
 {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
