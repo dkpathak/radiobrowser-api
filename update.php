@@ -30,7 +30,11 @@ function updateCacheTags()
         // $tag_string = str_replace(';', ' ', $tag_string);
 
         $tag_array = explode(',', $tag_string);
+        $tag_array_corrected = array();
         foreach ($tag_array as $tag) {
+            $tag_corrected = trim($tag);
+            array_push($tag_array_corrected, $tag_corrected);
+
             $tag_clean = strtolower(trim($tag));
             if ($tag_clean !== '') {
                 if (!array_key_exists($tag_clean, $tags_new)) {
@@ -39,6 +43,10 @@ function updateCacheTags()
                     $tags_new[$tag_clean] = (int)($tags_new[$tag_clean] + 1);
                 }
             }
+        }
+        $tag_string_corrected = implode(',',$tag_array_corrected);
+        if ($tag_array_corrected !== $tag_string){
+          echo "Try correcting tags:'".$tag_string."' -> '".$tag_string_corrected."'";
         }
     }
     // generate old list of tags
