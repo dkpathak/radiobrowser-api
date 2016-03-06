@@ -53,6 +53,18 @@ function updateCacheTags()
             if ($tag_clean === 'top100' || $tag_clean === 'top-100') {
                 $tag_corrected = 'top 100';
             }
+            if ($tag_clean === 'catolic') {
+                $tag_corrected = 'catholic';
+            }
+            if ($tag_clean === 'religous') {
+                $tag_corrected = 'religion';
+            }
+            if ($tag_clean === 'pop music') {
+                $tag_corrected = 'pop';
+            }
+            if ($tag_clean === 'active hits') {
+                $tag_corrected = 'hits';
+            }
             $tag_corrected = str_replace('/',',',$tag_corrected);
 
             array_push($tag_array_corrected, $tag_corrected);
