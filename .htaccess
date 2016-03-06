@@ -10,17 +10,17 @@ Header add Access-Control-Allow-Methods "GET,POST"
 
 RewriteEngine on
 # http://site/webservice/<type>/countries
-RewriteRule ^webservice/json/countries/(.*)$ completion/countries.php?term=$1
-RewriteRule ^webservice/json/countries$ completion/countries.php
+RewriteRule ^webservice/(.*)/countries/(.*)$ /?term=$2&format=$1&action=countries
+RewriteRule ^webservice/(.*)/countries$ /?format=$1&action=countries
 
 # http://site/webservice/<type>/countries
-RewriteRule ^webservice/json/states/(.*)/(.*)$ completion/subcountries.php?term=$2&country=$1
-RewriteRule ^webservice/json/states/(.*)$ completion/subcountries.php?term=$1
-RewriteRule ^webservice/json/states$ completion/subcountries.php
+RewriteRule ^webservice/(.*)/states/(.*)/(.*)$ /?term=$3&country=$2&format=$1&action=states
+RewriteRule ^webservice/(.*)/states/(.*)$ /?term=$2&format=$1&action=states
+RewriteRule ^webservice/(.*)/states$ /?format=$1&action=states
 
 # http://site/webservice/<type>/languages
-RewriteRule ^webservice/json/languages/(.*)$ completion/languages.php?term=$1
-RewriteRule ^webservice/json/languages$ completion/languages.php
+RewriteRule ^webservice/(.*)/languages/(.*)$ /?term=$2&format=$1&action=languages
+RewriteRule ^webservice/(.*)/languages$ /?format=$1&action=languages
 
 # http://site/webservice/<type>/tags
 RewriteRule ^webservice/(.*)/tags/(.*)$ /?format=$1&action=tags&term=$2

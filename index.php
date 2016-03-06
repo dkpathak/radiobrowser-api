@@ -6,6 +6,15 @@ if (isset($_REQUEST['action'])) {
     if ($_REQUEST['action'] == 'tags') {
         print_tags($_REQUEST['term']);
     }
+    if ($_REQUEST['action'] == 'countries') {
+        print_countries($_REQUEST['term']);
+    }
+    if ($_REQUEST['action'] == 'states') {
+        print_states($_REQUEST['term']);
+    }
+    if ($_REQUEST['action'] == 'languages') {
+        print_languages($_REQUEST['term']);
+    }
     if ($_REQUEST['action'] == 'stats') {
         print_stats();
     }

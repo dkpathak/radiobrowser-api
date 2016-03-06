@@ -9,27 +9,109 @@ function print_tags($search_term)
         echo str(mysql_error());
     } else {
         print_output_header($format);
-        if ($format == 'xml') {
-            while ($row = mysql_fetch_assoc($result)) {
-                echo '<tag name="'.htmlspecialchars($row['TagName'], ENT_QUOTES).'"/>';
+        print_output_arr_start($format);
+        $i = 0;
+        while ($row = mysql_fetch_assoc($result)) {
+            if ($i > 0) {
+                print_output_item_arr_sep($format);
             }
+            print_output_item_start($format, 'tag');
+            print_output_item_content($format, 'name', $row['TagName']);
+            print_output_item_end($format);
+            ++$i;
         }
-        if ($format == 'json') {
-            $i = 0;
-            while ($row = mysql_fetch_assoc($result)) {
-                if ($i > 0) {
-                    print_output_item_arr_sep($format);
-                }
-                echo '{';
-                echo '"name":"'.htmlspecialchars($row['TagName'], ENT_COMPAT).'"';
-                echo '}';
-                ++$i;
-            }
-        }
-
+        print_output_arr_end($format);
         print_output_footer($format);
     }
 }
+
+function print_countries($search_term)
+{
+    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
+
+    $result = mysql_query("SELECT Country, COUNT(*) AS StationCount FROM Station WHERE Country LIKE '%".$search_term."%' AND Country<>'' GROUP BY Country ORDER BY Country");
+    if (!$result) {
+        echo str(mysql_error());
+    } else {
+        print_output_header($format);
+        print_output_arr_start($format);
+        $i = 0;
+        while ($row = mysql_fetch_assoc($result)) {
+            if ($i > 0) {
+                print_output_item_arr_sep($format);
+            }
+            print_output_item_start($format, 'country');
+            print_output_item_content($format, 'name', $row['Country']);
+            print_output_item_dict_sep($format);
+            print_output_item_content($format, 'stationcount', $row['StationCount']);
+            print_output_item_end($format);
+            ++$i;
+        }
+        print_output_arr_end($format);
+        print_output_footer($format);
+    }
+}
+
+function print_languages($search_term)
+{
+    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
+
+    $result = mysql_query("SELECT Language, COUNT(*) AS StationCount FROM Station WHERE Language LIKE '%".escape_string($search_term)."%' AND Language<>'' GROUP BY Language ORDER BY Language");
+    if (!$result) {
+        echo str(mysql_error());
+    } else {
+        print_output_header($format);
+        print_output_arr_start($format);
+        $i = 0;
+        while ($row = mysql_fetch_assoc($result)) {
+            if ($i > 0) {
+                print_output_item_arr_sep($format);
+            }
+            print_output_item_start($format, 'country');
+            print_output_item_content($format, 'name', $row['Language']);
+            print_output_item_dict_sep($format);
+            print_output_item_content($format, 'stationcount', $row['StationCount']);
+            print_output_item_end($format);
+            ++$i;
+        }
+        print_output_arr_end($format);
+        print_output_footer($format);
+    }
+}
+
+function print_states($search_term)
+{
+    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
+
+    if (isset($_REQUEST["country"])){
+      $result = mysql_query("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Country='".escape_string($_REQUEST["country"])."' AND Subcountry LIKE '%".escape_string($search_term)."%' AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
+    } else {
+      $result = mysql_query("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Subcountry LIKE '%".escape_string($search_term)."%' AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
+    }
+    if (!$result) {
+        echo str(mysql_error());
+    } else {
+        print_output_header($format);
+        print_output_arr_start($format);
+        $i = 0;
+        while ($row = mysql_fetch_assoc($result)) {
+            if ($i > 0) {
+                print_output_item_arr_sep($format);
+            }
+            print_output_item_start($format, 'state');
+            print_output_item_content($format, 'name', $row['Subcountry']);
+            print_output_item_dict_sep($format);
+            print_output_item_content($format, 'country', $row['Country']);
+            print_output_item_dict_sep($format);
+            print_output_item_content($format, 'stationcount', $row['StationCount']);
+            print_output_item_end($format);
+            ++$i;
+        }
+        print_output_arr_end($format);
+        print_output_footer($format);
+    }
+}
+
 
 function print_stations_last_click_data()
 {
@@ -40,7 +122,7 @@ function print_stations_last_click_data()
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_result_stations($format,$result);
+        print_result_stations($format, $result);
     }
 }
 
@@ -53,7 +135,7 @@ function print_stations_last_change_data()
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_result_stations($format,$result);
+        print_result_stations($format, $result);
     }
 }
 
@@ -66,7 +148,7 @@ function print_stations_top_click_data()
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_result_stations($format,$result);
+        print_result_stations($format, $result);
     }
 }
 
@@ -79,7 +161,7 @@ function print_stations_top_vote_data()
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_result_stations($format,$result);
+        print_result_stations($format, $result);
     }
 }
 
@@ -125,15 +207,17 @@ function get_click_count_hours($hours)
 function print_stats()
 {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-    print_output_header_dict($format);
-    print_output_item_dict($format, 'stations', get_station_count());
+    print_output_header($format);
+    print_output_item_start($format, 'stats');
+    print_output_item_content($format, 'stations', get_station_count());
     print_output_item_dict_sep($format);
-    print_output_item_dict($format, 'tags', get_tag_count());
+    print_output_item_content($format, 'tags', get_tag_count());
     print_output_item_dict_sep($format);
-    print_output_item_dict($format, 'clicks_last_hour', get_click_count_hours(1));
+    print_output_item_content($format, 'clicks_last_hour', get_click_count_hours(1));
     print_output_item_dict_sep($format);
-    print_output_item_dict($format, 'clicks_last_day', get_click_count_hours(24));
-    print_output_footer_dict($format);
+    print_output_item_content($format, 'clicks_last_day', get_click_count_hours(24));
+    print_output_item_end($format);
+    print_output_footer($format);
 }
 
 function print_stations_list_data($column)
@@ -149,29 +233,25 @@ function print_stations_list_data($column)
         exit;
     }
 
-    print_result_stations($format,$result);
+    print_result_stations($format, $result);
 }
 
-function print_result_stations($format, $result){
-  print_output_header($format);
+function print_result_stations($format, $result)
+{
+    print_output_header($format);
+    print_output_arr_start($format);
 
-  if ($format == 'xml') {
-      while ($row = mysql_fetch_assoc($result)) {
-          print_station_xml($row);
-      }
-  }
-  if ($format == 'json') {
-      $i = 0;
-      while ($row = mysql_fetch_assoc($result)) {
-          if ($i > 0) {
-              print_output_item_arr_sep($format);
-          }
-          print_station_json($row);
-          ++$i;
-      }
-  }
+    $i = 0;
+    while ($row = mysql_fetch_assoc($result)) {
+        if ($i > 0) {
+            print_output_item_arr_sep($format);
+        }
+        print_station($format, $row);
+        ++$i;
+    }
 
-  print_output_footer($format);
+    print_output_arr_end($format);
+    print_output_footer($format);
 }
 
 function print_stations_list_data_exact($column)
@@ -187,12 +267,13 @@ function print_stations_list_data_exact($column)
         exit;
     }
 
-    print_result_stations($format,$result);
+    print_result_stations($format, $result);
 }
 
 function print_output_item_dict_sep($format)
 {
     if ($format == 'xml') {
+        echo ' ';
     }
     if ($format == 'json') {
         echo ',';
@@ -208,131 +289,112 @@ function print_output_item_arr_sep($format)
     }
 }
 
-function print_output_header_dict($format)
+function print_output_arr_start($format)
 {
     if ($format == 'xml') {
-        header('content-type: text/xml');
-        /*echo '<?xml version="1.0" encoding="UTF-8"?>';*/
-        echo '<result>';
     }
     if ($format == 'json') {
-        header('content-type: application/json');
-        echo '{';
+        echo '[';
     }
 }
 
-function print_output_footer_dict($format)
+function print_output_arr_end($format)
 {
     if ($format == 'xml') {
-        echo '</result>';
     }
     if ($format == 'json') {
-        echo '}';
+        echo ']';
     }
-}
-
-function print_output_item_dict($format, $key, $value)
-{
-    if ($format == 'xml') {
-        echo '<'.$key.'>'.$value.'</'.$key.'>';
-    }
-    if ($format == 'json') {
-        echo '"'.$key.'":"'.$value.'"';
-    }
-}
-
-function print_output_xml_header()
-{
-    header('content-type: text/xml');
-    /*echo '<?xml version="1.0" encoding="UTF-8"?>';*/
-    echo '<result>';
-}
-
-function print_output_xml_footer()
-{
-    echo '</result>';
-}
-
-function print_output_json_header()
-{
-    header('content-type: application/json');
-    echo '[';
-}
-
-function print_output_json_footer()
-{
-    echo ']';
 }
 
 function print_output_header($format)
 {
     if ($format == 'xml') {
-        print_output_xml_header();
+        header('content-type: text/xml');
+        echo '<result>';
     }
     if ($format == 'json') {
-        print_output_json_header();
+        header('content-type: application/json');
     }
 }
 
 function print_output_footer($format)
 {
     if ($format == 'xml') {
-        print_output_xml_footer();
+        echo '</result>';
     }
     if ($format == 'json') {
-        print_output_json_footer();
     }
 }
 
-function print_station_xml($row)
+function print_output_item_start($format, $itemname)
 {
-    echo "<station id='".$row['StationID']."'";
-    echo " name='".htmlspecialchars($row['Name'], ENT_QUOTES)."'";
-    echo " url='".htmlspecialchars($row['Url'], ENT_QUOTES)."'";
-    echo " homepage='".htmlspecialchars($row['Homepage'], ENT_QUOTES)."'";
-    echo " favicon='".htmlspecialchars($row['Favicon'], ENT_QUOTES)."'";
-    echo " tags='".htmlspecialchars($row['Tags'], ENT_QUOTES)."'";
-    echo " country='".htmlspecialchars($row['Country'], ENT_QUOTES)."'";
-    echo " subcountry='".htmlspecialchars($row['Subcountry'], ENT_QUOTES)."'";
-    echo " language='".htmlspecialchars($row['Language'], ENT_QUOTES)."'";
-    echo " votes='".$row['Votes']."'";
-    echo " negativevotes='".$row['NegativeVotes']."'";
-    if (isset($row['ClickID'])) {
-        echo " clickid='".htmlspecialchars($row['ClickID'], ENT_QUOTES)."'";
+    if ($format == 'xml') {
+        echo '<'.$itemname.' ';
     }
-    if (isset($row['ClickTimestamp'])) {
-        echo " clicktimestamp='".htmlspecialchars($row['ClickTimestamp'], ENT_QUOTES)."'";
+    if ($format == 'json') {
+        echo '{';
     }
-    if (isset($row['clickcount'])) {
-        echo " clickcount='".htmlspecialchars($row['clickcount'], ENT_QUOTES)."'";
-    }
-    echo '/>';
 }
 
-function print_station_json($row)
+function print_output_item_end($format)
 {
-    echo '{';
-    echo '"id":'.$row['StationID'].',';
-    echo '"name":"'.htmlspecialchars($row['Name'], ENT_COMPAT).'",';
-    echo '"url":"'.htmlspecialchars($row['Url'], ENT_COMPAT).'",';
-    echo '"homepage":"'.htmlspecialchars($row['Homepage'], ENT_COMPAT).'",';
-    echo '"favicon":"'.htmlspecialchars($row['Favicon'], ENT_COMPAT).'",';
-    echo '"tags":"'.htmlspecialchars($row['Tags'], ENT_COMPAT).'",';
-    echo '"country":"'.htmlspecialchars($row['Country'], ENT_COMPAT).'",';
-    echo '"subcountry":"'.htmlspecialchars($row['Subcountry'], ENT_COMPAT).'",';
-    echo '"language":"'.htmlspecialchars($row['Language'], ENT_COMPAT).'",';
-    echo '"votes":'.htmlspecialchars($row['Votes'], ENT_COMPAT).',';
-    echo '"negativevotes":'.htmlspecialchars($row['NegativeVotes'], ENT_COMPAT);
+    if ($format == 'xml') {
+        echo '/>';
+    }
+    if ($format == 'json') {
+        echo '}';
+    }
+}
+
+function print_output_item_content($format, $key, $value)
+{
+    if ($format == 'xml') {
+        echo $key.'="'.htmlspecialchars($value, ENT_QUOTES).'"';
+    }
+    if ($format == 'json') {
+        echo '"'.$key.'":"'.htmlspecialchars($value, ENT_COMPAT).'"';
+    }
+}
+
+function print_station($format, $row)
+{
+    print_output_item_start($format, 'station');
+    print_output_item_content($format, 'id', $row['StationID']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'name', $row['Name']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'url', $row['Url']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'homepage', $row['Homepage']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'favicon', $row['Favicon']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'tags', $row['Tags']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'country', $row['Country']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'state', $row['Subcountry']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'language', $row['Language']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'votes', $row['Votes']);
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'negativevotes', $row['NegativeVotes']);
+
     if (isset($row['ClickID'])) {
-        echo ',"clickid":'.htmlspecialchars($row['ClickID'], ENT_QUOTES);
+        print_output_item_dict_sep($format);
+        print_output_item_content($format, 'clickid', $row['ClickID']);
     }
     if (isset($row['ClickTimestamp'])) {
-        echo ',"clicktimestamp":"'.htmlspecialchars($row['ClickTimestamp'], ENT_QUOTES).'"';
+        print_output_item_dict_sep($format);
+        print_output_item_content($format, 'clicktimestamp', $row['ClickTimestamp']);
     }
     if (isset($row['clickcount'])) {
-        echo ',"clickcount":'.htmlspecialchars($row['clickcount'], ENT_QUOTES);
+        print_output_item_dict_sep($format);
+        print_output_item_content($format, 'clickcount', $row['clickcount']);
     }
-    echo '}';
+    print_output_item_end($format);
 }
 
 function escape_string($str)
@@ -448,7 +510,7 @@ function print_station_by_id($id)
     if (!$result) {
         echo str(mysql_error());
     } else {
-        print_result_stations($format,$result);
+        print_result_stations($format, $result);
     }
 }
 ?>
