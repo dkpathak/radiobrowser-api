@@ -62,10 +62,10 @@ if (isset($_REQUEST['action'])) {
     }
 
     if ($_REQUEST['action'] == 'add') {
-        addStation($_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $_REQUEST['country'], $_REQUEST['language'], $_REQUEST['tags'], $_REQUEST['subcountry']);
+        addStation($_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $_REQUEST['country'], $_REQUEST['language'], $_REQUEST['tags'], $_REQUEST['state']);
     }
     if ($_REQUEST['action'] == 'edit') {
-        editStation($_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $_REQUEST['country'], $_REQUEST['language'], $_REQUEST['tags'], $_REQUEST['subcountry']);
+        editStation($_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $_REQUEST['country'], $_REQUEST['language'], $_REQUEST['tags'], $_REQUEST['state']);
     }
     if ($_REQUEST['action'] == 'delete') {
         echo 'delete:'.$_REQUEST['stationid'];
