@@ -44,8 +44,10 @@ if ($extension == '.m3u') {
         while (!feof($handle)) {
             $buffer = fgets($handle, 4096);
             if (substr(trim($buffer), 0, 1) != '#') {
-                $audiofile = trim($buffer);
-                break;
+                if (trim($buffer) !== '') {
+                    $audiofile = trim($buffer);
+                    break;
+                }
             }
         }
         fclose($handle);
