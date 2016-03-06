@@ -387,7 +387,7 @@ function print_output_item_end($format)
 function print_output_item_content($format, $key, $value)
 {
     if ($format == 'xml') {
-        echo $key.'="'.addcslashes(str_replace('\\','',$value),'"').'"';
+        echo $key.'="'.htmlspecialchars($value, ENT_QUOTES).'"';
     }
     if ($format == 'json') {
         echo '"'.$key.'":"'.addcslashes(str_replace('\\','',$value),'"').'"';
