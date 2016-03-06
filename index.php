@@ -78,7 +78,9 @@ if (isset($_REQUEST['action'])) {
         negativeVoteForStation($_REQUEST['id']);
     }
     if ($_REQUEST['action'] == 'clicked') {
-        clickedStationID($_REQUEST['id']);
+        if (isset($_REQUEST['id'])) {
+            clickedStationID($_REQUEST['id']);
+        }
     }
 } else {
     ?>
