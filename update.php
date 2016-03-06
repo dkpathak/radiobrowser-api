@@ -67,7 +67,7 @@ function updateCacheTags()
             echo 'added new:'.$tag.'<br/>';
             mysql_query("INSERT INTO TagCache (TagName,StationCount) VALUES ('".escape_string($tag)."',".$count.')');
         } else {
-            if ($count !== $tags_old[$key]) {
+            if ($count !== $tags_old[$tag]) {
                 echo 'updated:'.$tag.' from '.$tags_old[$tag].' to '.$count.'<br/>';
                 mysql_query('UPDATE TagCache SET StationCount='.$count." WHERE TagName='".escape_string($tag)."'");
             }
