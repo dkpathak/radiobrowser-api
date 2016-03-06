@@ -23,11 +23,13 @@
     <div class="header_sub">Syntax:</div>
     <div class="syntax"> http://www.radio-browser.info/webservice/json/countries
       <br /> http://www.radio-browser.info/webservice/json/countries/&lt;filter&gt;
+      <br />http://www.radio-browser.info/webservice/xml/countries
+        <br /> http://www.radio-browser.info/webservice/xml/countries/&lt;filter&gt;
       <br />
     </div>
     <div class="header_sub">Description:</div>
     Will get a JSON encoded list of all countries in the database. If a filter is given, it will only only return the ones that contain the filter as substring.
-    <br />
+    <br />Supported output formats: json,xml
     <div class="header_sub">Example:</div>
     <div> <a href="http://www.radio-browser.info/webservice/json/countries" target="_blank">http://www.radio-browser.info/webservice/json/countries</a></div>
 
@@ -36,10 +38,14 @@
     <div class="syntax"> http://www.radio-browser.info/webservice/json/states
       <br /> http://www.radio-browser.info/webservice/json/states/&lt;filter&gt;
       <br /> http://www.radio-browser.info/webservice/json/states/&lt;country&gt;/&lt;filter&gt;
+      <br />http://www.radio-browser.info/webservice/xml/states
+        <br /> http://www.radio-browser.info/webservice/xml/states/&lt;filter&gt;
+        <br /> http://www.radio-browser.info/webservice/xml/states/&lt;country&gt;/&lt;filter&gt;
       <br />
     </div>
     <div class="header_sub">Description:</div>
     Will get a JSON encoded list of all states in the database. Countries are divided into states. If a filter is given, it will only only return the ones that contain the filter as substring. If a country is given, it will only display states in this country.
+    <br />Supported output formats: json,xml
     <br />
     <div class="header_sub">Example:</div>
     <div> <a href="http://www.radio-browser.info/webservice/json/states" target="_blank">http://www.radio-browser.info/webservice/json/states</a></div>
@@ -51,10 +57,13 @@
     <div class="syntax">
       http://www.radio-browser.info/webservice/json/languages
       <br /> http://www.radio-browser.info/webservice/json/languages/&lt;filter&gt;
+      <br />http://www.radio-browser.info/webservice/xml/languages
+      <br /> http://www.radio-browser.info/webservice/xml/languages/&lt;filter&gt;
       <br />
     </div>
     <div class="header_sub">Description:</div>
     Will get a JSON encoded list of all languages in the database. If a filter is given, it will only only return the ones that contain the filter as substring.
+    <br />Supported output formats: json,xml
     <br />
     <div class="header_sub">Example:</div>
     <div> <a href="http://www.radio-browser.info/webservice/json/languages" target="_blank">http://www.radio-browser.info/webservice/json/languages</a></div>
