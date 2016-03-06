@@ -32,22 +32,29 @@ function updateCacheTags()
         $tag_array = explode(',', $tag_string);
         $tag_array_corrected = array();
         foreach ($tag_array as $tag) {
-            $tag_corrected = trim($tag);
-            array_push($tag_array_corrected, $tag_corrected);
-
             $tag_clean = strtolower(trim($tag));
+
+            $tag_corrected = trim($tag);
+            if ($tag_clean === 'sports') {
+                $tag_corrected = 'sport';
+            }
+            if ($tag_clean === 'worldmusic') {
+                $tag_corrected = 'world music';
+            }
+
+            array_push($tag_array_corrected, $tag_corrected);
             if ($tag_clean !== '') {
                 if (!array_key_exists($tag_clean, $tags_new)) {
-                    $tags_new[$tag_clean] = (int)1;
+                    $tags_new[$tag_clean] = (int) 1;
                 } else {
-                    $tags_new[$tag_clean] = (int)($tags_new[$tag_clean] + 1);
+                    $tags_new[$tag_clean] = (int) ($tags_new[$tag_clean] + 1);
                 }
             }
         }
-        $tag_string_corrected = implode(',',$tag_array_corrected);
-        if (strcmp($tag_string_corrected,$tag_string) !== 0){
-          echo "Try correcting tags:'".$tag_string."' -> '".$tag_string_corrected."'<br/>";
-          mysql_query("UPDATE Station SET Tags='".escape_string($tag_string_corrected)."' WHERE StationID=".$row['StationID']);
+        $tag_string_corrected = implode(',', $tag_array_corrected);
+        if (strcmp($tag_string_corrected, $tag_string) !== 0) {
+            echo "Try correcting tags:'".$tag_string."' -> '".$tag_string_corrected."'<br/>";
+            // mysql_query("UPDATE Station SET Tags='".escape_string($tag_string_corrected)."' WHERE StationID=".$row['StationID']);
         }
     }
     // generate old list of tags
@@ -59,7 +66,7 @@ function updateCacheTags()
 
     $tags_old = array();
     while ($row = mysql_fetch_row($result)) {
-        $tags_old[$row[0]] = (int)$row[1];
+        $tags_old[$row[0]] = (int) $row[1];
     }
 
     // compare the arrays and update TagCache
