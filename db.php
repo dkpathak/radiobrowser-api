@@ -203,6 +203,32 @@ function get_click_count_hours($hours)
     return 0;
 }
 
+function get_languages_count()
+{
+    $result = mysql_query('SELECT COUNT(DISTINCT Language) FROM Station');
+    if ($result) {
+        $resArray = mysql_fetch_row($result);
+        $numrows = $resArray[0];
+
+        return $numrows;
+    }
+
+    return 0;
+}
+
+function get_countries_count()
+{
+    $result = mysql_query('SELECT COUNT(DISTINCT Country) FROM Station');
+    if ($result) {
+        $resArray = mysql_fetch_row($result);
+        $numrows = $resArray[0];
+
+        return $numrows;
+    }
+
+    return 0;
+}
+
 function print_stats()
 {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
@@ -215,6 +241,10 @@ function print_stats()
     print_output_item_content($format, 'clicks_last_hour', get_click_count_hours(1));
     print_output_item_dict_sep($format);
     print_output_item_content($format, 'clicks_last_day', get_click_count_hours(24));
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'languages', get_languages_count());
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'countries', get_countries_count());
     print_output_item_end($format);
     print_output_footer($format);
 }
