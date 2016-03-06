@@ -42,7 +42,7 @@ function updateCacheTags()
         }
     }
     // generate old list of tags
-    $result = mysql_query('SELECT TagName FROM TagCache');
+    $result = mysql_query('SELECT TagName, StationCount FROM TagCache');
     if (!$result) {
         echo str(mysql_error());
         exit;
@@ -50,7 +50,7 @@ function updateCacheTags()
 
     $tags_old = array();
     while ($row = mysql_fetch_row($result)) {
-        $tags_old[$row['TagName']] = $row['StationCount'];
+        $tags_old[$row[0] = $row[1];
     }
 
     // compare the arrays and update TagCache
