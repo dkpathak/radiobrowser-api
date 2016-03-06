@@ -88,7 +88,7 @@
 
     <h2>List of radio stations</h2>
     <div class="header_sub">Syntax:</div>
-    http://www.radio-browser.info/webservice/xml/stations
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations
     <br /> http://www.radio-browser.info/webservice/xml/stations/searchterm
     <br /> http://www.radio-browser.info/webservice/xml/stations/byid/searchterm
     <br /> http://www.radio-browser.info/webservice/xml/stations/bycountry/searchterm
@@ -102,9 +102,12 @@
     <br /> http://www.radio-browser.info/webservice/json/stations/searchterm
     <br /> http://www.radio-browser.info/webservice/json/stations/byid/searchterm
     <br /> http://www.radio-browser.info/webservice/json/stations/bycountry/searchterm
+    <br /> http://www.radio-browser.info/webservice/json/stations/bycountryexact/searchterm
     <br /> http://www.radio-browser.info/webservice/json/stations/bylanguage/searchterm
+    <br /> http://www.radio-browser.info/webservice/json/stations/bylanguageexact/searchterm
     <br /> http://www.radio-browser.info/webservice/json/stations/bytag/searchterm
-    <br />
+    <br /> http://www.radio-browser.info/webservice/json/stations/bytagexact/searchterm
+  </div>
     <div class="header_sub">Description:</div>
     Will get a list of all radio stations. It is possible to add a search term to only get stations that have the term in their names. The variants with "exact" will only search for perfect matches.
     <br /> It is also possible to select stations based on their country, language, tags or id.
@@ -118,11 +121,11 @@
 
     <h2>Stations by clicks</h2>
     <div class="header_sub">Syntax:</div>
-    http://www.radio-browser.info/webservice/xml/stations/topclick
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/topclick
     <br /> http://www.radio-browser.info/webservice/xml/stations/topclick/rowcount
     <br /> http://www.radio-browser.info/webservice/json/stations/topclick
     <br /> http://www.radio-browser.info/webservice/json/stations/topclick/rowcount
-    <br />
+    </div>
     <div class="header_sub">Description:</div>
     Returns a list of the stations that are clicked the most. You can add a parameter with the number of wanted stations. Supported output formats: json,xml
     <br/>
@@ -132,11 +135,12 @@
 
     <h2>Stations by votes</h2>
     <div class="header_sub">Syntax:</div>
+    <div class="syntax">
     http://www.radio-browser.info/webservice/xml/stations/topvote
     <br /> http://www.radio-browser.info/webservice/xml/stations/topvote/rowcount
     <br /> http://www.radio-browser.info/webservice/json/stations/topvote
     <br /> http://www.radio-browser.info/webservice/json/stations/topvote/rowcount
-    <br />
+    </div>
     <div class="header_sub">Description:</div>
     Returns a list of the highest voted stations. You can add a parameter with the number of wanted stations. Supported output formats: json,xml
     <br/>
@@ -146,11 +150,12 @@
 
     <h2>Stations that got clicked recently</h2>
     <div class="header_sub">Syntax:</div>
+    <div class="syntax">
     http://www.radio-browser.info/webservice/xml/stations/lastclick
     <br /> http://www.radio-browser.info/webservice/xml/stations/lastclick/rowcount
     <br /> http://www.radio-browser.info/webservice/json/stations/lastclick
     <br /> http://www.radio-browser.info/webservice/json/stations/lastclick/rowcount
-    <br />
+    </div>
     <div class="header_sub">Description:</div>
     Returns a list of stations that got clicked recently. Supported output formats: json,xml
     <br/>
@@ -160,11 +165,11 @@
 
     <h2>Stations that got changed/added recently</h2>
     <div class="header_sub">Syntax:</div>
-    http://www.radio-browser.info/webservice/xml/stations/lastchange
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/lastchange
     <br /> http://www.radio-browser.info/webservice/xml/stations/lastchange/rowcount
     <br /> http://www.radio-browser.info/webservice/json/stations/lastchange
     <br /> http://www.radio-browser.info/webservice/json/stations/lastchange/rowcount
-    <br />
+    </div>
     <div class="header_sub">Description:</div>
     Returns a list of stations that got added or changed recently. Supported output formats: json,xml
     <br/>
@@ -174,10 +179,10 @@
 
     <h2>Playable station url</h2>
     <div class="header_sub">Syntax:</div>
-    http://www.radio-browser.info/webservice/xml/url/stationid
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/url/stationid
     <br /> http://www.radio-browser.info/webservice/json/url/stationid
     <br /> http://www.radio-browser.info/webservice/pls/url/stationid
-    <br />
+    </div>
     <div class="header_sub">Description:</div>
     Returns the playable url for the station. Does return 404 code if the playlist on the remote server could not be retrieved. In this case the station is not working any more and needs to get updated. Supported output formats: json,xml,pls (playlist)
     <br/>
@@ -188,9 +193,10 @@
 
     <h2>Vote for station</h2>
     <div class="header_sub">Syntax:</div>
+    <div class="syntax">
     http://www.radio-browser.info/webservice/xml/vote/stationid
     <br/> http://www.radio-browser.info/webservice/json/vote/stationid
-    <br />
+    </div>
     <div class="header_sub">Description:</div>
     Increase the vote count for the station by one. Can only be done by the same ip adress for one station every 10 minutes. Returns the changed station as result if it worked.
     <br/> Supported output formats: json,xml
@@ -200,9 +206,10 @@
 
     <h2>Server stats</h2>
     <div class="header_sub">Syntax:</div>
+    <div class="syntax">
     http://www.radio-browser.info/webservice/xml/stats
     <br /> http://www.radio-browser.info/webservice/json/stats
-    <br />
+    </div>
     <div class="header_sub">Description:</div>
     Webservice stats. Supported output formats: json,xml
     <br/>
