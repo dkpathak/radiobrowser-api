@@ -50,7 +50,7 @@ function updateCacheTags()
 
     $tags_old = array();
     while ($row = mysql_fetch_row($result)) {
-        $tags_old[$row[0] = $row[1];
+        $tags_old[$row[0]] = $row[1];
     }
 
     // compare the arrays and update TagCache
