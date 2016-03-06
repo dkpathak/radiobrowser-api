@@ -33,6 +33,12 @@ if (isset($_REQUEST['action'])) {
     if ($_REQUEST['action'] == 'data_search') {
         print_stations_list_data('Name');
     }
+    if ($_REQUEST['action'] == 'data_search_name') {
+        print_stations_list_data('Name');
+    }
+    if ($_REQUEST['action'] == 'data_search_name_exact') {
+        print_stations_list_data_exact('Name',false);
+    }
     if ($_REQUEST['action'] == 'data_search_bycountry') {
         print_stations_list_data('Country');
     }
