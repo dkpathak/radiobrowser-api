@@ -45,6 +45,12 @@ if (isset($_REQUEST['action'])) {
     if ($_REQUEST['action'] == 'data_search_bycountry_exact') {
         print_stations_list_data_exact('Country', false);
     }
+    if ($_REQUEST['action'] == 'data_search_bystate') {
+        print_stations_list_data('Subcountry');
+    }
+    if ($_REQUEST['action'] == 'data_search_bystate_exact') {
+        print_stations_list_data_exact('Subcountry', false);
+    }
     if ($_REQUEST['action'] == 'data_search_bylanguage') {
         print_stations_list_data('Language');
     }

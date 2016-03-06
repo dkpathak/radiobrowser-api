@@ -47,6 +47,8 @@ RewriteRule ^webservice/(.*)/stations/byname/(.*)$ /?format=$1&term=$2&action=da
 RewriteRule ^webservice/(.*)/stations/bynameexact/(.*)$ /?format=$1&term=$2&action=data_search_name_exact
 RewriteRule ^webservice/(.*)/stations/bycountry/(.*)$ /?format=$1&term=$2&action=data_search_bycountry
 RewriteRule ^webservice/(.*)/stations/bycountryexact/(.*)$ /?format=$1&term=$2&action=data_search_bycountry_exact
+RewriteRule ^webservice/(.*)/stations/bystate/(.*)$ /?format=$1&term=$2&action=data_search_bystate
+RewriteRule ^webservice/(.*)/stations/bystateexact/(.*)$ /?format=$1&term=$2&action=data_search_bystate_exact
 RewriteRule ^webservice/(.*)/stations/bylanguage/(.*)$ /?format=$1&term=$2&action=data_search_bylanguage
 RewriteRule ^webservice/(.*)/stations/bylanguageexact/(.*)$ /?format=$1&term=$2&action=data_search_bylanguage_exact
 RewriteRule ^webservice/(.*)/stations/bytag/(.*)$ /?format=$1&term=$2&action=data_search_bytag
