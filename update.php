@@ -34,9 +34,9 @@ function updateCacheTags()
             $tag_clean = strtolower(trim($tag));
             if ($tag_clean !== '') {
                 if (!array_key_exists($tag_clean, $tags_new)) {
-                    $tags_new[$tag_clean] = 1;
+                    $tags_new[$tag_clean] = (int)1;
                 } else {
-                    $tags_new[$tag_clean] = $tags_new[$tag_clean] + 1;
+                    $tags_new[$tag_clean] = (int)($tags_new[$tag_clean] + 1);
                 }
             }
         }
@@ -50,7 +50,7 @@ function updateCacheTags()
 
     $tags_old = array();
     while ($row = mysql_fetch_row($result)) {
-        $tags_old[$row[0]] = $row[1];
+        $tags_old[$row[0]] = (int)$row[1];
     }
 
     // compare the arrays and update TagCache
