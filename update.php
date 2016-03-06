@@ -33,8 +33,10 @@ function updateCacheTags()
         foreach ($tag_array as $tag) {
             $tag_clean = strtolower(trim($tag));
             if ($tag_clean !== '') {
-                if (!in_array($tag_clean, $tags_new)) {
-                    array_push($tags_new, $tag_clean);
+                if (!array_key_exists($tag_clean, $tags_new)) {
+                    $tags_new[$tag_clean] = 1;
+                }else{
+                  $tags_new[$tag_clean] = $tags_new[$tag_clean] + 1;
                 }
             }
         }
@@ -54,16 +56,19 @@ function updateCacheTags()
     // compare the arrays and update TagCache
     // remove unused tags
     foreach ($tags_old as $tag) {
-        if (!in_array($tag, $tags_new)) {
+        if (!array_key_exists($tag, $tags_new)) {
             echo 'removed old:'.$tag.'<br/>';
             mysql_query("DELETE FROM TagCache WHERE TagName='".escape_string($tag)."'");
         }
     }
     // add new tags
-    foreach ($tags_new as $tag) {
+    foreach ($tags_new as $tag => $count) {
         if (!in_array($tag, $tags_old)) {
             echo 'added new:'.$tag.'<br/>';
-            mysql_query("INSERT INTO TagCache (TagName) VALUES ('".escape_string($tag)."')");
+            mysql_query("INSERT INTO TagCache (TagName,StationCount) VALUES ('".escape_string($tag)."',".$count.")");
+        }else{
+          echo 'updated:'.$tag.' to '.$count.'<br/>';
+          mysql_query("UPDATE TagCache SET StationCount=".$count." WHERE TagName='".escape_string($tag)."'");
         }
     }
 }

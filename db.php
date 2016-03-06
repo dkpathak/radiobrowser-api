@@ -17,6 +17,8 @@ function print_tags($search_term)
             }
             print_output_item_start($format, 'tag');
             print_output_item_content($format, 'name', $row['TagName']);
+            print_output_item_dict_sep($format);
+            print_output_item_content($format, 'stationcount', $row['StationCount']);
             print_output_item_end($format);
             ++$i;
         }
@@ -460,7 +462,7 @@ function openDB()
         mysql_query('CREATE TABLE StationClick(ClickID INT NOT NULL AUTO_INCREMENT,Primary Key (ClickID),StationID INT, ClickTimestamp TIMESTAMP)') or die('could not create table');
     }
     if (!mysql_num_rows(mysql_query("SHOW TABLES LIKE 'TagCache'"))) {
-        mysql_query('CREATE TABLE TagCache(TagName VARCHAR(100) NOT NULL,Primary Key (TagName))') or die('could not create table');
+        mysql_query('CREATE TABLE TagCache(TagName VARCHAR(100) NOT NULL,Primary Key (TagName), StationCount INT DEFAULT 0)') or die('could not create table');
     }
 }
 
