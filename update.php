@@ -45,7 +45,7 @@ function updateCacheTags()
             }
         }
         $tag_string_corrected = implode(',',$tag_array_corrected);
-        if (strcmp($tag_array_corrected,$tag_string) !== 0){
+        if (strcmp($tag_string_corrected,$tag_string) !== 0){
           echo "Try correcting tags:'".$tag_string."' -> '".$tag_string_corrected."'<br/>";
         }
     }
