@@ -17,7 +17,7 @@ function updateCacheTags()
     openDB();
 
     // generate new list of tags
-    $result = mysql_query('SELECT Tags FROM Station');
+    $result = mysql_query('SELECT Tags, StationID FROM Station');
     if (!$result) {
         echo str(mysql_error());
         exit;
@@ -47,6 +47,7 @@ function updateCacheTags()
         $tag_string_corrected = implode(',',$tag_array_corrected);
         if (strcmp($tag_string_corrected,$tag_string) !== 0){
           echo "Try correcting tags:'".$tag_string."' -> '".$tag_string_corrected."'<br/>";
+          mysql_query("UPDATE Station SET Tags='".escape_string($tag_string_corrected)."' WHERE StationID=".$row['StationID']);
         }
     }
     // generate old list of tags
