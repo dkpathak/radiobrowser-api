@@ -26,14 +26,16 @@ function updateCacheTags()
     $tags_new = array();
     while ($row = mysql_fetch_assoc($result)) {
         $tag_string = $row['Tags'];
-        $tag_string = str_replace(',', ' ', $tag_string);
-        $tag_string = str_replace(';', ' ', $tag_string);
+        // $tag_string = str_replace(',', ' ', $tag_string);
+        // $tag_string = str_replace(';', ' ', $tag_string);
 
-        $tag_array = explode(' ', $tag_string);
+        $tag_array = explode(',', $tag_string);
         foreach ($tag_array as $tag) {
             $tag_clean = strtolower(trim($tag));
-            if (!in_array($tag_clean, $tags_new)) {
-                array_push($tags_new, $tag_clean);
+            if ($tag_clean !== '') {
+                if (!in_array($tag_clean, $tags_new)) {
+                    array_push($tags_new, $tag_clean);
+                }
             }
         }
     }
