@@ -390,7 +390,7 @@ function print_output_item_content($format, $key, $value)
         echo $key.'="'.htmlspecialchars($value, ENT_QUOTES).'"';
     }
     if ($format == 'json') {
-        echo '"'.$key.'":"'.htmlspecialchars($value, ENT_COMPAT).'"';
+        echo '"'.$key.'":"'.addcslashes(str_replace('\\','',$value),'"').'"';
     }
 }
 
