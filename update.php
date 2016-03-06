@@ -41,6 +41,19 @@ function updateCacheTags()
             if ($tag_clean === 'worldmusic') {
                 $tag_corrected = 'world music';
             }
+            if ($tag_clean === 'hip-hop' || $tag_clean === 'hip hop') {
+                $tag_corrected = 'hiphop';
+            }
+            if ($tag_clean === 'top40' || $tag_clean === 'top-40') {
+                $tag_corrected = 'top 40';
+            }
+            if ($tag_clean === 'top10' || $tag_clean === 'top-10') {
+                $tag_corrected = 'top 10';
+            }
+            if ($tag_clean === 'top100' || $tag_clean === 'top-100') {
+                $tag_corrected = 'top 100';
+            }
+            $tag_corrected = str_replace('/','-',$tag_corrected);
 
             array_push($tag_array_corrected, $tag_corrected);
             if ($tag_clean !== '') {
