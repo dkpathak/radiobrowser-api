@@ -83,10 +83,10 @@ function print_states($search_term)
 {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
 
-    if (isset($_REQUEST["country"])){
-      $result = mysql_query("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Country='".escape_string($_REQUEST["country"])."' AND Subcountry LIKE '%".escape_string($search_term)."%' AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
+    if (isset($_REQUEST['country'])) {
+        $result = mysql_query("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Country='".escape_string($_REQUEST['country'])."' AND Subcountry LIKE '%".escape_string($search_term)."%' AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
     } else {
-      $result = mysql_query("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Subcountry LIKE '%".escape_string($search_term)."%' AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
+        $result = mysql_query("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Subcountry LIKE '%".escape_string($search_term)."%' AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
     }
     if (!$result) {
         echo str(mysql_error());
@@ -111,7 +111,6 @@ function print_states($search_term)
         print_output_footer($format);
     }
 }
-
 
 function print_stations_last_click_data()
 {
@@ -254,11 +253,17 @@ function print_result_stations($format, $result)
     print_output_footer($format);
 }
 
-function print_stations_list_data_exact($column)
+function print_stations_list_data_exact($column, $multivalue)
 {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
+
     if (isset($_GET['term'])) {
-        $result = mysql_query('SELECT * FROM Station WHERE Source is NULL AND '.$column."='".$_GET['term']."'");
+        $value = escape_string($_GET['term']);
+        if ($multivalue === true) {
+            $result = mysql_query('SELECT * FROM Station WHERE Source is NULL AND ('.$column."='".$value."' OR ".$column." LIKE '".$value.",%' OR ".$column." LIKE '%,".$value."' OR ".$column." LIKE '%,".$value.",%')");
+        } else {
+            $result = mysql_query('SELECT * FROM Station WHERE Source is NULL AND '.$column."='".$value."'");
+        }
     } else {
         $result = mysql_query('SELECT * FROM Station WHERE Source is NULL');
     }
@@ -513,4 +518,5 @@ function print_station_by_id($id)
         print_result_stations($format, $result);
     }
 }
+
 ?>

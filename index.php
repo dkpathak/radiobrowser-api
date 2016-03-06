@@ -36,14 +36,23 @@ if (isset($_REQUEST['action'])) {
     if ($_REQUEST['action'] == 'data_search_bycountry') {
         print_stations_list_data('Country');
     }
+    if ($_REQUEST['action'] == 'data_search_bycountry') {
+        print_stations_list_data_exact('Country', false);
+    }
     if ($_REQUEST['action'] == 'data_search_bylanguage') {
         print_stations_list_data('Language');
+    }
+    if ($_REQUEST['action'] == 'data_search_bylanguage') {
+        print_stations_list_data_exact('Language', false);
     }
     if ($_REQUEST['action'] == 'data_search_bytag') {
         print_stations_list_data('Tags');
     }
+    if ($_REQUEST['action'] == 'data_search_bytag') {
+        print_stations_list_data_exact('Tags', true);
+    }
     if ($_REQUEST['action'] == 'data_search_byid') {
-        print_stations_list_data_exact('StationID');
+        print_stations_list_data_exact('StationID', false);
     }
 
     if ($_REQUEST['action'] == 'add') {
