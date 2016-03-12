@@ -4,7 +4,7 @@ function print_tags($search_term)
 {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
 
-    $result = mysql_query("SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE '%".escape_string($search_term)."%' ORDER BY TagName");
+    $result = mysql_query("SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE '%".escape_string($search_term)."%' ORDER BY StationCount DESC,TagName ASC");
     if (!$result) {
         echo str(mysql_error());
     } else {
