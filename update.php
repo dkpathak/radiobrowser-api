@@ -38,7 +38,7 @@ function updateCacheTags()
             if ($tag_clean === 'sports') {
                 $tag_corrected = 'sport';
             }
-            if ($tag_clean === 'worldmusic') {
+            if ($tag_clean === 'worldmusic' || $tag_clean === 'world') {
                 $tag_corrected = 'world music';
             }
             if ($tag_clean === 'hip-hop' || $tag_clean === 'hip hop') {
@@ -74,6 +74,13 @@ function updateCacheTags()
             if ($tag_clean === 'various') {
                 $tag_corrected = 'variety';
             }
+            if ($tag_clean === 'musik') {
+                $tag_corrected = 'music';
+            }
+            if ($tag_clean === 'nachrichten') {
+                $tag_corrected = 'news';
+            }
+
             $tag_corrected = str_replace('/', ',', $tag_corrected);
 
             array_push($tag_array_corrected, $tag_corrected);
