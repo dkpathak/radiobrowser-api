@@ -56,7 +56,7 @@ function updateCacheTags()
             if ($tag_clean === 'catolic') {
                 $tag_corrected = 'catholic';
             }
-            if ($tag_clean === 'religous') {
+            if ($tag_clean === 'religous' || $tag_clean === 'religious') {
                 $tag_corrected = 'religion';
             }
             if ($tag_clean === 'pop music') {
@@ -65,7 +65,16 @@ function updateCacheTags()
             if ($tag_clean === 'active hits') {
                 $tag_corrected = 'hits';
             }
-            $tag_corrected = str_replace('/',',',$tag_corrected);
+            if ($tag_clean === 'newage') {
+                $tag_corrected = 'new age';
+            }
+            if ($tag_clean === 'local service') {
+                $tag_corrected = 'local programming';
+            }
+            if ($tag_clean === 'various') {
+                $tag_corrected = 'variety';
+            }
+            $tag_corrected = str_replace('/', ',', $tag_corrected);
 
             array_push($tag_array_corrected, $tag_corrected);
             if ($tag_clean !== '') {
