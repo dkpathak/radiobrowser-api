@@ -114,7 +114,15 @@ if (isset($audiofile)) {
         echo '}]';
         clickedStationID($stationid);
     } elseif ($format == 'pls') {
-        header('content-type: audio/x-scpls');
+        //header('content-type: audio/x-scpls');
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=radio.pls');
+        header('Content-Transfer-Encoding: chunked'); //changed to chunked
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+
         echo "[playlist]\n";
 
         echo 'File1='.$audiofile."\n";

@@ -2,12 +2,6 @@ Header add Access-Control-Allow-Origin "*"
 Header add Access-Control-Allow-Headers "origin, x-requested-with, content-type"
 Header add Access-Control-Allow-Methods "GET,POST"
 
-#AddHandler php-script .pls
-<Files "*.pls">
-	#SetHandler php-script
-	SetHandler application/x-httpd-php
-</Files>
-
 RewriteEngine on
 # http://site/webservice/<type>/countries
 RewriteRule ^webservice/(.*)/countries/(.*)$ /?term=$2&format=$1&action=countries

@@ -267,6 +267,9 @@ function print_stations_list_data($column)
     print_result_stations($format, $result);
 }
 
+/*
+Print a result set with many stations in the given format
+*/
 function print_result_stations($format, $result)
 {
     print_output_header($format);
