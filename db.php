@@ -255,9 +255,9 @@ function print_stations_list_data($column)
 {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     if (isset($_GET['term'])) {
-        $result = mysql_query('SELECT * FROM Station WHERE Source is NULL AND '.$column." LIKE '%".$_GET['term']."%'");
+        $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column." LIKE '%".$_GET['term']."%' GROUP BY Station.StationID");
     } else {
-        $result = mysql_query('SELECT * FROM Station WHERE Source is NULL');
+        $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL GROUP BY Station.StationID');
     }
     if (!$result) {
         echo str(mysql_error());
@@ -295,9 +295,9 @@ function print_stations_list_data_exact($column, $multivalue)
     if (isset($_GET['term'])) {
         $value = escape_string($_GET['term']);
         if ($multivalue === true) {
-            $result = mysql_query('SELECT * FROM Station WHERE Source is NULL AND ('.$column."='".$value."' OR ".$column." LIKE '".$value.",%' OR ".$column." LIKE '%,".$value."' OR ".$column." LIKE '%,".$value.",%')");
+            $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND ('.$column."='".$value."' OR ".$column." LIKE '".$value.",%' OR ".$column." LIKE '%,".$value."' OR ".$column." LIKE '%,".$value.",%') GROUP BY Station.StationID");
         } else {
-            $result = mysql_query('SELECT * FROM Station WHERE Source is NULL AND '.$column."='".$value."'");
+            $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND '.$column."='".$value."' GROUP BY Station.StationID");
         }
     } else {
         $result = mysql_query('SELECT * FROM Station WHERE Source is NULL');
@@ -393,7 +393,7 @@ function print_output_item_content($format, $key, $value)
         echo $key.'="'.htmlspecialchars($value, ENT_QUOTES).'"';
     }
     if ($format == 'json') {
-        echo '"'.$key.'":"'.addcslashes(str_replace('\\','',$value),'"').'"';
+        echo '"'.$key.'":"'.addcslashes(str_replace('\\', '', $value), '"').'"';
     }
 }
 
