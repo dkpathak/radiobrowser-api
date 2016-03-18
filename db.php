@@ -300,7 +300,7 @@ function print_stations_list_data_exact($column, $multivalue)
             $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND '.$column."='".$value."' GROUP BY Station.StationID");
         }
     } else {
-        $result = mysql_query('SELECT * FROM Station WHERE Source is NULL');
+      exit;
     }
     if (!$result) {
         echo str(mysql_error());
