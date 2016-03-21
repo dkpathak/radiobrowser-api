@@ -295,9 +295,9 @@ function print_stations_list_data_exact($column, $multivalue)
     if (isset($_GET['term'])) {
         $value = escape_string($_GET['term']);
         if ($multivalue === true) {
-            $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND ('.$column."='".$value."' OR ".$column." LIKE '".$value.",%' OR ".$column." LIKE '%,".$value."' OR ".$column." LIKE '%,".$value.",%') GROUP BY Station.StationID");
+            $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND (Station.'.$column."='".$value."' OR Station.".$column." LIKE '".$value.",%' OR Station.".$column." LIKE '%,".$value."' OR Station.".$column." LIKE '%,".$value.",%') GROUP BY Station.StationID");
         } else {
-            $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND '.$column."='".$value."' GROUP BY Station.StationID");
+            $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column."='".$value."' GROUP BY Station.StationID");
         }
     } else {
       exit;
