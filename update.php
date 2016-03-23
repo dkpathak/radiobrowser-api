@@ -130,4 +130,6 @@ function updateCacheTags()
             }
         }
     }
+    
+    mysql_query("DELETE FROM Station WHERE Name=''");
 }
