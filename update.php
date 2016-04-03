@@ -25,6 +25,7 @@ function updateCacheTags()
 
     $tags_new = array();
     while ($row = mysql_fetch_assoc($result)) {
+        $url = trim($row['Url']);
         $tag_string = $row['Tags'];
         // $tag_string = str_replace(',', ' ', $tag_string);
         // $tag_string = str_replace(';', ' ', $tag_string);
@@ -92,6 +93,12 @@ function updateCacheTags()
                 }
             }
         }
+
+        if ($url !== $row['Url']) {
+            echo "changed url:'".escape_string($url)."' from '".$row['Url']."'<br/>";
+            mysql_query("UPDATE Station SET Url='".escape_string($url)."' WHERE StationID=".$row['StationID']);
+        }
+
         $tag_string_corrected = implode(',', $tag_array_corrected);
         if (strcmp($tag_string_corrected, $tag_string) !== 0) {
             echo "Try correcting tags:'".$tag_string."' -> '".$tag_string_corrected."'<br/>";
@@ -130,6 +137,6 @@ function updateCacheTags()
             }
         }
     }
-    
+
     mysql_query("DELETE FROM Station WHERE Name=''");
 }
