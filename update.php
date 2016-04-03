@@ -17,7 +17,7 @@ function updateCacheTags()
     openDB();
 
     // generate new list of tags
-    $result = mysql_query('SELECT Tags, StationID FROM Station');
+    $result = mysql_query('SELECT Name, Tags, StationID FROM Station');
     if (!$result) {
         echo str(mysql_error());
         exit;
@@ -25,7 +25,8 @@ function updateCacheTags()
 
     $tags_new = array();
     while ($row = mysql_fetch_assoc($result)) {
-        $url = trim($row['Url']);
+        $name = str_replace('\t', ' ', trim($row['Name']));
+        $url = str_replace('\t', ' ', trim($row['Url']));
         $tag_string = $row['Tags'];
         // $tag_string = str_replace(',', ' ', $tag_string);
         // $tag_string = str_replace(';', ' ', $tag_string);
@@ -94,8 +95,13 @@ function updateCacheTags()
             }
         }
 
+        if ($name !== $row['Name']) {
+            echo "fixed name:'".escape_string($name)."' from '".$row['Name']."'<br/>";
+            //mysql_query("UPDATE Station SET Name='".escape_string($name)."' WHERE StationID=".$row['StationID']);
+        }
+
         if ($url !== $row['Url']) {
-            echo "changed url:'".escape_string($url)."' from '".$row['Url']."'<br/>";
+            echo "fixed url:'".escape_string($url)."' from '".$row['Url']."'<br/>";
             mysql_query("UPDATE Station SET Url='".escape_string($url)."' WHERE StationID=".$row['StationID']);
         }
 
