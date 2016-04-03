@@ -8,6 +8,13 @@ updateCaches();
 function updateCaches()
 {
     updateCacheTags();
+    updateStationClick();
+}
+
+function updateStationClick()
+{
+    // delete clicks older than 30 days
+    mysql_query('DELETE FROM StationClick WHERE TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*30;');
 }
 
 function updateCacheTags()
