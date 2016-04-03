@@ -119,7 +119,7 @@ function print_stations_last_click_data()
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
 
-    $result = mysql_query('SELECT * from Station LEFT Join StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL ORDER BY StationClick.ClickTimestamp DESC LIMIT '.$limit);
+    $result = mysql_query('SELECT Name,COUNT(StationClick.StationID) as clickcount, MAX(StationClick.ClickTimestamp) AS lastclicktime FROM Station INNER JOIN StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY MAX(StationClick.ClickTimestamp) DESC LIMIT '.$limit);
     if (!$result) {
         echo str(mysql_error());
     } else {
@@ -145,7 +145,7 @@ function print_stations_top_click_data()
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
 
-    $result = mysql_query('SELECT st.*,COUNT(*) AS clickcount FROM Station st,StationClick stc WHERE st.StationID=stc.StationID AND st.Source IS NULL GROUP BY st.StationID ORDER BY clickcount DESC LIMIT '.$limit);
+    $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) AS clickcount FROM Station INNER JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY clickcount DESC LIMIT '.$limit);
     if (!$result) {
         echo str(mysql_error());
     } else {
@@ -255,9 +255,9 @@ function print_stations_list_data($column)
 {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     if (isset($_GET['term'])) {
-        $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column." LIKE '%".$_GET['term']."%' GROUP BY Station.StationID");
+        $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column." LIKE '%".$_GET['term']."%' GROUP BY Station.StationID");
     } else {
-        $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL GROUP BY Station.StationID');
+        $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL GROUP BY Station.StationID');
     }
     if (!$result) {
         echo str(mysql_error());
@@ -295,9 +295,9 @@ function print_stations_list_data_exact($column, $multivalue)
     if (isset($_GET['term'])) {
         $value = escape_string($_GET['term']);
         if ($multivalue === true) {
-            $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND (Station.'.$column."='".$value."' OR Station.".$column." LIKE '".$value.",%' OR Station.".$column." LIKE '%,".$value."' OR Station.".$column." LIKE '%,".$value.",%') GROUP BY Station.StationID");
+            $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND (Station.'.$column."='".$value."' OR Station.".$column." LIKE '".$value.",%' OR Station.".$column." LIKE '%,".$value."' OR Station.".$column." LIKE '%,".$value.",%') GROUP BY Station.StationID");
         } else {
-            $result = mysql_query('SELECT Station.*,COUNT(*) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column."='".$value."' GROUP BY Station.StationID");
+            $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column."='".$value."' GROUP BY Station.StationID");
         }
     } else {
       exit;
