@@ -95,18 +95,21 @@ function updateCacheTags($db)
     foreach ($tags_old as $tag => $count) {
         if (!array_key_exists($tag, $tags_new)) {
             echo 'removed old:'.$tag.'<br/>';
-            // mysql_query("DELETE FROM TagCache WHERE TagName='".escape_string($tag)."'");
+            $stmt = $db->prepare('DELETE FROM TagCache WHERE TagName=:tag');
+            $stmt->execute(['tag' => $tag]);
         }
     }
     // add new tags
     foreach ($tags_new as $tag => $count) {
         if (!array_key_exists($tag, $tags_old)) {
             echo 'added new:'.$tag.'<br/>';
-            // mysql_query("INSERT INTO TagCache (TagName,StationCount) VALUES ('".escape_string($tag)."',".$count.')');
+            $stmt = $db->prepare('INSERT INTO TagCache (TagName,StationCount) VALUES (:tag,:count)');
+            $stmt->execute(['tag' => $tag, 'count' => $count]);
         } else {
             if ($count !== $tags_old[$tag]) {
                 echo 'updated:'.$tag.' from '.$tags_old[$tag].' to '.$count.'<br/>';
-                // mysql_query('UPDATE TagCache SET StationCount='.$count." WHERE TagName='".escape_string($tag)."'");
+                $stmt = $db->prepare('UPDATE TagCache SET StationCount=:count WHERE TagName=:tag');
+                $stmt->execute(['tag' => $tag, 'count' => $count]);
             }
         }
     }
