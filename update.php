@@ -36,15 +36,15 @@ function updateCacheTags($db)
         $name = str_replace("\t", ' ', trim($row['Name']));
         if ($name !== $row['Name']) {
             echo "fixed name:'".escape_string($name)."' from '".$row['Name']."'<br/>";
-            $stmt = $db->prepare('UPDATE Station SET Name=:name WHERE StationID='.$row['StationID']);
-            $stmt->execute(['name' => $name]);
+            // $stmt = $db->prepare('UPDATE Station SET Name=:name WHERE StationID='.$row['StationID']);
+            // $stmt->execute(['name' => $name]);
         }
 
         $url = str_replace("\t", ' ', trim($row['Url']));
         if ($url !== $row['Url']) {
             echo "fixed url:'".escape_string($url)."' from '".$row['Url']."'<br/>";
-            $stmt = $db->prepare('UPDATE Station SET Url=:url WHERE StationID='.$row['StationID']);
-            $stmt->execute(['url' => $url]);
+            // $stmt = $db->prepare('UPDATE Station SET Url=:url WHERE StationID='.$row['StationID']);
+            // $stmt->execute(['url' => $url]);
         }
 
         $tag_string = $row['Tags'];
@@ -57,13 +57,13 @@ function updateCacheTags($db)
             array_push($tag_array_corrected, $tag_corrected);
 
             // count tag occurences
-            if ($tag_corrected !== '') {
-                if (!array_key_exists($tag_corrected, $tags_new)) {
-                    $tags_new[$tag_corrected] = (int) 1;
-                } else {
-                    $tags_new[$tag_corrected] = (int) ($tags_new[$tag_corrected] + 1);
-                }
-            }
+            // if ($tag_corrected !== '') {
+            //     if (!array_key_exists($tag_corrected, $tags_new)) {
+            //         $tags_new[$tag_corrected] = (int) 1;
+            //     } else {
+            //         $tags_new[$tag_corrected] = (int) ($tags_new[$tag_corrected] + 1);
+            //     }
+            // }
         }
 
         $tag_string_corrected = implode(',', $tag_array_corrected);
@@ -160,4 +160,5 @@ function correctTag($tag)
     if ($tag === 'nachrichten') {
         return 'news';
     }
+    return $tag;
 }
