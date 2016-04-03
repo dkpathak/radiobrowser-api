@@ -5,7 +5,11 @@ ini_set('display_errors', true);
 
 $db = new PDO('mysql:host=localhost;dbname=radio', 'root', '');
 
-updateCaches($db);
+try {
+    updateCaches($db);
+} catch (PDOException $ex) {
+    echo 'An Error occured!'.$ex->getMessage();
+}
 
 function updateCaches($db)
 {
@@ -69,7 +73,7 @@ function updateCacheTags($db)
         $tag_string_corrected = implode(',', $tag_array_corrected);
         if (strcmp($tag_string_corrected, $tag_string) !== 0) {
             echo "Try correcting tags:'".$tag_string."' -> '".$tag_string_corrected."'<br/>";
-            $stmt = $db->prepare("UPDATE Station SET Tags=:tags WHERE StationID=".$row['StationID']);
+            $stmt = $db->prepare('UPDATE Station SET Tags=:tags WHERE StationID='.$row['StationID']);
             $stmt->execute(['tags' => $tag_string_corrected]);
         }
     }
@@ -160,5 +164,6 @@ function correctTag($tag)
     if ($tag === 'nachrichten') {
         return 'news';
     }
+
     return $tag;
 }
