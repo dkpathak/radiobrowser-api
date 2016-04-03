@@ -69,8 +69,8 @@ function updateCacheTags($db)
         $tag_string_corrected = implode(',', $tag_array_corrected);
         if (strcmp($tag_string_corrected, $tag_string) !== 0) {
             echo "Try correcting tags:'".$tag_string."' -> '".$tag_string_corrected."'<br/>";
-            // $stmt = $db->prepare("UPDATE Station SET Tags=:tags WHERE StationID=".$row['StationID']);
-            // $stmt->execute(['tags' => $tag_string_corrected]);
+            $stmt = $db->prepare("UPDATE Station SET Tags=:tags WHERE StationID=".$row['StationID']);
+            $stmt->execute(['tags' => $tag_string_corrected]);
         }
     }
 
