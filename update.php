@@ -25,13 +25,13 @@ function updateCacheTags()
 
     $tags_new = array();
     while ($row = mysql_fetch_assoc($result)) {
-        $name = str_replace('\t', ' ', trim($row['Name']));
+        $name = str_replace("\t", " ", trim($row['Name']));
         if ($name !== $row['Name']) {
             echo "fixed name:'".escape_string($name)."' from '".$row['Name']."'<br/>";
             mysql_query("UPDATE Station SET Name='".escape_string($name)."' WHERE StationID=".$row['StationID']);
         }
 
-        $url = str_replace('\t', ' ', trim($row['Url']));
+        $url = str_replace("\t", " ", trim($row['Url']));
         if ($url !== $row['Url']) {
             echo "fixed url:'".escape_string($url)."' from '".$row['Url']."'<br/>";
             mysql_query("UPDATE Station SET Url='".escape_string($url)."' WHERE StationID=".$row['StationID']);
