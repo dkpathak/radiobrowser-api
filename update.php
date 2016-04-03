@@ -47,12 +47,12 @@ function updateCacheTags($db)
             // $stmt->execute(['url' => $url]);
         }
 
-        $tag_string = $row['Tags'];
+        $tag_string = strtolower($row['Tags']);
         $tag_array = explode(',', $tag_string);
         $tag_array_corrected = array();
         foreach ($tag_array as $tag) {
             // correct the tag
-            $tag_corrected = correctTag(strtolower(trim($tag)));
+            $tag_corrected = correctTag(trim($tag));
             $tag_corrected = str_replace('/', ',', $tag_corrected);
             array_push($tag_array_corrected, $tag_corrected);
 
