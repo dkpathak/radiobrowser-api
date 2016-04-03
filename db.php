@@ -119,7 +119,7 @@ function print_stations_last_click_data()
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
 
-    $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount, MAX(StationClick.ClickTimestamp) AS lastclicktime FROM Station INNER JOIN StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY MAX(StationClick.ClickTimestamp) DESC LIMIT '.$limit);
+    $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount, MAX(StationClick.ClickTimestamp) AS ClickTimestamp FROM Station INNER JOIN StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY MAX(StationClick.ClickTimestamp) DESC LIMIT '.$limit);
     if (!$result) {
         echo str(mysql_error());
     } else {
