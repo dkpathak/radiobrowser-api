@@ -29,26 +29,26 @@ function updateCacheTags($db)
     $db->query("DELETE FROM Station WHERE Name=''");
 
     // generate new list of tags
-    $stmt = $db->query('SELECT Name, Url, Tags, StationID FROM Station');
-    if (!$stmt) {
+    $select_stmt = $db->query('SELECT Name, Url, Tags, StationID FROM Station');
+    if (!$select_stmt) {
         echo str(mysql_error());
         exit;
     }
 
     $tags_new = array();
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
         $name = str_replace("\t", ' ', trim($row['Name']));
         if ($name !== $row['Name']) {
             echo "fixed name:'".escape_string($name)."' from '".$row['Name']."'<br/>";
-            // $stmt = $db->prepare('UPDATE Station SET Name=:name WHERE StationID='.$row['StationID']);
-            // $stmt->execute(['name' => $name]);
+            $stmt = $db->prepare('UPDATE Station SET Name=:name WHERE StationID='.$row['StationID']);
+            $stmt->execute(['name' => $name]);
         }
 
         $url = str_replace("\t", ' ', trim($row['Url']));
         if ($url !== $row['Url']) {
             echo "fixed url:'".escape_string($url)."' from '".$row['Url']."'<br/>";
-            // $stmt = $db->prepare('UPDATE Station SET Url=:url WHERE StationID='.$row['StationID']);
-            // $stmt->execute(['url' => $url]);
+            $stmt = $db->prepare('UPDATE Station SET Url=:url WHERE StationID='.$row['StationID']);
+            $stmt->execute(['url' => $url]);
         }
 
         $tag_string = strtolower($row['Tags']);
