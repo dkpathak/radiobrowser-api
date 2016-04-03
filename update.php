@@ -3,111 +3,65 @@
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-updateCaches();
+$db = new PDO('mysql:host=localhost;dbname=radio', 'root', '');
 
-function updateCaches()
+updateCaches($db);
+
+function updateCaches($db)
 {
-    updateCacheTags();
-    updateStationClick();
+    updateCacheTags($db);
+    updateStationClick($db);
 }
 
-function updateStationClick()
+function updateStationClick($db)
 {
     // delete clicks older than 30 days
-    mysql_query('DELETE FROM StationClick WHERE TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*30;');
+    $db->query('DELETE FROM StationClick WHERE TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*30;');
 }
 
-function updateCacheTags()
+function updateCacheTags($db)
 {
-    // This is for updating caches
-    require 'db.php';
-    openDB();
+    // Delete empty stations
+    $db->query("DELETE FROM Station WHERE Name=''");
 
     // generate new list of tags
-    $result = mysql_query('SELECT Name, Url, Tags, StationID FROM Station');
-    if (!$result) {
+    $stmt = $db->query('SELECT Name, Url, Tags, StationID FROM Station');
+    if (!$stmt) {
         echo str(mysql_error());
         exit;
     }
 
     $tags_new = array();
-    while ($row = mysql_fetch_assoc($result)) {
-        $name = str_replace("\t", " ", trim($row['Name']));
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $name = str_replace("\t", ' ', trim($row['Name']));
         if ($name !== $row['Name']) {
             echo "fixed name:'".escape_string($name)."' from '".$row['Name']."'<br/>";
-            mysql_query("UPDATE Station SET Name='".escape_string($name)."' WHERE StationID=".$row['StationID']);
+            $stmt = $db->prepare('UPDATE Station SET Name=:name WHERE StationID='.$row['StationID']);
+            $stmt->execute(['name' => $name]);
         }
 
-        $url = str_replace("\t", " ", trim($row['Url']));
+        $url = str_replace("\t", ' ', trim($row['Url']));
         if ($url !== $row['Url']) {
             echo "fixed url:'".escape_string($url)."' from '".$row['Url']."'<br/>";
-            mysql_query("UPDATE Station SET Url='".escape_string($url)."' WHERE StationID=".$row['StationID']);
+            $stmt = $db->prepare('UPDATE Station SET Url=:url WHERE StationID='.$row['StationID']);
+            $stmt->execute(['url' => $url]);
         }
 
         $tag_string = $row['Tags'];
-        // $tag_string = str_replace(',', ' ', $tag_string);
-        // $tag_string = str_replace(';', ' ', $tag_string);
-
         $tag_array = explode(',', $tag_string);
         $tag_array_corrected = array();
         foreach ($tag_array as $tag) {
-            $tag_clean = strtolower(trim($tag));
-
-            $tag_corrected = trim($tag);
-            if ($tag_clean === 'sports') {
-                $tag_corrected = 'sport';
-            }
-            if ($tag_clean === 'worldmusic' || $tag_clean === 'world') {
-                $tag_corrected = 'world music';
-            }
-            if ($tag_clean === 'hip-hop' || $tag_clean === 'hip hop') {
-                $tag_corrected = 'hiphop';
-            }
-            if ($tag_clean === 'top40' || $tag_clean === 'top-40') {
-                $tag_corrected = 'top 40';
-            }
-            if ($tag_clean === 'top10' || $tag_clean === 'top-10') {
-                $tag_corrected = 'top 10';
-            }
-            if ($tag_clean === 'top100' || $tag_clean === 'top-100') {
-                $tag_corrected = 'top 100';
-            }
-            if ($tag_clean === 'catolic') {
-                $tag_corrected = 'catholic';
-            }
-            if ($tag_clean === 'religous' || $tag_clean === 'religious') {
-                $tag_corrected = 'religion';
-            }
-            if ($tag_clean === 'pop music') {
-                $tag_corrected = 'pop';
-            }
-            if ($tag_clean === 'active hits') {
-                $tag_corrected = 'hits';
-            }
-            if ($tag_clean === 'newage') {
-                $tag_corrected = 'new age';
-            }
-            if ($tag_clean === 'local service') {
-                $tag_corrected = 'local programming';
-            }
-            if ($tag_clean === 'various') {
-                $tag_corrected = 'variety';
-            }
-            if ($tag_clean === 'musik') {
-                $tag_corrected = 'music';
-            }
-            if ($tag_clean === 'nachrichten') {
-                $tag_corrected = 'news';
-            }
-
+            // correct the tag
+            $tag_corrected = correctTag(strtolower(trim($tag)));
             $tag_corrected = str_replace('/', ',', $tag_corrected);
-
             array_push($tag_array_corrected, $tag_corrected);
-            if ($tag_clean !== '') {
-                if (!array_key_exists($tag_clean, $tags_new)) {
-                    $tags_new[$tag_clean] = (int) 1;
+
+            // count tag occurences
+            if ($tag_corrected !== '') {
+                if (!array_key_exists($tag_corrected, $tags_new)) {
+                    $tags_new[$tag_corrected] = (int) 1;
                 } else {
-                    $tags_new[$tag_clean] = (int) ($tags_new[$tag_clean] + 1);
+                    $tags_new[$tag_corrected] = (int) ($tags_new[$tag_corrected] + 1);
                 }
             }
         }
@@ -115,9 +69,13 @@ function updateCacheTags()
         $tag_string_corrected = implode(',', $tag_array_corrected);
         if (strcmp($tag_string_corrected, $tag_string) !== 0) {
             echo "Try correcting tags:'".$tag_string."' -> '".$tag_string_corrected."'<br/>";
-            mysql_query("UPDATE Station SET Tags='".escape_string($tag_string_corrected)."' WHERE StationID=".$row['StationID']);
+            // $stmt = $db->prepare("UPDATE Station SET Tags=:tags WHERE StationID=".$row['StationID']);
+            // $stmt->execute(['tags' => $tag_string_corrected]);
         }
     }
+
+    return;
+
     // generate old list of tags
     $result = mysql_query('SELECT TagName, StationCount FROM TagCache');
     if (!$result) {
@@ -150,6 +108,56 @@ function updateCacheTags()
             }
         }
     }
+}
 
-    mysql_query("DELETE FROM Station WHERE Name=''");
+function correctTag($tag)
+{
+    if ($tag === 'sports') {
+        return 'sport';
+    }
+    if ($tag === 'worldmusic' || $tag === 'world') {
+        return 'world music';
+    }
+    if ($tag === 'hip-hop' || $tag === 'hip hop') {
+        return 'hiphop';
+    }
+    if ($tag === 'top40' || $tag === 'top-40') {
+        return 'top 40';
+    }
+    if ($tag === 'top10' || $tag === 'top-10') {
+        return 'top 10';
+    }
+    if ($tag === 'top100' || $tag === 'top-100') {
+        return 'top 100';
+    }
+    if ($tag === 'catolic') {
+        return 'catholic';
+    }
+    if ($tag === 'religous' || $tag === 'religious') {
+        return 'religion';
+    }
+    if ($tag === 'pop music') {
+        return 'pop';
+    }
+    if ($tag === 'classical music') {
+        return 'classical';
+    }
+    if ($tag === 'active hits') {
+        return 'hits';
+    }
+    if ($tag === 'newage') {
+        return 'new age';
+    }
+    if ($tag === 'local service') {
+        return 'local programming';
+    }
+    if ($tag === 'various') {
+        return 'variety';
+    }
+    if ($tag === 'musik') {
+        return 'music';
+    }
+    if ($tag === 'nachrichten') {
+        return 'news';
+    }
 }
