@@ -17,7 +17,7 @@ function updateCacheTags()
     openDB();
 
     // generate new list of tags
-    $result = mysql_query('SELECT Name, Tags, StationID FROM Station');
+    $result = mysql_query('SELECT Name, Url, Tags, StationID FROM Station');
     if (!$result) {
         echo str(mysql_error());
         exit;
