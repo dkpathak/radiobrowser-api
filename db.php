@@ -119,7 +119,7 @@ function print_stations_last_click_data()
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
 
-    $result = mysql_query('SELECT Name,COUNT(StationClick.StationID) as clickcount, MAX(StationClick.ClickTimestamp) AS lastclicktime FROM Station INNER JOIN StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY MAX(StationClick.ClickTimestamp) DESC LIMIT '.$limit);
+    $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount, MAX(StationClick.ClickTimestamp) AS lastclicktime FROM Station INNER JOIN StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY MAX(StationClick.ClickTimestamp) DESC LIMIT '.$limit);
     if (!$result) {
         echo str(mysql_error());
     } else {
@@ -132,7 +132,7 @@ function print_stations_last_change_data()
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
 
-    $result = mysql_query('SELECT * from Station WHERE Station.Source IS NULL ORDER BY Creation DESC LIMIT '.$limit);
+    $result = mysql_query('SELECT Station.*, COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY Creation DESC LIMIT '.$limit);
     if (!$result) {
         echo str(mysql_error());
     } else {
@@ -158,7 +158,7 @@ function print_stations_top_vote_data()
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
 
-    $result = mysql_query('SELECT * FROM Station WHERE Source IS NULL ORDER BY Votes DESC,NegativeVotes ASC,Name LIMIT '.$limit);
+    $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) AS clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source IS NULL GROUP BY Station.StationID ORDER BY Votes DESC,NegativeVotes ASC,Name LIMIT '.$limit);
     if (!$result) {
         echo str(mysql_error());
     } else {
