@@ -97,7 +97,7 @@ function updateCacheTags()
 
         if ($name !== $row['Name']) {
             echo "fixed name:'".escape_string($name)."' from '".$row['Name']."'<br/>";
-            //mysql_query("UPDATE Station SET Name='".escape_string($name)."' WHERE StationID=".$row['StationID']);
+            mysql_query("UPDATE Station SET Name='".escape_string($name)."' WHERE StationID=".$row['StationID']);
         }
 
         if ($url !== $row['Url']) {
