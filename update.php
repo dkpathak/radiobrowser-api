@@ -100,11 +100,9 @@ function isIconLoadable($url){
     return false;
 }
 
-function extractIconLink($html){
+function extractIconLink($html, $base){
     $dom = new DOMDocument();
     @$dom->loadHTML($html);
-
-    $base = null;
 
     foreach($dom->getElementsByTagName('base') as $link) {
         $base = $link->getAttribute('href');
@@ -186,7 +184,7 @@ function checkUrlHtmlContent($url){
 function updateFavicon($db)
 {
     // generate new list of tags
-    $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station');
+    $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station WHERE Favicon=""');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
@@ -221,7 +219,8 @@ function fixFavicon($icon, $hp) {
     if ($icon === '') {
         if (hasCorrectScheme($hp)){
             // try default favicon pathinfo
-            $icon = getBaseUrl($hp).'/favicon.ico';
+            $base = getBaseUrl($hp);
+            $icon = $base.'/favicon.ico';
             if ($icon != null){
                 if (!isIconLoadable($icon)) {
                     $icon = '';
@@ -237,7 +236,8 @@ function fixFavicon($icon, $hp) {
                 if (checkUrlHtmlContent($hp)){
                     $hpContent = getLinkContent($hp);
                     if ($hpContent !== null){
-                        $icon = extractIconLink($hpContent);
+                        $icon = extractIconLink($hpContent,$base);
+                        // echo "extracted:".$icon."\n";
                         // if (!isIconLoadable($icon)) {
                         //     $icon = '';
                         //     echo "d";
