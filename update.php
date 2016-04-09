@@ -106,7 +106,7 @@ function checkUrlHtmlContent($url){
     if (isset($meta['wrapper_data']))
     {
       $data = $meta['wrapper_data'];
-      for ($i=0;$i<$data.length;$i++){
+      foreach ($data as $meta) {
         echo " meta = ".$data[i];
         if (strpos($data[i],"Content-Type: text/html") === 0)
         {
