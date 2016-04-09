@@ -85,10 +85,13 @@ function updateFavicon($db)
         $hp = trim($row['Homepage']);
         $icon = trim($row['Favicon']);
 
+        echo "checking : ".$icon;
+
         // if icon link not ok, remove it
         if ($icon !== '') {
             if (!isIconLoadable($icon)) {
                 $icon = '';
+                echo "-"
             }
         }
 
@@ -102,6 +105,7 @@ function updateFavicon($db)
                 $icon = getBaseUrl($hp).'/favicon.ico';
                 if (!isIconLoadable($icon)) {
                     $icon = '';
+                    echo "-"
                 }
 
                 if ($icon === '') {
@@ -118,8 +122,14 @@ function updateFavicon($db)
             }
         }
 
+        if ($icon !== ""){
+          echo "+";
+        }
+
+        echo "<br/>\n";
+
         if ($icon !== $row['Favicon']) {
-            echo 'fix favicon ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Favicon'].' -> '.$icon.'<br/>';
+            echo 'fix favicon ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Favicon'].' -> '.$icon.'<br/>\n';
             // $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID='.$row['StationID']);
             // $stmt->execute(['favicon' => $icon]);
         }
