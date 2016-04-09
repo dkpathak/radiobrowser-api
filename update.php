@@ -151,13 +151,19 @@ function extractIconLink($html){
         }
     }
 
-    // check shortcut icon link
+    // check apple icon link
     foreach($dom->getElementsByTagName('link') as $link) {
         $rel = $link->getAttribute('rel');
 
         if ($rel === "apple-touch-icon"){
             return FixUrl($link->getAttribute('href'),$base);
         }
+    }
+
+    // check shortcut icon link
+    foreach($dom->getElementsByTagName('link') as $link) {
+        $rel = $link->getAttribute('rel');
+
         if ($rel === "shortcut icon"){
             return FixUrl($link->getAttribute('href'),$base);
         }
@@ -198,11 +204,9 @@ function updateFavicon($db)
         echo str(mysql_error());
         exit;
     }
-    // while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
-    //     $hp = trim($row['Homepage']);
-    //     $icon = trim($row['Favicon']);
-    $hp = "http://www.radioflora.de/";
-    $icon = "http://www.radioflora.de/favicon.ico";
+    while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+        $hp = trim($row['Homepage']);
+        $icon = trim($row['Favicon']);
         $icon = fixFavicon($icon, $hp);
 
         if ($icon !== $row['Favicon']) {
@@ -210,7 +214,7 @@ function updateFavicon($db)
             // $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID='.$row['StationID']);
             // $stmt->execute(['favicon' => $icon]);
         }
-    // }
+    }
 }
 
 function fixFavicon($icon, $hp) {
