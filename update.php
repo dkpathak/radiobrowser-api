@@ -28,10 +28,18 @@ function hasCorrectScheme($url)
     return false;
 }
 
-function FixUrl($url)
+function FixUrl($url, $base = null)
 {
+    if (!hasCorrectScheme($base)){
+        $base = null;
+    }
+
     if (!hasCorrectScheme($url)) {
-        $url = 'http://'.$url;
+        if ($base === null){
+            $url = 'http://'.$url;
+        }else{
+            $url = $base."/".$url;
+        }
     }
 
     return $url;
@@ -109,31 +117,37 @@ function extractIconLink($html){
     $dom = new DOMDocument();
     @$dom->loadHTML($html);
 
+    $base = null;
+
+    foreach($dom->getElementsByTagName('base') as $link) {
+        $base = $link->getAttribute('href');
+    }
+
     foreach($dom->getElementsByTagName('meta') as $link) {
         // check microsoft link
         // <meta name="msapplication-TileImage" content="http://..." />
         $name = $link->getAttribute('name');
         if ($name === "msapplication-TileImage"){
-            return $link->getAttribute('content');
+            return FixUrl($link->getAttribute('content'),$base);
         }
         if ($name === "msapplication-square70x70logo"){
-            return $link->getAttribute('content');
+            return FixUrl($link->getAttribute('content'),$base);
         }
         if ($name === "msapplication-square150x150logo"){
-            return $link->getAttribute('content');
+            return FixUrl($link->getAttribute('content'),$base);
         }
         if ($name === "msapplication-square310x310logo"){
-            return $link->getAttribute('content');
+            return FixUrl($link->getAttribute('content'),$base);
         }
         if ($name === "msapplication-wide310x150logo"){
-            return $link->getAttribute('content');
+            return FixUrl($link->getAttribute('content'),$base);
         }
 
         // support for open graph
         // <meta property="og:image" content="http://..." />
         $property = $link->getAttribute('property');
         if ($property === "og:image"){
-            return $link->getAttribute('content');
+            return FixUrl($link->getAttribute('content'),$base);
         }
     }
 
@@ -142,13 +156,13 @@ function extractIconLink($html){
         $rel = $link->getAttribute('rel');
 
         if ($rel === "apple-touch-icon"){
-            return $link->getAttribute('href');
+            return FixUrl($link->getAttribute('href'),$base);
         }
         if ($rel === "shortcut icon"){
-            return $link->getAttribute('href');
+            return FixUrl($link->getAttribute('href'),$base);
         }
         if ($rel === "icon"){
-            return $link->getAttribute('href');
+            return FixUrl($link->getAttribute('href'),$base);
         }
     }
     return null;
@@ -178,7 +192,6 @@ function checkUrlHtmlContent($url){
 
 function updateFavicon($db)
 {
-
     // generate new list of tags
     $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station');
     if (!$select_stmt) {
@@ -264,8 +277,8 @@ function updateWebpages($db)
             $url = FixUrl($url);
             if ($url !== $row['Homepage']) {
                 echo 'fix homepage ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Homepage'].' -> '.$url.'<br/>';
-                $stmt = $db->prepare('UPDATE Station SET Homepage=:homepage WHERE StationID='.$row['StationID']);
-                $stmt->execute(['homepage' => $url]);
+                // $stmt = $db->prepare('UPDATE Station SET Homepage=:homepage WHERE StationID='.$row['StationID']);
+                // $stmt->execute(['homepage' => $url]);
             }
         }
     }
