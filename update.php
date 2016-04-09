@@ -14,20 +14,116 @@ try {
 function updateCaches($db)
 {
     updateWebpages($db);
+    updateFavicon($db);
     // updateCacheTags($db);
     // updateStationClick($db);
 }
 
-function FixUrl($url)
+function hasCorrectScheme($url)
 {
-    if (strtolower(substr($url, 0, 7)) === 'http://') {
-        return $url;
-    }
-    if (strtolower(substr($url, 0, 8)) === 'https://') {
-        return $url;
+    if ((strtolower(substr($url, 0, 7)) === 'http://') || (strtolower(substr($url, 0, 8)) === 'https://')) {
+        return true;
     }
 
-    return 'http://'.$url;
+    return false;
+}
+
+function FixUrl($url)
+{
+    if (!hasCorrectScheme($url)) {
+        $url = 'http://'.$url;
+    }
+
+    return $url;
+}
+
+function getLinkContent($url)
+{
+    if (!hasCorrectScheme($url)) {
+        return;
+    }
+
+    return file_get_contents($url);
+}
+
+function getBaseUrl($url)
+{
+    $parsed_url = parse_url($url);
+    if ($parsed_url) {
+        $scheme = isset($parsed_url['scheme']) ? $parsed_url['scheme'].'://' : '';
+        $host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+        $port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
+    }
+
+    return "$scheme$host$port";
+}
+
+function isIconLoadable($url){
+    if (!hasCorrectScheme($url)){
+        return false;
+    }
+    $headers = get_headers($url);
+
+    if (isset($headers['Content-Type'])){
+        if (substr($headers['Content-Type'],0,5) === "image"){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function updateFavicon($db)
+{
+    // generate new list of tags
+    $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station');
+    if (!$select_stmt) {
+        echo str(mysql_error());
+        exit;
+    }
+    while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+        $hp = trim($row['Homepage']);
+        $icon = trim($row['Favicon']);
+
+        // if icon link not ok, remove it
+        if ($icon !== '') {
+            if (!isIconLoadable($icon)) {
+                $icon = '';
+            }
+        }
+
+        // if icon link empty, try to fix it
+        if ($icon === '') {
+            // get hp
+            $hpContent = getLinkContent($hp);
+
+            if ($hpContent !== null){
+                // try default favicon pathinfo
+                $icon = getBaseUrl($hp).'/favicon.ico';
+                if (!isIconLoadable($icon)) {
+                    $icon = '';
+                }
+
+                if ($icon === '') {
+                    // try to fix it with microsoft icon tag
+                    $tags = get_meta_tags($hp);
+                    if (isset($tags["msapplication-TileImage"])){
+                        if (hasCorrectScheme($tags["msapplication-TileImage"])){
+                            $icon = $tags["msapplication-TileImage"];
+                        }else{
+                            echo " - Unknown msapplication-TileImage link:".$tags["msapplication-TileImage"];
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($icon !== $row['Favicon']) {
+            echo 'fix favicon ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Favicon'].' -> '.$icon.'<br/>';
+            // $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID='.$row['StationID']);
+            // $stmt->execute(['favicon' => $icon]);
+        }
+    }
 }
 
 function updateWebpages($db)
@@ -44,7 +140,7 @@ function updateWebpages($db)
         if ($url !== '') {
             $url = FixUrl($url);
             if ($url !== $row['Homepage']) {
-                echo 'fix homepage ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Homepage'].' -> '.$url."<br/>";
+                echo 'fix homepage ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Homepage'].' -> '.$url.'<br/>';
                 $stmt = $db->prepare('UPDATE Station SET Homepage=:homepage WHERE StationID='.$row['StationID']);
                 $stmt->execute(['homepage' => $url]);
             }
