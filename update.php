@@ -13,8 +13,41 @@ try {
 
 function updateCaches($db)
 {
-    updateCacheTags($db);
-    updateStationClick($db);
+    updateWebpages($db);
+    // updateCacheTags($db);
+    // updateStationClick($db);
+}
+
+function FixUrl($url)
+{
+    if (strtolower(substr($url, 0, 7)) === 'http://') {
+        return $url;
+    }
+    if (strtolower(substr($url, 0, 8)) === 'https://') {
+        return $url;
+    }
+
+    return 'https://'.$url;
+}
+
+function updateWebpages($db)
+{
+    // generate new list of tags
+    $select_stmt = $db->query('SELECT StationID, Homepage FROM Station');
+    if (!$select_stmt) {
+        echo str(mysql_error());
+        exit;
+    }
+
+    while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+        $url = trim($row['Homepage']);
+        if ($url !== '') {
+            $url = FixUrl($url);
+            if ($url !== $row['Homepage']) {
+                echo 'fix homepage:'.$row['Homepage'].' -> '.$url;
+            }
+        }
+    }
 }
 
 function updateStationClick($db)
