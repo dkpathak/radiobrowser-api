@@ -106,10 +106,20 @@ function checkUrlHtmlContent($url){
     if (isset($meta['wrapper_data']))
     {
       $data = $meta['wrapper_data'];
+      for ($i=0;$i<$data.length;$i++){
+        if (strpos($data[i],"Content-Type: text/html") == 0)
+        {
+          echo "found html<br>\n";
+          fclose($fp);
+          return true;
+        }
+      }
+
       print_r($data);
     }
 
     fclose($fp);
+    return false;
 }
 
 function updateFavicon($db)
@@ -146,13 +156,14 @@ function updateFavicon($db)
 
                 if ($icon === ''){
                     // get hp
-                    checkUrlHtmlContent($hp);
-                    $hpContent = getLinkContent($hp);
-                    if ($hpContent !== null){
-                        $icon = extractIconLink($hpContent);
-                        if (!isIconLoadable($icon)) {
-                            $icon = '';
-                            echo "-";
+                    if (checkUrlHtmlContent($hp)){
+                        $hpContent = getLinkContent($hp);
+                        if ($hpContent !== null){
+                            $icon = extractIconLink($hpContent);
+                            if (!isIconLoadable($icon)) {
+                                $icon = '';
+                                echo "-";
+                            }
                         }
                     }
                 }
