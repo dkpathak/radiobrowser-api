@@ -76,7 +76,29 @@ function isIconLoadable($url){
     {
         if (strpos($header,"Content-Type: image",0) === 0)
         {
-            return true;
+            $img = @imagecreatefromgif($url);
+            if ($img !== false){
+                imagedestroy($img);
+                return true;
+            }
+
+            $img = @imagecreatefromjpeg($url);
+            if ($img !== false){
+                imagedestroy($img);
+                return true;
+            }
+
+            $img = @imagecreatefrompng($url);
+            if ($img !== false){
+                imagedestroy($img);
+                return true;
+            }
+
+            $img = @imagecreatefromxbm($url);
+            if ($img !== false){
+                imagedestroy($img);
+                return true;
+            }
         }
     }
 
@@ -153,7 +175,7 @@ function checkUrlHtmlContent($url){
 function updateFavicon($db)
 {
     // generate new list of tags
-    $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station WHERE Favicon=""');
+    $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
