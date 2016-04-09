@@ -53,9 +53,11 @@ function getBaseUrl($url)
         $scheme = isset($parsed_url['scheme']) ? $parsed_url['scheme'].'://' : '';
         $host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
         $port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
+        return "$scheme$host$port";
     }
 
-    return "$scheme$host$port";
+    echo "BAD URL:".$url."<br/>\n";
+    return null;
 }
 
 function isIconLoadable($url){
@@ -176,7 +178,12 @@ function updateFavicon($db)
             if (hasCorrectScheme($hp)){
                 // try default favicon pathinfo
                 $icon = getBaseUrl($hp).'/favicon.ico';
-                if (!isIconLoadable($icon)) {
+                if ($icon != null){
+                    if (!isIconLoadable($icon)) {
+                        $icon = '';
+                        echo "-";
+                    }
+                }else{
                     $icon = '';
                     echo "-";
                 }
