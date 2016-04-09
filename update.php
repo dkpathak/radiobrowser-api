@@ -178,69 +178,74 @@ function checkUrlHtmlContent($url){
 
 function updateFavicon($db)
 {
+
     // generate new list of tags
     $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
     }
-    while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
-        $hp = trim($row['Homepage']);
-        $icon = trim($row['Favicon']);
+    // while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+    //     $hp = trim($row['Homepage']);
+    //     $icon = trim($row['Favicon']);
+    $hp = "http://www.radioflora.de/";
+    $icon = "http://www.radioflora.de/favicon.ico";
+        $icon = fixFavicon($icon, $hp);
 
-        // echo "-----------------------<br/>\n";
-        // echo "checking : ".$row["Name"]." HP=".$hp." ICO=".$icon."<br/>\n";
-
-        // if icon link not ok, remove it
-        if ($icon !== '') {
-            if (!isIconLoadable($icon)) {
-                $icon = '';
-                echo "-";
-            }
+        if ($icon !== $row['Favicon']) {
+            echo 'fix favicon ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Favicon'].' -> '.$icon." <br/>\n";
+            // $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID='.$row['StationID']);
+            // $stmt->execute(['favicon' => $icon]);
         }
+    // }
+}
 
-        // if icon link empty, try to fix it
-        if ($icon === '') {
-            if (hasCorrectScheme($hp)){
-                // try default favicon pathinfo
-                $icon = getBaseUrl($hp).'/favicon.ico';
-                if ($icon != null){
-                    if (!isIconLoadable($icon)) {
-                        $icon = '';
-                        echo "-";
-                    }
-                }else{
+function fixFavicon($icon, $hp) {
+    echo "|";
+    // echo "-----------------------<br/>\n";
+    // echo "checking : ".$row["Name"]." HP=".$hp." ICO=".$icon."<br/>\n";
+
+    // if icon link not ok, remove it
+    if ($icon !== '') {
+        if (!isIconLoadable($icon)) {
+            $icon = '';
+            echo "a";
+        }
+    }
+
+    // if icon link empty, try to fix it
+    if ($icon === '') {
+        if (hasCorrectScheme($hp)){
+            // try default favicon pathinfo
+            $icon = getBaseUrl($hp).'/favicon.ico';
+            if ($icon != null){
+                if (!isIconLoadable($icon)) {
                     $icon = '';
-                    echo "-";
+                    echo "b";
                 }
+            }else{
+                $icon = '';
+                echo "c";
+            }
 
-                if ($icon === ''){
-                    // get hp
-                    if (checkUrlHtmlContent($hp)){
-                        $hpContent = getLinkContent($hp);
-                        if ($hpContent !== null){
-                            $icon = extractIconLink($hpContent);
-                            if (!isIconLoadable($icon)) {
-                                $icon = '';
-                                echo "-";
-                            }
+            if ($icon === ''){
+                // get hp
+                if (checkUrlHtmlContent($hp)){
+                    $hpContent = getLinkContent($hp);
+                    if ($hpContent !== null){
+                        $icon = extractIconLink($hpContent);
+                        if (!isIconLoadable($icon)) {
+                            $icon = '';
+                            echo "d";
                         }
                     }
                 }
             }
         }
+    }
 
-        if ($icon !== ""){
-          echo "+";
-        }
-
-        // echo "<br/>\n";
-
-        if ($icon !== $row['Favicon']) {
-            echo 'fix favicon ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Favicon'].' -> '.$icon."<br/>\n";
-            $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID='.$row['StationID']);
-            $stmt->execute(['favicon' => $icon]);
-        }
+    if ($icon !== ""){
+      echo "+";
     }
 }
 
