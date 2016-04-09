@@ -91,7 +91,7 @@ function updateFavicon($db)
         if ($icon !== '') {
             if (!isIconLoadable($icon)) {
                 $icon = '';
-                echo "-"
+                echo "-";
             }
         }
 
@@ -105,7 +105,7 @@ function updateFavicon($db)
                 $icon = getBaseUrl($hp).'/favicon.ico';
                 if (!isIconLoadable($icon)) {
                     $icon = '';
-                    echo "-"
+                    echo "-";
                 }
 
                 if ($icon === '') {
