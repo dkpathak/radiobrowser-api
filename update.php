@@ -60,11 +60,11 @@ function getBaseUrl($url)
 
 function isIconLoadable($url){
     if ($url === null)
-      return false;
+        return false;
     if (!hasCorrectScheme($url)){
         return false;
     }
-    $headers = get_headers($url);
+    $headers = get_headers($url,1);
 
     if (isset($headers['Content-Type'])){
         if (substr($headers['Content-Type'],0,5) === "image"){
