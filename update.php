@@ -27,13 +27,13 @@ function FixUrl($url)
         return $url;
     }
 
-    return 'https://'.$url;
+    return 'http://'.$url;
 }
 
 function updateWebpages($db)
 {
     // generate new list of tags
-    $select_stmt = $db->query('SELECT StationID, Homepage FROM Station');
+    $select_stmt = $db->query('SELECT StationID, Name, Homepage FROM Station');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
@@ -44,7 +44,7 @@ function updateWebpages($db)
         if ($url !== '') {
             $url = FixUrl($url);
             if ($url !== $row['Homepage']) {
-                echo 'fix homepage:'.$row['Homepage'].' -> '.$url."\n";
+                echo 'fix homepage ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Homepage'].' -> '.$url."<br/>";
                 // $stmt = $db->prepare('UPDATE Station SET Homepage=:homepage WHERE StationID='.$row['StationID']);
                 // $stmt->execute(['homepage' => $url]);
             }
