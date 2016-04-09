@@ -85,10 +85,30 @@ function extractIconLink($html){
     $dom = new DOMDocument();
     @$dom->loadHTML($html);
 
-    // check microsoft link
     foreach($dom->getElementsByTagName('meta') as $link) {
-        $rel = $link->getAttribute('name');
-        if ($rel === "msapplication-TileImage"){
+        // check microsoft link
+        // <meta name="msapplication-TileImage" content="http://..." />
+        $name = $link->getAttribute('name');
+        if ($name === "msapplication-TileImage"){
+            return $link->getAttribute('content');
+        }
+        if ($name === "msapplication-square70x70logo"){
+            return $link->getAttribute('content');
+        }
+        if ($name === "msapplication-square150x150logo"){
+            return $link->getAttribute('content');
+        }
+        if ($name === "msapplication-square310x310logo"){
+            return $link->getAttribute('content');
+        }
+        if ($name === "msapplication-wide310x150logo"){
+            return $link->getAttribute('content');
+        }
+
+        // support for open graph
+        // <meta property="og:image" content="http://..." />
+        $property = $link->getAttribute('property');
+        if ($property === "og:image"){
             return $link->getAttribute('content');
         }
     }
@@ -97,6 +117,9 @@ function extractIconLink($html){
     foreach($dom->getElementsByTagName('link') as $link) {
         $rel = $link->getAttribute('rel');
         if ($rel === "shortcut icon"){
+            return $link->getAttribute('href');
+        }
+        if ($rel === "icon"){
             return $link->getAttribute('href');
         }
     }
