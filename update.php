@@ -264,6 +264,7 @@ function fixFavicon($icon, $hp) {
     if ($icon !== ""){
       echo "+";
     }
+    return $icon;
 }
 
 function updateWebpages($db)
