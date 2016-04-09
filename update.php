@@ -107,15 +107,14 @@ function checkUrlHtmlContent($url){
     {
       $data = $meta['wrapper_data'];
       for ($i=0;$i<$data.length;$i++){
-        if (strpos($data[i],"Content-Type: text/html") == 0)
+        echo " meta = ".$data[i];
+        if (strpos($data[i],"Content-Type: text/html") === 0)
         {
           echo "found html<br>\n";
           fclose($fp);
           return true;
         }
       }
-
-      print_r($data);
     }
 
     fclose($fp);
