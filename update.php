@@ -140,6 +140,10 @@ function extractIconLink($html){
     // check shortcut icon link
     foreach($dom->getElementsByTagName('link') as $link) {
         $rel = $link->getAttribute('rel');
+
+        if ($rel === "apple-touch-icon"){
+            return $link->getAttribute('href');
+        }
         if ($rel === "shortcut icon"){
             return $link->getAttribute('href');
         }
