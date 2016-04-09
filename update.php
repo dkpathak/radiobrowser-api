@@ -64,10 +64,13 @@ function isIconLoadable($url){
     if (!hasCorrectScheme($url)){
         return false;
     }
-    $headers = get_headers($url,1);
 
-    if (isset($headers['Content-Type'])){
-        if (substr($headers['Content-Type'],0,5) === "image"){
+    $headers = get_headers($url);
+
+    foreach ($headers as $header)
+    {
+        if (strpos($header,"Content-Type: image",0) === 0)
+        {
             return true;
         }
     }
@@ -124,7 +127,7 @@ function checkUrlHtmlContent($url){
 function updateFavicon($db)
 {
     // generate new list of tags
-    $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station');
+    $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station WHERE Favicon=""');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
