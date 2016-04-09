@@ -13,10 +13,10 @@ try {
 
 function updateCaches($db)
 {
+    updateCacheTags($db);
+    updateStationClick($db);
     updateWebpages($db);
     updateFavicon($db);
-    // updateCacheTags($db);
-    // updateStationClick($db);
 }
 
 function hasCorrectScheme($url)
@@ -242,6 +242,9 @@ function fixFavicon($icon, $hp) {
                     $hpContent = getLinkContent($hp);
                     if ($hpContent !== null){
                         $icon = extractIconLink($hpContent,$base);
+                        if ($icon === null){
+                            $icon = "";
+                        }
                         // echo "extracted:".$icon."\n";
                         // if (!isIconLoadable($icon)) {
                         //     $icon = '';
