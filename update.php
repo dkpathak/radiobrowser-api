@@ -30,6 +30,8 @@ function hasCorrectScheme($url)
 
 function FixUrl($url, $base = null)
 {
+    $url = str_replace('file://','',$url);
+
     if (!hasCorrectScheme($base)){
         $base = null;
     }
@@ -277,8 +279,8 @@ function updateWebpages($db)
             $url = FixUrl($url);
             if ($url !== $row['Homepage']) {
                 echo 'fix homepage ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Homepage'].' -> '.$url.'<br/>';
-                // $stmt = $db->prepare('UPDATE Station SET Homepage=:homepage WHERE StationID='.$row['StationID']);
-                // $stmt->execute(['homepage' => $url]);
+                $stmt = $db->prepare('UPDATE Station SET Homepage=:homepage WHERE StationID='.$row['StationID']);
+                $stmt->execute(['homepage' => $url]);
             }
         }
     }
