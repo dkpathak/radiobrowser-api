@@ -136,7 +136,8 @@ function updateFavicon($db)
         $hp = trim($row['Homepage']);
         $icon = trim($row['Favicon']);
 
-        echo "checking : ".$icon;
+        echo "-----------------------<br/>\n";
+        echo "checking : ".$row["Name"]." HP=".$hp." ICO=".$icon."<br/>\n";
 
         // if icon link not ok, remove it
         if ($icon !== '') {
