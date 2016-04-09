@@ -44,7 +44,9 @@ function updateWebpages($db)
         if ($url !== '') {
             $url = FixUrl($url);
             if ($url !== $row['Homepage']) {
-                echo 'fix homepage:'.$row['Homepage'].' -> '.$url;
+                echo 'fix homepage:'.$row['Homepage'].' -> '.$url."\n";
+                // $stmt = $db->prepare('UPDATE Station SET Homepage=:homepage WHERE StationID='.$row['StationID']);
+                // $stmt->execute(['homepage' => $url]);
             }
         }
     }
