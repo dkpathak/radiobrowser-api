@@ -40,7 +40,7 @@ function FixUrl($url)
 function getLinkContent($url)
 {
     if (!hasCorrectScheme($url)) {
-        return;
+        return null;
     }
 
     return file_get_contents($url);
@@ -59,6 +59,8 @@ function getBaseUrl($url)
 }
 
 function isIconLoadable($url){
+    if ($url === null)
+      return false;
     if (!hasCorrectScheme($url)){
         return false;
     }
@@ -71,6 +73,28 @@ function isIconLoadable($url){
     }
 
     return false;
+}
+
+function extractIconLink($html){
+    $dom = new DOMDocument();
+    @$dom->loadHTML($html);
+
+    // check microsoft link
+    foreach($dom->getElementsByTagName('meta') as $link) {
+        $rel = $link->getAttribute('name');
+        if ($rel === "msapplication-TileImage"){
+            return $link->getAttribute('content');
+        }
+    }
+
+    // check shortcut icon link
+    foreach($dom->getElementsByTagName('link') as $link) {
+        $rel = $link->getAttribute('rel');
+        if ($rel === "shortcut icon"){
+            return $link->getAttribute('href');
+        }
+    }
+    return null;
 }
 
 function updateFavicon($db)
@@ -97,10 +121,7 @@ function updateFavicon($db)
 
         // if icon link empty, try to fix it
         if ($icon === '') {
-            // get hp
-            $hpContent = getLinkContent($hp);
-
-            if ($hpContent !== null){
+            if (hasCorrectScheme($hp)){
                 // try default favicon pathinfo
                 $icon = getBaseUrl($hp).'/favicon.ico';
                 if (!isIconLoadable($icon)) {
@@ -108,14 +129,14 @@ function updateFavicon($db)
                     echo "-";
                 }
 
-                if ($icon === '') {
-                    // try to fix it with microsoft icon tag
-                    $tags = get_meta_tags($hp);
-                    if (isset($tags["msapplication-TileImage"])){
-                        if (hasCorrectScheme($tags["msapplication-TileImage"])){
-                            $icon = $tags["msapplication-TileImage"];
-                        }else{
-                            echo " - Unknown msapplication-TileImage link:".$tags["msapplication-TileImage"];
+                if ($icon === ''){
+                    // get hp
+                    $hpContent = getLinkContent($hp);
+                    if ($hpContent !== null){
+                        $icon = extractIconLink($hpContent);
+                        if (!isIconLoadable($icon)) {
+                            $icon = '';
+                            echo "-";
                         }
                     }
                 }
