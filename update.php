@@ -150,7 +150,7 @@ function updateFavicon($db)
         echo "<br/>\n";
 
         if ($icon !== $row['Favicon']) {
-            echo 'fix favicon ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Favicon'].' -> '.$icon.'<br/>\n';
+            echo 'fix favicon ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Favicon'].' -> '.$icon."<br/>\n";
             // $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID='.$row['StationID']);
             // $stmt->execute(['favicon' => $icon]);
         }
