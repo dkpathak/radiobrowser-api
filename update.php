@@ -105,7 +105,12 @@ function extractIconLink($html, $base){
     @$dom->loadHTML($html);
 
     foreach($dom->getElementsByTagName('base') as $link) {
-        $base = $link->getAttribute('href');
+        $base_new = $link->getAttribute('href');
+        if (hasCorrectScheme($base_new)){
+            $base = $base_new;
+        }else{
+            $base = $base."/".$base_new;
+        }
     }
 
     foreach($dom->getElementsByTagName('meta') as $link) {
@@ -184,7 +189,7 @@ function checkUrlHtmlContent($url){
 function updateFavicon($db)
 {
     // generate new list of tags
-    $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station WHERE Favicon=""');
+    $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station WHERE Favicon="" ORDER BY Creation ASC');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
