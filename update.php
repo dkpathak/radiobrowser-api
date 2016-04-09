@@ -84,29 +84,16 @@ function isIconLoadable($url){
     {
         if (strpos($header,"Content-Type: image",0) === 0)
         {
-            $img = @imagecreatefromgif($url);
-            if ($img !== false){
-                imagedestroy($img);
-                return true;
-            }
-
-            $img = @imagecreatefromjpeg($url);
-            if ($img !== false){
-                imagedestroy($img);
-                return true;
-            }
-
-            $img = @imagecreatefrompng($url);
-            if ($img !== false){
-                imagedestroy($img);
-                return true;
-            }
-
-            $img = @imagecreatefromxbm($url);
-            if ($img !== false){
-                imagedestroy($img);
-                return true;
-            }
+          $content = file_get_contents($url);
+          if ($content !== false)
+          {
+              $img = @imagecreatefromstring($content);
+              if ($img !== false)
+              {
+                  imagedestroy($img);
+                  return true;
+              }
+          }
         }
     }
 
@@ -251,10 +238,10 @@ function fixFavicon($icon, $hp) {
                     $hpContent = getLinkContent($hp);
                     if ($hpContent !== null){
                         $icon = extractIconLink($hpContent);
-                        if (!isIconLoadable($icon)) {
-                            $icon = '';
-                            echo "d";
-                        }
+                        // if (!isIconLoadable($icon)) {
+                        //     $icon = '';
+                        //     echo "d";
+                        // }
                     }
                 }
             }
