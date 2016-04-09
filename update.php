@@ -65,7 +65,10 @@ function isIconLoadable($url){
         return false;
     }
 
-    $headers = get_headers($url);
+    @$headers = get_headers($url);
+    if ($headers === false){
+        return false;
+    }
 
     foreach ($headers as $header)
     {
@@ -101,7 +104,7 @@ function extractIconLink($html){
 }
 
 function checkUrlHtmlContent($url){
-    if (!$fp = fopen($url, 'r')) {
+    if (!@$fp = fopen($url, 'r')) {
         return false;
     }
 
@@ -110,10 +113,8 @@ function checkUrlHtmlContent($url){
     {
       $data = $meta['wrapper_data'];
       foreach ($data as $item) {
-        echo " meta = ".$item;
         if (strpos($item,"Content-Type: text/html") === 0)
         {
-          echo "found html<br>\n";
           fclose($fp);
           return true;
         }
@@ -136,8 +137,8 @@ function updateFavicon($db)
         $hp = trim($row['Homepage']);
         $icon = trim($row['Favicon']);
 
-        echo "-----------------------<br/>\n";
-        echo "checking : ".$row["Name"]." HP=".$hp." ICO=".$icon."<br/>\n";
+        // echo "-----------------------<br/>\n";
+        // echo "checking : ".$row["Name"]." HP=".$hp." ICO=".$icon."<br/>\n";
 
         // if icon link not ok, remove it
         if ($icon !== '') {
@@ -177,12 +178,12 @@ function updateFavicon($db)
           echo "+";
         }
 
-        echo "<br/>\n";
+        // echo "<br/>\n";
 
         if ($icon !== $row['Favicon']) {
             echo 'fix favicon ('.$row['StationID'].' - '.$row['Name'].'):'.$row['Favicon'].' -> '.$icon."<br/>\n";
-            // $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID='.$row['StationID']);
-            // $stmt->execute(['favicon' => $icon]);
+            $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID='.$row['StationID']);
+            $stmt->execute(['favicon' => $icon]);
         }
     }
 }
