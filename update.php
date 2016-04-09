@@ -97,6 +97,21 @@ function extractIconLink($html){
     return null;
 }
 
+function checkUrlHtmlContent($url){
+    if (!$fp = fopen($url, 'r')) {
+        return false;
+    }
+
+    $meta = stream_get_meta_data($fp);
+    if (isset($meta['wrapper_data']))
+    {
+      $data = $meta['wrapper_data'];
+      print_r($data);
+    }
+
+    fclose($fp);
+}
+
 function updateFavicon($db)
 {
     // generate new list of tags
@@ -131,6 +146,7 @@ function updateFavicon($db)
 
                 if ($icon === ''){
                     // get hp
+                    checkUrlHtmlContent($hp);
                     $hpContent = getLinkContent($hp);
                     if ($hpContent !== null){
                         $icon = extractIconLink($hpContent);
