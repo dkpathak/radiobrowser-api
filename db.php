@@ -336,40 +336,55 @@ function print_output_item_content($format, $key, $value)
     }
 }
 
-function escape_string($str)
-{
-    global $db;
-    if (get_magic_quotes_gpc() == 1) {
-        return mysql_real_escape_string(stripslashes($str), $db);
-    } else {
-        return mysql_real_escape_string($str, $db);
-    }
-}
-
-function backupStation($stationid)
+function backupStation($db, $stationid)
 {
     // backup old content
-    mysql_query('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,Language,Tags,Votes,NegativeVotes,Creation FROM Station WHERE StationID='.escape_string($stationid));
+    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,Language,Tags,Votes,NegativeVotes,Creation FROM Station WHERE StationID=:id');
+    $result = $stmt->execute(['id'=>$stationid]);
 }
 
-function addStation($name, $url, $homepage, $favicon, $country, $language, $tags, $subcountry)
+function addStation($db, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
 {
-    mysql_query("DELETE FROM Station WHERE Url='".escape_string($url)."'");
-    mysql_query("INSERT INTO Station(Name,Url,Homepage,Favicon,Country,Language,Tags,Subcountry) VALUES('".escape_string($name)."','".escape_string($url)."','".escape_string($homepage)."','".escape_string($favicon)."','".escape_string($country)."','".escape_string($language)."','".escape_string($tags)."','".escape_string($subcountry)."')");
+    $stmt = $db->prepare('DELETE FROM Station WHERE Url=:url');
+    $stmt->execute(['url'=>$url]);
+
+    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Homepage,Favicon,Country,Language,Tags,Subcountry) VALUES(:name,:url,:homepage,:favicon,:country,:language,:tags,:state)');
+    $stmt->execute([
+      'name'=>$name,
+      'url'=>$url,
+      'homepage'=>$homepage,
+      'favicon'=>$favicon,
+      'country'=>$country,
+      'language'=>$language,
+      'tags'=>$tags,
+      'state'=>$state
+    ]);
 }
 
-function editStation($stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $subcountry)
+function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
 {
-    backupStation($stationid);
+    backupStation($db, $stationid);
     // update values
-    mysql_query("UPDATE Station SET Name='".escape_string($name)."',Url='".escape_string($url)."',Homepage='".escape_string($homepage)."',Favicon='".escape_string($favicon)."',Country='".escape_string($country)."',Language='".escape_string($language)."',Tags='".escape_string($tags)."',Subcountry='".escape_string($subcountry)."',Creation=Now() WHERE StationID=".escape_string($stationid));
+    $stmt = $db->query("UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state WHERE StationID=:id");
+    $stmt->execute([
+      'name'=>$name,
+      'url'=>$url,
+      'homepage'=>$homepage,
+      'favicon'=>$favicon,
+      'country'=>$country,
+      'language'=>$language,
+      'tags'=>$tags,
+      'state'=>$state,
+      'id'=>$stationid
+    ]);
 }
 
-function deleteStation($stationid)
+function deleteStation($db, $stationid)
 {
     if (trim($stationid) != '') {
-        backupStation($stationid);
-        mysql_query('DELETE FROM Station WHERE StationID='.escape_string($stationid));
+        backupStation($db, $stationid);
+        $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id');
+        $stmt->execute(['id'=>$stationid]);
     }
 }
 
@@ -386,7 +401,7 @@ function IPVoteChecker($db, $id)
     if ($result){
         // if no, then add new entry
         $ccc = $stmt->fetchColumn(0);
-        if ($ccc === 0){
+        if ($ccc == 0){
             $stmt = $db->prepare('INSERT INTO IPVoteCheck(IP,StationID) VALUES(:ip,:id)');
             $result = $stmt->execute(['id'=>$id,'ip'=>$ip]);
             if ($result){
