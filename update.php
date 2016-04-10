@@ -3,7 +3,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-$db = new PDO('mysql:host=localhost;dbname=radio', 'root', '');
+require 'db.php';
+$db = openDB();
 
 try {
     updateCaches($db);
@@ -16,7 +17,7 @@ function updateCaches($db)
     updateCacheTags($db);
     updateStationClick($db);
     updateWebpages($db);
-    updateFavicon($db);
+    // updateFavicon($db);
 }
 
 function hasCorrectScheme($url)

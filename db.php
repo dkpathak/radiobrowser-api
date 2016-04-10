@@ -1,313 +1,252 @@
 <?php
-
-function print_tags($search_term)
+function openDB()
 {
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
+    $db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', '');
+    // use exceptions for error handling
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // create needed tables if they do not exist
+    if (!tableExists($db, 'Station')) {
+        $db->query('CREATE TABLE Station(StationID INT NOT NULL AUTO_INCREMENT,Primary Key (StationID),Name TEXT,Url TEXT,Homepage TEXT,Favicon TEXT,Creation TIMESTAMP,Country VARCHAR(50),Subcountry VARCHAR(50),Language VARCHAR(50),Tags TEXT,Votes INT DEFAULT 0,NegativeVotes INT DEFAULT 0,Source VARCHAR(20))');// or die('could not create table');
+    }
+    if (!tableExists($db, 'StationHistory')) {
+        $db->query('CREATE TABLE StationHistory(StationChangeID INT NOT NULL AUTO_INCREMENT, Primary Key (StationChangeID),StationID INT NOT NULL,Name TEXT,Url TEXT,Homepage TEXT,Favicon TEXT,Creation TIMESTAMP,Country VARCHAR(50),Subcountry VARCHAR(50),Language VARCHAR(50),Tags TEXT,Votes INT DEFAULT 0,NegativeVotes INT DEFAULT 0)');// or die('could not create table');
+    }
+    if (!tableExists($db, 'IPVoteCheck')) {
+        $db->query('CREATE TABLE IPVoteCheck(CheckID INT NOT NULL AUTO_INCREMENT,Primary Key (CheckID),IP VARCHAR(15) NOT NULL,StationID INT NOT NULL, VoteTimestamp TIMESTAMP)');// or die('could not create table');
+    }
+    if (!tableExists($db, 'StationClick')) {
+        $db->query('CREATE TABLE StationClick(ClickID INT NOT NULL AUTO_INCREMENT,Primary Key (ClickID),StationID INT, ClickTimestamp TIMESTAMP)');// or die('could not create table');
+    }
+    if (!tableExists($db, 'TagCache')) {
+        $db->query('CREATE TABLE TagCache(TagName VARCHAR(100) NOT NULL,Primary Key (TagName), StationCount INT DEFAULT 0)');// or die('could not create table');
+    }
+    return $db;
+}
 
-    $result = mysql_query("SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE '%".escape_string($search_term)."%' ORDER BY StationCount DESC,TagName ASC");
-    if (!$result) {
-        echo str(mysql_error());
-    } else {
-        print_output_header($format);
-        print_output_arr_start($format);
-        $i = 0;
-        while ($row = mysql_fetch_assoc($result)) {
-            if ($i > 0) {
-                print_output_item_arr_sep($format);
+function tableExists($db, $tableName){
+    if ($result = $db->query("SHOW TABLES LIKE '".$tableName."'")) {
+        return $result->rowCount() > 0;
+    }
+    return false;
+}
+
+function print_object($row, $format, $columns, $itemname){
+    print_output_item_start($format, $itemname);
+    $j = 0;
+    foreach ($columns as $outputName => $dbColumn ){
+        if (isset($row[$dbColumn])) {
+            if ($j > 0) {
+                print_output_item_dict_sep($format);
             }
-            print_output_item_start($format, 'tag');
-            print_output_item_content($format, 'name', $row['TagName']);
-            print_output_item_dict_sep($format);
-            print_output_item_content($format, 'stationcount', $row['StationCount']);
-            print_output_item_end($format);
-            ++$i;
+            print_output_item_content($format, $outputName, $row[$dbColumn]);
+            ++$j;
         }
-        print_output_arr_end($format);
-        print_output_footer($format);
     }
-}
-
-function print_countries($search_term)
-{
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-
-    $result = mysql_query("SELECT Country, COUNT(*) AS StationCount FROM Station WHERE Country LIKE '%".$search_term."%' AND Country<>'' GROUP BY Country ORDER BY Country");
-    if (!$result) {
-        echo str(mysql_error());
-    } else {
-        print_output_header($format);
-        print_output_arr_start($format);
-        $i = 0;
-        while ($row = mysql_fetch_assoc($result)) {
-            if ($i > 0) {
-                print_output_item_arr_sep($format);
-            }
-            print_output_item_start($format, 'country');
-            print_output_item_content($format, 'name', $row['Country']);
-            print_output_item_dict_sep($format);
-            print_output_item_content($format, 'stationcount', $row['StationCount']);
-            print_output_item_end($format);
-            ++$i;
-        }
-        print_output_arr_end($format);
-        print_output_footer($format);
-    }
-}
-
-function print_languages($search_term)
-{
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-
-    $result = mysql_query("SELECT Language, COUNT(*) AS StationCount FROM Station WHERE Language LIKE '%".escape_string($search_term)."%' AND Language<>'' GROUP BY Language ORDER BY Language");
-    if (!$result) {
-        echo str(mysql_error());
-    } else {
-        print_output_header($format);
-        print_output_arr_start($format);
-        $i = 0;
-        while ($row = mysql_fetch_assoc($result)) {
-            if ($i > 0) {
-                print_output_item_arr_sep($format);
-            }
-            print_output_item_start($format, 'country');
-            print_output_item_content($format, 'name', $row['Language']);
-            print_output_item_dict_sep($format);
-            print_output_item_content($format, 'stationcount', $row['StationCount']);
-            print_output_item_end($format);
-            ++$i;
-        }
-        print_output_arr_end($format);
-        print_output_footer($format);
-    }
-}
-
-function print_states($search_term)
-{
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-
-    if (isset($_REQUEST['country'])) {
-        $result = mysql_query("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Country='".escape_string($_REQUEST['country'])."' AND Subcountry LIKE '%".escape_string($search_term)."%' AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
-    } else {
-        $result = mysql_query("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Subcountry LIKE '%".escape_string($search_term)."%' AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
-    }
-    if (!$result) {
-        echo str(mysql_error());
-    } else {
-        print_output_header($format);
-        print_output_arr_start($format);
-        $i = 0;
-        while ($row = mysql_fetch_assoc($result)) {
-            if ($i > 0) {
-                print_output_item_arr_sep($format);
-            }
-            print_output_item_start($format, 'state');
-            print_output_item_content($format, 'name', $row['Subcountry']);
-            print_output_item_dict_sep($format);
-            print_output_item_content($format, 'country', $row['Country']);
-            print_output_item_dict_sep($format);
-            print_output_item_content($format, 'stationcount', $row['StationCount']);
-            print_output_item_end($format);
-            ++$i;
-        }
-        print_output_arr_end($format);
-        print_output_footer($format);
-    }
-}
-
-function print_stations_last_click_data()
-{
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
-
-    $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount, MAX(StationClick.ClickTimestamp) AS ClickTimestamp FROM Station INNER JOIN StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY MAX(StationClick.ClickTimestamp) DESC LIMIT '.$limit);
-    if (!$result) {
-        echo str(mysql_error());
-    } else {
-        print_result_stations($format, $result);
-    }
-}
-
-function print_stations_last_change_data()
-{
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
-
-    $result = mysql_query('SELECT Station.*, COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY Creation DESC LIMIT '.$limit);
-    if (!$result) {
-        echo str(mysql_error());
-    } else {
-        print_result_stations($format, $result);
-    }
-}
-
-function print_stations_top_click_data()
-{
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
-
-    $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) AS clickcount FROM Station INNER JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY clickcount DESC LIMIT '.$limit);
-    if (!$result) {
-        echo str(mysql_error());
-    } else {
-        print_result_stations($format, $result);
-    }
-}
-
-function print_stations_top_vote_data()
-{
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
-
-    $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) AS clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source IS NULL GROUP BY Station.StationID ORDER BY Votes DESC,NegativeVotes ASC,Name LIMIT '.$limit);
-    if (!$result) {
-        echo str(mysql_error());
-    } else {
-        print_result_stations($format, $result);
-    }
-}
-
-function get_station_count()
-{
-    $result = mysql_query('SELECT COUNT(*) FROM Station WHERE Source is NULL');
-    if ($result) {
-        $resArray = mysql_fetch_row($result);
-        $numrows = $resArray[0];
-
-        return $numrows;
-    }
-
-    return 0;
-}
-
-function get_tag_count()
-{
-    $result = mysql_query('SELECT COUNT(*) FROM TagCache');
-    if ($result) {
-        $resArray = mysql_fetch_row($result);
-        $numrows = $resArray[0];
-
-        return $numrows;
-    }
-
-    return 0;
-}
-
-function get_click_count_hours($hours)
-{
-    $result = mysql_query('SELECT COUNT(*) FROM StationClick stc, Station st WHERE stc.StationID=st.StationID AND Source IS NULL AND TIMEDIFF(NOW(),ClickTimestamp)<MAKETIME('.$hours.',0,0)');
-    if ($result) {
-        $resArray = mysql_fetch_row($result);
-        $numrows = $resArray[0];
-
-        return $numrows;
-    }
-
-    return 0;
-}
-
-function get_languages_count()
-{
-    $result = mysql_query('SELECT COUNT(DISTINCT Language) FROM Station');
-    if ($result) {
-        $resArray = mysql_fetch_row($result);
-        $numrows = $resArray[0];
-
-        return $numrows;
-    }
-
-    return 0;
-}
-
-function get_countries_count()
-{
-    $result = mysql_query('SELECT COUNT(DISTINCT Country) FROM Station');
-    if ($result) {
-        $resArray = mysql_fetch_row($result);
-        $numrows = $resArray[0];
-
-        return $numrows;
-    }
-
-    return 0;
-}
-
-function print_stats()
-{
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-    print_output_header($format);
-    print_output_item_start($format, 'stats');
-    print_output_item_content($format, 'stations', get_station_count());
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'tags', get_tag_count());
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'clicks_last_hour', get_click_count_hours(1));
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'clicks_last_day', get_click_count_hours(24));
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'languages', get_languages_count());
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'countries', get_countries_count());
     print_output_item_end($format);
-    print_output_footer($format);
 }
 
-function print_stations_list_data($column)
-{
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-    if (isset($_GET['term'])) {
-        $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column." LIKE '%".$_GET['term']."%' GROUP BY Station.StationID");
-    } else {
-        $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL GROUP BY Station.StationID');
+function print_list($stmt, $format, $columns, $itemname){
+    print_output_header($format);
+    print_output_arr_start($format);
+    $i = 0;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        if ($i > 0) {
+            print_output_item_arr_sep($format);
+        }
+        print_object($row, $format, $columns, $itemname);
+        ++$i;
     }
-    if (!$result) {
-        echo str(mysql_error());
-        exit;
-    }
-
-    print_result_stations($format, $result);
+    print_output_arr_end($format);
+    print_output_footer($format);
 }
 
 /*
 Print a result set with many stations in the given format
 */
-function print_result_stations($format, $result)
+function print_result_stations($stmt, $format)
 {
-    print_output_header($format);
-    print_output_arr_start($format);
+    print_list($stmt, $format, [
+        'id'=>'StationID',
+        'name'=>'Name',
+        'url'=>'Url',
+        'homepage'=>'Homepage',
+        'favicon'=>'Favicon',
+        'tags'=>'Tags',
+        'country'=>'Country',
+        'state'=>'Subcountry',
+        'language'=>'Language',
+        'votes'=>'Votes',
+        'negativevotes'=>'NegativeVotes',
+        'clickid'=>'ClickID',
+        'clicktimestamp'=>'ClickTimestamp',
+        'clickcount'=>'clickcount'
+    ], 'station');
+}
 
-    $i = 0;
-    while ($row = mysql_fetch_assoc($result)) {
-        if ($i > 0) {
-            print_output_item_arr_sep($format);
-        }
-        print_station($format, $row);
-        ++$i;
+function print_tags($db, $format, $search_term)
+{
+    $stmt = $db->prepare("SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE :search ORDER BY StationCount DESC,TagName ASC");
+    $result = $stmt->execute(['search' => '%'.$search_term.'%']);
+    if ($result) {
+        print_list($stmt, $format, ['name' => 'TagName', 'stationcount' => 'StationCount'], 'tag');
+    }
+}
+
+function print_1_n($db, $format, $column, $outputItemName, $search_term)
+{
+    $stmt = $db->prepare("SELECT ".$column.", COUNT(*) AS StationCount FROM Station WHERE ".$column." LIKE :search AND ".$column."<>'' GROUP BY ".$column." ORDER BY ".$column."");
+    $result = $stmt->execute(['search' => '%'.$search_term.'%']);
+    if ($result) {
+        print_list($stmt, $format, ['name' => $column, 'stationcount' => 'StationCount'], $outputItemName);
+    }
+}
+
+function print_states($db, $format, $search_term, $country)
+{
+    if ($country !== "") {
+        $stmt = $db->prepare("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Country=:country AND Subcountry LIKE :search AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
+        $result = $stmt->execute(['search'=>"%".$search_term."%", 'country'=>$country]);
+    } else {
+        $stmt = $db->prepare("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Subcountry LIKE :search AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
+        $result = $stmt->execute(['search'=>"%".$search_term."%"]);
     }
 
-    print_output_arr_end($format);
+    if ($result) {
+        print_list($stmt, $format, ['name' => 'Subcountry','country' => 'Country', 'stationcount' => 'StationCount'], 'state');
+    }
+}
+
+function print_stations_last_click_data($db, $format, $limit)
+{
+    $result = $db->query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount, MAX(StationClick.ClickTimestamp) AS ClickTimestamp FROM Station INNER JOIN StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY MAX(StationClick.ClickTimestamp) DESC LIMIT '.$limit);
+    if ($result) {
+        print_result_stations($result, $format);
+    }
+}
+
+function print_stations_last_change_data($db, $format, $limit)
+{
+    $result = $db->query('SELECT Station.*, COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY Creation DESC LIMIT '.$limit);
+    if ($result) {
+        print_result_stations($result, $format);
+    }
+}
+
+function print_stations_top_click_data($db, $format, $limit)
+{
+    $result = $db->query('SELECT Station.*,COUNT(StationClick.StationID) AS clickcount FROM Station INNER JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY clickcount DESC LIMIT '.$limit);
+    if ($result) {
+        print_result_stations($result, $format);
+    }
+}
+
+function print_stations_top_vote_data($db, $format, $limit)
+{
+    $result = $db->query('SELECT Station.*,COUNT(StationClick.StationID) AS clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source IS NULL GROUP BY Station.StationID ORDER BY Votes DESC,NegativeVotes ASC,Name LIMIT '.$limit);
+    if ($result) {
+        print_result_stations($result, $format);
+    }
+}
+
+function get_station_count($db)
+{
+    $result = $db->query('SELECT COUNT(*) FROM Station WHERE Source is NULL');
+    if ($result) {
+        return $result->fetchColumn(0);
+    }
+
+    return 0;
+}
+
+function get_tag_count($db)
+{
+    $result = $db->query('SELECT COUNT(*) FROM TagCache');
+    if ($result) {
+        return $result->fetchColumn(0);
+    }
+
+    return 0;
+}
+
+function get_click_count_hours($db, $hours)
+{
+    $stmt = $db->prepare('SELECT COUNT(*) FROM StationClick stc, Station st WHERE stc.StationID=st.StationID AND Source IS NULL AND TIMEDIFF(NOW(),ClickTimestamp)<MAKETIME(:hours,0,0)');
+    $result = $stmt->execute(['hours'=>$hours]);
+    if ($result) {
+        return $stmt->fetchColumn(0);
+    }
+
+    return 0;
+}
+
+function get_languages_count($db)
+{
+    $result = $db->query('SELECT COUNT(DISTINCT Language) FROM Station');
+    if ($result) {
+        return $result->fetchColumn(0);
+    }
+
+    return 0;
+}
+
+function get_countries_count($db)
+{
+    $result = $db->query('SELECT COUNT(DISTINCT Country) FROM Station');
+    if ($result) {
+        return $result->fetchColumn(0);
+    }
+
+    return 0;
+}
+
+function print_stats($db, $format)
+{
+    print_output_header($format);
+    print_output_item_start($format, 'stats');
+    print_output_item_content($format, 'stations', get_station_count($db));
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'tags', get_tag_count($db));
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'clicks_last_hour', get_click_count_hours($db, 1));
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'clicks_last_day', get_click_count_hours($db, 24));
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'languages', get_languages_count($db));
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'countries', get_countries_count($db));
+    print_output_item_end($format);
     print_output_footer($format);
 }
 
-function print_stations_list_data_exact($column, $multivalue)
+function print_stations_list_data($db, $format, $column, $search_term)
 {
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-
-    if (isset($_GET['term'])) {
-        $value = escape_string($_GET['term']);
-        if ($multivalue === true) {
-            $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND (Station.'.$column."='".$value."' OR Station.".$column." LIKE '".$value.",%' OR Station.".$column." LIKE '%,".$value."' OR Station.".$column." LIKE '%,".$value.",%') GROUP BY Station.StationID");
-        } else {
-            $result = mysql_query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column."='".$value."' GROUP BY Station.StationID");
-        }
+    if ($search_term != "") {
+        $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column." LIKE :search GROUP BY Station.StationID");
+        $result = $stmt->execute(['search'=>'%'.$search_term.'%']);
     } else {
-      exit;
+        $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL GROUP BY Station.StationID');
+        $result = $stmt->execute();
     }
-    if (!$result) {
-        echo str(mysql_error());
-        exit;
+    if ($result) {
+        print_result_stations($stmt, $format);
     }
+}
 
-    print_result_stations($format, $result);
+function print_stations_list_data_exact($db, $format, $column, $search_term, $multivalue)
+{
+    $result = false;
+    if ($search_term != "") {
+        if ($multivalue === true) {
+            $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND (Station.'.$column."=:searchSingle OR Station.".$column." LIKE :searchRight OR Station.".$column." LIKE :searchLeft OR Station.".$column." LIKE :searchMiddle) GROUP BY Station.StationID");
+            $result = $stmt->execute(['searchSingle'=>$search_term, 'searchLeft'=>'%,'.$search_term, 'searchRight'=>$search_term.',%', 'searchMiddle'=>'%,'.$search_term.',%']);
+        } else {
+            $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column.'=:search GROUP BY Station.StationID');
+            $result = $stmt->execute(['search'=>$search_term]);
+        }
+    }
+    if ($result) {
+        print_result_stations($stmt, $format);
+    }
 }
 
 function print_output_item_dict_sep($format)
@@ -397,46 +336,6 @@ function print_output_item_content($format, $key, $value)
     }
 }
 
-function print_station($format, $row)
-{
-    print_output_item_start($format, 'station');
-    print_output_item_content($format, 'id', $row['StationID']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'name', $row['Name']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'url', $row['Url']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'homepage', $row['Homepage']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'favicon', $row['Favicon']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'tags', $row['Tags']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'country', $row['Country']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'state', $row['Subcountry']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'language', $row['Language']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'votes', $row['Votes']);
-    print_output_item_dict_sep($format);
-    print_output_item_content($format, 'negativevotes', $row['NegativeVotes']);
-
-    if (isset($row['ClickID'])) {
-        print_output_item_dict_sep($format);
-        print_output_item_content($format, 'clickid', $row['ClickID']);
-    }
-    if (isset($row['ClickTimestamp'])) {
-        print_output_item_dict_sep($format);
-        print_output_item_content($format, 'clicktimestamp', $row['ClickTimestamp']);
-    }
-    if (isset($row['clickcount'])) {
-        print_output_item_dict_sep($format);
-        print_output_item_content($format, 'clickcount', $row['clickcount']);
-    }
-    print_output_item_end($format);
-}
-
 function escape_string($str)
 {
     global $db;
@@ -444,28 +343,6 @@ function escape_string($str)
         return mysql_real_escape_string(stripslashes($str), $db);
     } else {
         return mysql_real_escape_string($str, $db);
-    }
-}
-
-function openDB()
-{
-    global $db;
-    $db = mysql_connect('localhost', 'root', '') or die('could not connect');
-    mysql_select_db('radio') or die('could not change to database');
-    if (!mysql_num_rows(mysql_query("SHOW TABLES LIKE 'Station'"))) {
-        mysql_query('CREATE TABLE Station(StationID INT NOT NULL AUTO_INCREMENT,Primary Key (StationID),Name TEXT,Url TEXT,Homepage TEXT,Favicon TEXT,Creation TIMESTAMP,Country VARCHAR(50),Subcountry VARCHAR(50),Language VARCHAR(50),Tags TEXT,Votes INT DEFAULT 0,NegativeVotes INT DEFAULT 0,Source VARCHAR(20))') or die('could not create table');
-    }
-    if (!mysql_num_rows(mysql_query("SHOW TABLES LIKE 'StationHistory'"))) {
-        mysql_query('CREATE TABLE StationHistory(StationChangeID INT NOT NULL AUTO_INCREMENT, Primary Key (StationChangeID),StationID INT NOT NULL,Name TEXT,Url TEXT,Homepage TEXT,Favicon TEXT,Creation TIMESTAMP,Country VARCHAR(50),Subcountry VARCHAR(50),Language VARCHAR(50),Tags TEXT,Votes INT DEFAULT 0,NegativeVotes INT DEFAULT 0)') or die('could not create table');
-    }
-    if (!mysql_num_rows(mysql_query("SHOW TABLES LIKE 'IPVoteCheck'"))) {
-        mysql_query('CREATE TABLE IPVoteCheck(CheckID INT NOT NULL AUTO_INCREMENT,Primary Key (CheckID),IP VARCHAR(15) NOT NULL,StationID INT NOT NULL, VoteTimestamp TIMESTAMP)') or die('could not create table');
-    }
-    if (!mysql_num_rows(mysql_query("SHOW TABLES LIKE 'StationClick'"))) {
-        mysql_query('CREATE TABLE StationClick(ClickID INT NOT NULL AUTO_INCREMENT,Primary Key (ClickID),StationID INT, ClickTimestamp TIMESTAMP)') or die('could not create table');
-    }
-    if (!mysql_num_rows(mysql_query("SHOW TABLES LIKE 'TagCache'"))) {
-        mysql_query('CREATE TABLE TagCache(TagName VARCHAR(100) NOT NULL,Primary Key (TagName), StationCount INT DEFAULT 0)') or die('could not create table');
     }
 }
 
@@ -496,61 +373,78 @@ function deleteStation($stationid)
     }
 }
 
-function IPVoteChecker($id)
+function IPVoteChecker($db, $id)
 {
     $ip = $_SERVER['REMOTE_ADDR'];
 
     // delete ipcheck entries after 10 minutes
-    mysql_query('DELETE FROM IPVoteCheck WHERE TIME_TO_SEC(TIMEDIFF(Now(),VoteTimestamp))>10*60');
+    $db->query('DELETE FROM IPVoteCheck WHERE TIME_TO_SEC(TIMEDIFF(Now(),VoteTimestamp))>10*60');
 
     // was there a vote from the ip in the last 10 minutes?
-    if (!mysql_num_rows(mysql_query('SELECT * FROM IPVoteCheck WHERE StationID='.$id." AND IP='".$ip."'"))) {
+    $stmt = $db->prepare('SELECT COUNT(*) FROM IPVoteCheck WHERE StationID=:id AND IP=:ip');
+    $result = $stmt->execute(['id'=>$id,'ip'=>$ip]);
+    if ($result){
         // if no, then add new entry
-        mysql_query("INSERT INTO IPVoteCheck(IP,StationID) VALUES('".$ip."',".$id.')');
-
-        return true;
+        $ccc = $stmt->fetchColumn(0);
+        if ($ccc === 0){
+            $stmt = $db->prepare('INSERT INTO IPVoteCheck(IP,StationID) VALUES(:ip,:id)');
+            $result = $stmt->execute(['id'=>$id,'ip'=>$ip]);
+            if ($result){
+                return true;
+            }
+        }
     }
 
     return false;
 }
 
-function clickedStationID($id)
+function clickedStationID($db, $id)
 {
-    mysql_query('INSERT INTO StationClick(StationID) VALUES('.$id.')');
-
-    return 1;
+    $stmt = $db->prepare('INSERT INTO StationClick(StationID) VALUES(:id)');
+    $result = $stmt->execute(['id'=>$id]);
+    if ($result){
+        return true;
+    }
+    return false;
 }
 
-function voteForStation($id)
+function voteForStation($db, $format, $id)
 {
-    if (!IPVoteChecker($id)) {
+    if (!IPVoteChecker($db, $id)) {
+        print_station_by_id($db, $format, $id);
         return false;
     }
-    mysql_query('UPDATE Station SET Votes=Votes+1 WHERE StationID='.$id);
-    print_station_by_id($id);
-
-    return true;
+    $stmt = $db->prepare('UPDATE Station SET Votes=Votes+1 WHERE StationID=:id');
+    $result = $stmt->execute(['id'=>$id]);
+    print_station_by_id($db, $format, $id);
+    if ($result){
+        return true;
+    }
+    return false;
 }
 
-function negativeVoteForStation($id)
+function negativeVoteForStation($db, $format, $id)
 {
-    if (!IPVoteChecker($id)) {
+    if (!IPVoteChecker($db, $id)) {
+        print_station_by_id($db, $format, $id);
         return false;
     }
-    mysql_query('UPDATE Station SET NegativeVotes=NegativeVotes+1 WHERE StationID='.$id);
-    print_station_by_id($id);
-    //mysql_query("DELETE FROM Station WHERE NegativeVotes>5");
-    return true;
+    $stmt = $db->prepare('UPDATE Station SET NegativeVotes=NegativeVotes+1 WHERE StationID=:id');
+    $result = $stmt->execute(['id'=>$id]);
+    print_station_by_id($db, $format, $id);
+    if ($result){
+        //$db->query("DELETE FROM Station WHERE NegativeVotes>5");
+        return true;
+    }
+    return false;
 }
 
-function print_station_by_id($id)
+function print_station_by_id($db, $format, $id)
 {
-    $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-    $result = mysql_query('SELECT * from Station WHERE Station.StationID='.$id);
-    if (!$result) {
-        echo str(mysql_error());
-    } else {
-        print_result_stations($format, $result);
+    $stmt = $db->prepare('SELECT * from Station WHERE Station.StationID=:id');
+    $result = $stmt->execute(['id'=>$id]);
+    if ($result) {
+        print_result_stations($stmt, $format);
     }
 }
 

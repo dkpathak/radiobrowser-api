@@ -6,23 +6,24 @@ if (!isset($_REQUEST['format']) || !isset($_REQUEST['stationid'])) {
 }
 
 require 'db.php';
-openDB();
+$db = openDB();
 
 $stationid = $_REQUEST['stationid'];
 $foundStation = false;
 
 {
-        $result = mysql_query('SELECT Name, Url FROM Station WHERE StationID='.$stationid);
-        if (!$result) {
-            echo mysql_error();
-            exit();
-        }
+    $stmt = $db->prepare('SELECT Name, Url FROM Station WHERE StationID=:stationid');
+    $result = $stmt->execute(['stationid'=>$stationid]);
+    if (!$result) {
+        exit();
+    }
 
-        while ($row = mysql_fetch_assoc($result)) {
-            $url = $row['Url'];
-            $stationname = $row['Name'];
-            $foundStation = true;
-        }
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $url = $row['Url'];
+        $stationname = $row['Name'];
+        $foundStation = true;
+        break;
+    }
 }
 
 $format = $_REQUEST['format'];
@@ -104,7 +105,7 @@ if (isset($audiofile)) {
         header('Content-Type: text/xml');
         echo '<?xml version="1.0"?>';
         echo "<result><station id='".$stationid."' url='".$audiofile."'/></result>";
-        clickedStationID($stationid);
+        clickedStationID($db, $stationid);
     } elseif ($format == 'json') {
         header('Content-Type: application/json');
         echo '[{';
@@ -112,7 +113,7 @@ if (isset($audiofile)) {
         echo "\"name\":\"$stationname\",";
         echo '"url":"'.$audiofile.'"';
         echo '}]';
-        clickedStationID($stationid);
+        clickedStationID($db, $stationid);
     } elseif ($format == 'pls') {
         //header('content-type: audio/x-scpls');
         header('Content-Description: File Transfer');
@@ -127,7 +128,7 @@ if (isset($audiofile)) {
 
         echo 'File1='.$audiofile."\n";
         echo 'Title1='.$stationname;
-        clickedStationID($stationid);
+        clickedStationID($db, $stationid);
     } else {
         echo 'unknown format';
     }
