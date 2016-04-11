@@ -419,7 +419,7 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
 {
     backupStation($db, $stationid);
     // update values
-    $stmt = $db->query('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state,Creation=NOW() WHERE StationID=:id');
+    $stmt = $db->prepare('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state,Creation=NOW() WHERE StationID=:id');
     $stmt->execute([
       'name' => $name,
       'url' => $url,
