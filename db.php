@@ -24,7 +24,7 @@ function openDB()
           Source VARCHAR(20),
           clickcount INT DEFAULT 0,
           ClickTrend INT DEFAULT 0,
-          ClickTimestamp TIMESTAMP)
+          ClickTimestamp TIMESTAMP NOT NULL)
           ');
     }
     if (!tableExists($db, 'StationHistory')) {
@@ -402,7 +402,7 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
     $stmt = $db->prepare('DELETE FROM Station WHERE Url=:url');
     $stmt->execute(['url' => $url]);
 
-    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Homepage,Favicon,Country,Language,Tags,Subcountry) VALUES(:name,:url,:homepage,:favicon,:country,:language,:tags,:state)');
+    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Homepage,Favicon,Country,Language,Tags,Subcountry,Creation) VALUES(:name,:url,:homepage,:favicon,:country,:language,:tags,:state, NOW())');
     $stmt->execute([
       'name' => $name,
       'url' => $url,
@@ -419,7 +419,7 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
 {
     backupStation($db, $stationid);
     // update values
-    $stmt = $db->query('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state WHERE StationID=:id');
+    $stmt = $db->query('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state,Creation=NOW() WHERE StationID=:id');
     $stmt->execute([
       'name' => $name,
       'url' => $url,
