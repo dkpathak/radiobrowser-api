@@ -223,7 +223,7 @@ function get_tag_count($db)
 
 function get_click_count_hours($db, $hours)
 {
-    $stmt = $db->prepare('SELECT COUNT(*) FROM StationClick stc, Station st WHERE stc.StationID=st.StationID AND Source IS NULL AND TIMEDIFF(NOW(),ClickTimestamp)<MAKETIME(:hours,0,0)');
+    $stmt = $db->prepare('SELECT COUNT(*) FROM Station WHERE Source IS NULL AND ClickTimestamp IS NOT NULL AND TIMEDIFF(NOW(),ClickTimestamp)<MAKETIME(:hours,0,0)');
     $result = $stmt->execute(['hours' => $hours]);
     if ($result) {
         return $stmt->fetchColumn(0);
@@ -470,7 +470,11 @@ function clickedStationID($db, $id)
 {
     $stmt = $db->prepare('INSERT INTO StationClick(StationID) VALUES(:id)');
     $result = $stmt->execute(['id' => $id]);
-    if ($result) {
+
+    $stmt = $db->prepare('UPDATE Station SET ClickTimestamp=NOW() WHERE StationID=:id');
+    $result2 = $stmt->execute(['id' => $id]);
+
+    if ($result && $result2) {
         return true;
     }
 
