@@ -23,7 +23,8 @@ function openDB()
           NegativeVotes INT DEFAULT 0,
           Source VARCHAR(20),
           clickcount INT DEFAULT 0,
-          ClickTrend INT DEFAULT 0)
+          ClickTrend INT DEFAULT 0,
+          ClickTimestamp TIMESTAMP)
           ');
     }
     if (!tableExists($db, 'StationHistory')) {
@@ -170,7 +171,7 @@ function print_states($db, $format, $search_term, $country)
 
 function print_stations_last_click_data($db, $format, $limit)
 {
-    $result = $db->query('SELECT Station.*,COUNT(StationClick.StationID) as clickcount, MAX(StationClick.ClickTimestamp) AS ClickTimestamp FROM Station INNER JOIN StationClick ON StationClick.StationID=Station.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY MAX(StationClick.ClickTimestamp) DESC LIMIT '.$limit);
+    $result = $db->query('SELECT * FROM Station WHERE Station.Source IS NULL ORDER BY ClickTimestamp DESC LIMIT '.$limit);
     if ($result) {
         print_result_stations($result, $format);
     }
@@ -178,7 +179,7 @@ function print_stations_last_click_data($db, $format, $limit)
 
 function print_stations_last_change_data($db, $format, $limit)
 {
-    $result = $db->query('SELECT Station.*, COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY Creation DESC LIMIT '.$limit);
+    $result = $db->query('SELECT * FROM Station WHERE Station.Source IS NULL ORDER BY Creation DESC LIMIT '.$limit);
     if ($result) {
         print_result_stations($result, $format);
     }
@@ -186,7 +187,7 @@ function print_stations_last_change_data($db, $format, $limit)
 
 function print_stations_top_click_data($db, $format, $limit)
 {
-    $result = $db->query('SELECT Station.*,COUNT(StationClick.StationID) AS clickcount FROM Station INNER JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Station.Source IS NULL GROUP BY Station.StationID ORDER BY clickcount DESC LIMIT '.$limit);
+    $result = $db->query('SELECT * FROM Station WHERE Station.Source IS NULL ORDER BY clickcount DESC LIMIT '.$limit);
     if ($result) {
         print_result_stations($result, $format);
     }
@@ -194,7 +195,7 @@ function print_stations_top_click_data($db, $format, $limit)
 
 function print_stations_top_vote_data($db, $format, $limit)
 {
-    $result = $db->query('SELECT Station.*,COUNT(StationClick.StationID) AS clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source IS NULL GROUP BY Station.StationID ORDER BY Votes DESC,NegativeVotes ASC,Name LIMIT '.$limit);
+    $result = $db->query('SELECT * FROM Station WHERE Source IS NULL ORDER BY Votes DESC,NegativeVotes ASC,Name LIMIT '.$limit);
     if ($result) {
         print_result_stations($result, $format);
     }
@@ -273,11 +274,10 @@ function print_stats($db, $format)
 function print_stations_list_data($db, $format, $column, $search_term)
 {
     if ($search_term != '') {
-        // $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column.' LIKE :search GROUP BY Station.StationID');
-        $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.' LIKE :search GROUP BY Station.StationID');
+        $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.' LIKE :search');
         $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     } else {
-        $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL GROUP BY Station.StationID');
+        $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL');
         $result = $stmt->execute();
     }
     if ($result) {
@@ -290,10 +290,10 @@ function print_stations_list_data_exact($db, $format, $column, $search_term, $mu
     $result = false;
     if ($search_term != '') {
         if ($multivalue === true) {
-            $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND (Station.'.$column.'=:searchSingle OR Station.'.$column.' LIKE :searchRight OR Station.'.$column.' LIKE :searchLeft OR Station.'.$column.' LIKE :searchMiddle) GROUP BY Station.StationID');
+            $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND ('.$column.'=:searchSingle OR '.$column.' LIKE :searchRight OR '.$column.' LIKE :searchLeft OR '.$column.' LIKE :searchMiddle)');
             $result = $stmt->execute(['searchSingle' => $search_term, 'searchLeft' => '%,'.$search_term, 'searchRight' => $search_term.',%', 'searchMiddle' => '%,'.$search_term.',%']);
         } else {
-            $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column.'=:search GROUP BY Station.StationID');
+            $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.'=:search');
             $result = $stmt->execute(['search' => $search_term]);
         }
     }
