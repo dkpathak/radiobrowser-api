@@ -7,10 +7,13 @@ if (isset($_REQUEST['action'])) {
     // check parameters, set default values
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $term = isset($_GET['term']) ? $_GET['term'] : '';
-    $country = isset($_GET['country']) ? $_GET['country'] : '';
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : '10';
-    $stationid = isset($_GET['stationid']) ? $_GET['stationid'] : '10';
+    $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
+    $stationid = isset($_GET['stationid']) ? $_GET['stationid'] : null;
     $action = $_GET['action'];
+
+    $country = isset($_REQUEST['country']) ? $_REQUEST['country'] : '';
+    $state = isset($_REQUEST['state']) ? $_REQUEST['state'] : '';
+    $language = isset($_REQUEST['language']) ? $_REQUEST['language'] : '';
 
     if ($action == 'tags') {
         print_tags($db, $format, $term);
@@ -55,9 +58,9 @@ if (isset($_REQUEST['action'])) {
     }elseif ($action == 'data_search_byid') {
         print_stations_list_data_exact($db, $format, 'StationID', $term, false);
     }elseif ($action == 'add') {
-        addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $_REQUEST['country'], $_REQUEST['language'], $_REQUEST['tags'], $_REQUEST['state']);
+        addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $_REQUEST['tags'], $state);
     }elseif ($action == 'edit') {
-        editStation($db, $_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $_REQUEST['country'], $_REQUEST['language'], $_REQUEST['tags'], $_REQUEST['state']);
+        editStation($db, $_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $_REQUEST['tags'], $state]);
     }elseif ($action == 'delete') {
         deleteStation($db, $stationid);
     }elseif ($action == 'vote') {
