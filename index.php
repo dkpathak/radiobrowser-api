@@ -60,7 +60,7 @@ if (isset($_REQUEST['action'])) {
     }elseif ($action == 'add') {
         addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $_REQUEST['tags'], $state);
     }elseif ($action == 'edit') {
-        editStation($db, $_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $_REQUEST['tags'], $state]);
+        editStation($db, $_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $_REQUEST['tags'], $state);
     }elseif ($action == 'delete') {
         deleteStation($db, $stationid);
     }elseif ($action == 'vote') {
