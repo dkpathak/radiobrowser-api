@@ -302,9 +302,6 @@ function updateStationClick($db)
 
 function updateCacheTags($db)
 {
-    // Delete empty stations
-    $db->query("DELETE FROM Station WHERE Name=''");
-
     // generate new list of tags
     $select_stmt = $db->query('SELECT Name, Url, Tags, StationID FROM Station');
     if (!$select_stmt) {

@@ -431,6 +431,9 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
       'state' => $state,
       'id' => $stationid,
     ]);
+
+    // Delete empty stations
+    $db->query("DELETE FROM Station WHERE Url=''");
 }
 
 function deleteStation($db, $stationid)
