@@ -85,13 +85,15 @@ function print_object($row, $format, $columns, $itemname)
     print_output_item_start($format, $itemname);
     $j = 0;
     foreach ($columns as $outputName => $dbColumn) {
-        if (isset($row[$dbColumn])) {
-            if ($j > 0) {
-                print_output_item_dict_sep($format);
-            }
-            print_output_item_content($format, $outputName, $row[$dbColumn]);
-            ++$j;
+        if ($j > 0) {
+            print_output_item_dict_sep($format);
         }
+        if (isset($row[$dbColumn])) {
+            print_output_item_content($format, $outputName, $row[$dbColumn]);
+        }else{
+            print_output_item_content($format, $outputName, '');
+        }
+        ++$j;
     }
     print_output_item_end($format);
 }
@@ -129,7 +131,6 @@ function print_result_stations($stmt, $format)
         'language' => 'Language',
         'votes' => 'Votes',
         'negativevotes' => 'NegativeVotes',
-        'clickid' => 'ClickID',
         'clicktimestamp' => 'ClickTimestamp',
         'clickcount' => 'clickcount',
         'clicktrend' => 'ClickTrend'
