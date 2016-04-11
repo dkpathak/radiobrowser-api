@@ -291,6 +291,10 @@ function updateStationClick($db)
 {
     // delete clicks older than 30 days
     $db->query('DELETE FROM StationClick WHERE TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*30;');
+
+    // update stationclick count (last day, and the day before, then diff them)
+    $db->query('UPDATE Station AS st SET clickcount=(SELECT COUNT(StationClick.StationID) FROM StationClick WHERE StationClick.StationID=st.StationID AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))<60*60*24*1);')
+    $db->query('UPDATE Station AS st SET clicktrend=clickcount-(SELECT count(StationClick.StationID) FROM StationClick WHERE StationClick.StationID=st.StationID AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*1 AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))<60*60*24*2);');
 }
 
 function updateCacheTags($db)

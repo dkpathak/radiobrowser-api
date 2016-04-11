@@ -1,4 +1,5 @@
 <?php
+
 function openDB()
 {
     $db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', '');
@@ -6,34 +7,83 @@ function openDB()
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     // create needed tables if they do not exist
     if (!tableExists($db, 'Station')) {
-        $db->query('CREATE TABLE Station(StationID INT NOT NULL AUTO_INCREMENT,Primary Key (StationID),Name TEXT,Url TEXT,Homepage TEXT,Favicon TEXT,Creation TIMESTAMP,Country VARCHAR(50),Subcountry VARCHAR(50),Language VARCHAR(50),Tags TEXT,Votes INT DEFAULT 0,NegativeVotes INT DEFAULT 0,Source VARCHAR(20))');// or die('could not create table');
+        $db->query('CREATE TABLE Station(
+          StationID INT NOT NULL AUTO_INCREMENT,
+          Primary Key (StationID),
+          Name TEXT,
+          Url TEXT,
+          Homepage TEXT,
+          Favicon TEXT,
+          Creation TIMESTAMP,
+          Country VARCHAR(50),
+          Subcountry VARCHAR(50),
+          Language VARCHAR(50),
+          Tags TEXT,
+          Votes INT DEFAULT 0,
+          NegativeVotes INT DEFAULT 0,
+          Source VARCHAR(20),
+          clickcount INT DEFAULT 0,
+          ClickTrend INT DEFAULT 0)
+          ');
     }
     if (!tableExists($db, 'StationHistory')) {
-        $db->query('CREATE TABLE StationHistory(StationChangeID INT NOT NULL AUTO_INCREMENT, Primary Key (StationChangeID),StationID INT NOT NULL,Name TEXT,Url TEXT,Homepage TEXT,Favicon TEXT,Creation TIMESTAMP,Country VARCHAR(50),Subcountry VARCHAR(50),Language VARCHAR(50),Tags TEXT,Votes INT DEFAULT 0,NegativeVotes INT DEFAULT 0)');// or die('could not create table');
+        $db->query('CREATE TABLE StationHistory(
+          StationChangeID INT NOT NULL AUTO_INCREMENT,
+          Primary Key (StationChangeID),
+          StationID INT NOT NULL,
+          Name TEXT,
+          Url TEXT,
+          Homepage TEXT,
+          Favicon TEXT,
+          Creation TIMESTAMP,
+          Country VARCHAR(50),
+          Subcountry VARCHAR(50),
+          Language VARCHAR(50),
+          Tags TEXT,
+          Votes INT DEFAULT 0,
+          NegativeVotes INT DEFAULT 0)
+          ');
     }
     if (!tableExists($db, 'IPVoteCheck')) {
-        $db->query('CREATE TABLE IPVoteCheck(CheckID INT NOT NULL AUTO_INCREMENT,Primary Key (CheckID),IP VARCHAR(15) NOT NULL,StationID INT NOT NULL, VoteTimestamp TIMESTAMP)');// or die('could not create table');
+        $db->query('CREATE TABLE IPVoteCheck(CheckID INT NOT NULL AUTO_INCREMENT,
+          Primary Key (CheckID),
+          IP VARCHAR(15) NOT NULL,
+          StationID INT NOT NULL,
+          VoteTimestamp TIMESTAMP)
+          ');
     }
     if (!tableExists($db, 'StationClick')) {
-        $db->query('CREATE TABLE StationClick(ClickID INT NOT NULL AUTO_INCREMENT,Primary Key (ClickID),StationID INT, ClickTimestamp TIMESTAMP)');// or die('could not create table');
+        $db->query('CREATE TABLE StationClick(ClickID INT NOT NULL AUTO_INCREMENT,
+          Primary Key (ClickID),
+          StationID INT,
+          ClickTimestamp TIMESTAMP)
+          ');
     }
     if (!tableExists($db, 'TagCache')) {
-        $db->query('CREATE TABLE TagCache(TagName VARCHAR(100) NOT NULL,Primary Key (TagName), StationCount INT DEFAULT 0)');// or die('could not create table');
+        $db->query('CREATE TABLE TagCache(
+          TagName VARCHAR(100) NOT NULL,
+          Primary Key (TagName),
+          StationCount INT DEFAULT 0)
+          ');
     }
+
     return $db;
 }
 
-function tableExists($db, $tableName){
+function tableExists($db, $tableName)
+{
     if ($result = $db->query("SHOW TABLES LIKE '".$tableName."'")) {
         return $result->rowCount() > 0;
     }
+
     return false;
 }
 
-function print_object($row, $format, $columns, $itemname){
+function print_object($row, $format, $columns, $itemname)
+{
     print_output_item_start($format, $itemname);
     $j = 0;
-    foreach ($columns as $outputName => $dbColumn ){
+    foreach ($columns as $outputName => $dbColumn) {
         if (isset($row[$dbColumn])) {
             if ($j > 0) {
                 print_output_item_dict_sep($format);
@@ -45,7 +95,8 @@ function print_object($row, $format, $columns, $itemname){
     print_output_item_end($format);
 }
 
-function print_list($stmt, $format, $columns, $itemname){
+function print_list($stmt, $format, $columns, $itemname)
+{
     print_output_header($format);
     print_output_arr_start($format);
     $i = 0;
@@ -66,26 +117,27 @@ Print a result set with many stations in the given format
 function print_result_stations($stmt, $format)
 {
     print_list($stmt, $format, [
-        'id'=>'StationID',
-        'name'=>'Name',
-        'url'=>'Url',
-        'homepage'=>'Homepage',
-        'favicon'=>'Favicon',
-        'tags'=>'Tags',
-        'country'=>'Country',
-        'state'=>'Subcountry',
-        'language'=>'Language',
-        'votes'=>'Votes',
-        'negativevotes'=>'NegativeVotes',
-        'clickid'=>'ClickID',
-        'clicktimestamp'=>'ClickTimestamp',
-        'clickcount'=>'clickcount'
+        'id' => 'StationID',
+        'name' => 'Name',
+        'url' => 'Url',
+        'homepage' => 'Homepage',
+        'favicon' => 'Favicon',
+        'tags' => 'Tags',
+        'country' => 'Country',
+        'state' => 'Subcountry',
+        'language' => 'Language',
+        'votes' => 'Votes',
+        'negativevotes' => 'NegativeVotes',
+        'clickid' => 'ClickID',
+        'clicktimestamp' => 'ClickTimestamp',
+        'clickcount' => 'clickcount',
+        'clicktrend' => 'ClickTrend'
     ], 'station');
 }
 
 function print_tags($db, $format, $search_term)
 {
-    $stmt = $db->prepare("SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE :search ORDER BY StationCount DESC,TagName ASC");
+    $stmt = $db->prepare('SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE :search ORDER BY StationCount DESC,TagName ASC');
     $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     if ($result) {
         print_list($stmt, $format, ['name' => 'TagName', 'stationcount' => 'StationCount'], 'tag');
@@ -94,7 +146,7 @@ function print_tags($db, $format, $search_term)
 
 function print_1_n($db, $format, $column, $outputItemName, $search_term)
 {
-    $stmt = $db->prepare("SELECT ".$column.", COUNT(*) AS StationCount FROM Station WHERE ".$column." LIKE :search AND ".$column."<>'' GROUP BY ".$column." ORDER BY ".$column."");
+    $stmt = $db->prepare('SELECT '.$column.', COUNT(*) AS StationCount FROM Station WHERE '.$column.' LIKE :search AND '.$column."<>'' GROUP BY ".$column.' ORDER BY '.$column);
     $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     if ($result) {
         print_list($stmt, $format, ['name' => $column, 'stationcount' => 'StationCount'], $outputItemName);
@@ -103,16 +155,16 @@ function print_1_n($db, $format, $column, $outputItemName, $search_term)
 
 function print_states($db, $format, $search_term, $country)
 {
-    if ($country !== "") {
+    if ($country !== '') {
         $stmt = $db->prepare("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Country=:country AND Subcountry LIKE :search AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
-        $result = $stmt->execute(['search'=>"%".$search_term."%", 'country'=>$country]);
+        $result = $stmt->execute(['search' => '%'.$search_term.'%', 'country' => $country]);
     } else {
         $stmt = $db->prepare("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Subcountry LIKE :search AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
-        $result = $stmt->execute(['search'=>"%".$search_term."%"]);
+        $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     }
 
     if ($result) {
-        print_list($stmt, $format, ['name' => 'Subcountry','country' => 'Country', 'stationcount' => 'StationCount'], 'state');
+        print_list($stmt, $format, ['name' => 'Subcountry', 'country' => 'Country', 'stationcount' => 'StationCount'], 'state');
     }
 }
 
@@ -171,7 +223,7 @@ function get_tag_count($db)
 function get_click_count_hours($db, $hours)
 {
     $stmt = $db->prepare('SELECT COUNT(*) FROM StationClick stc, Station st WHERE stc.StationID=st.StationID AND Source IS NULL AND TIMEDIFF(NOW(),ClickTimestamp)<MAKETIME(:hours,0,0)');
-    $result = $stmt->execute(['hours'=>$hours]);
+    $result = $stmt->execute(['hours' => $hours]);
     if ($result) {
         return $stmt->fetchColumn(0);
     }
@@ -220,9 +272,10 @@ function print_stats($db, $format)
 
 function print_stations_list_data($db, $format, $column, $search_term)
 {
-    if ($search_term != "") {
-        $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column." LIKE :search GROUP BY Station.StationID");
-        $result = $stmt->execute(['search'=>'%'.$search_term.'%']);
+    if ($search_term != '') {
+        // $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column.' LIKE :search GROUP BY Station.StationID');
+        $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.' LIKE :search GROUP BY Station.StationID');
+        $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     } else {
         $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL GROUP BY Station.StationID');
         $result = $stmt->execute();
@@ -235,13 +288,13 @@ function print_stations_list_data($db, $format, $column, $search_term)
 function print_stations_list_data_exact($db, $format, $column, $search_term, $multivalue)
 {
     $result = false;
-    if ($search_term != "") {
+    if ($search_term != '') {
         if ($multivalue === true) {
-            $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND (Station.'.$column."=:searchSingle OR Station.".$column." LIKE :searchRight OR Station.".$column." LIKE :searchLeft OR Station.".$column." LIKE :searchMiddle) GROUP BY Station.StationID");
-            $result = $stmt->execute(['searchSingle'=>$search_term, 'searchLeft'=>'%,'.$search_term, 'searchRight'=>$search_term.',%', 'searchMiddle'=>'%,'.$search_term.',%']);
+            $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND (Station.'.$column.'=:searchSingle OR Station.'.$column.' LIKE :searchRight OR Station.'.$column.' LIKE :searchLeft OR Station.'.$column.' LIKE :searchMiddle) GROUP BY Station.StationID');
+            $result = $stmt->execute(['searchSingle' => $search_term, 'searchLeft' => '%,'.$search_term, 'searchRight' => $search_term.',%', 'searchMiddle' => '%,'.$search_term.',%']);
         } else {
             $stmt = $db->prepare('SELECT Station.*,COUNT(StationClick.StationID) as clickcount FROM Station LEFT JOIN StationClick ON Station.StationID=StationClick.StationID WHERE Source is NULL AND Station.'.$column.'=:search GROUP BY Station.StationID');
-            $result = $stmt->execute(['search'=>$search_term]);
+            $result = $stmt->execute(['search' => $search_term]);
         }
     }
     if ($result) {
@@ -340,24 +393,24 @@ function backupStation($db, $stationid)
 {
     // backup old content
     $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,Language,Tags,Votes,NegativeVotes,Creation FROM Station WHERE StationID=:id');
-    $result = $stmt->execute(['id'=>$stationid]);
+    $result = $stmt->execute(['id' => $stationid]);
 }
 
 function addStation($db, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
 {
     $stmt = $db->prepare('DELETE FROM Station WHERE Url=:url');
-    $stmt->execute(['url'=>$url]);
+    $stmt->execute(['url' => $url]);
 
     $stmt = $db->prepare('INSERT INTO Station(Name,Url,Homepage,Favicon,Country,Language,Tags,Subcountry) VALUES(:name,:url,:homepage,:favicon,:country,:language,:tags,:state)');
     $stmt->execute([
-      'name'=>$name,
-      'url'=>$url,
-      'homepage'=>$homepage,
-      'favicon'=>$favicon,
-      'country'=>$country,
-      'language'=>$language,
-      'tags'=>$tags,
-      'state'=>$state
+      'name' => $name,
+      'url' => $url,
+      'homepage' => $homepage,
+      'favicon' => $favicon,
+      'country' => $country,
+      'language' => $language,
+      'tags' => $tags,
+      'state' => $state,
     ]);
 }
 
@@ -365,17 +418,17 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
 {
     backupStation($db, $stationid);
     // update values
-    $stmt = $db->query("UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state WHERE StationID=:id");
+    $stmt = $db->query('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state WHERE StationID=:id');
     $stmt->execute([
-      'name'=>$name,
-      'url'=>$url,
-      'homepage'=>$homepage,
-      'favicon'=>$favicon,
-      'country'=>$country,
-      'language'=>$language,
-      'tags'=>$tags,
-      'state'=>$state,
-      'id'=>$stationid
+      'name' => $name,
+      'url' => $url,
+      'homepage' => $homepage,
+      'favicon' => $favicon,
+      'country' => $country,
+      'language' => $language,
+      'tags' => $tags,
+      'state' => $state,
+      'id' => $stationid,
     ]);
 }
 
@@ -384,7 +437,7 @@ function deleteStation($db, $stationid)
     if (trim($stationid) != '') {
         backupStation($db, $stationid);
         $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id');
-        $stmt->execute(['id'=>$stationid]);
+        $stmt->execute(['id' => $stationid]);
     }
 }
 
@@ -397,14 +450,14 @@ function IPVoteChecker($db, $id)
 
     // was there a vote from the ip in the last 10 minutes?
     $stmt = $db->prepare('SELECT COUNT(*) FROM IPVoteCheck WHERE StationID=:id AND IP=:ip');
-    $result = $stmt->execute(['id'=>$id,'ip'=>$ip]);
-    if ($result){
+    $result = $stmt->execute(['id' => $id, 'ip' => $ip]);
+    if ($result) {
         // if no, then add new entry
         $ccc = $stmt->fetchColumn(0);
-        if ($ccc == 0){
+        if ($ccc == 0) {
             $stmt = $db->prepare('INSERT INTO IPVoteCheck(IP,StationID) VALUES(:ip,:id)');
-            $result = $stmt->execute(['id'=>$id,'ip'=>$ip]);
-            if ($result){
+            $result = $stmt->execute(['id' => $id, 'ip' => $ip]);
+            if ($result) {
                 return true;
             }
         }
@@ -416,10 +469,11 @@ function IPVoteChecker($db, $id)
 function clickedStationID($db, $id)
 {
     $stmt = $db->prepare('INSERT INTO StationClick(StationID) VALUES(:id)');
-    $result = $stmt->execute(['id'=>$id]);
-    if ($result){
+    $result = $stmt->execute(['id' => $id]);
+    if ($result) {
         return true;
     }
+
     return false;
 }
 
@@ -427,14 +481,16 @@ function voteForStation($db, $format, $id)
 {
     if (!IPVoteChecker($db, $id)) {
         print_station_by_id($db, $format, $id);
+
         return false;
     }
     $stmt = $db->prepare('UPDATE Station SET Votes=Votes+1 WHERE StationID=:id');
-    $result = $stmt->execute(['id'=>$id]);
+    $result = $stmt->execute(['id' => $id]);
     print_station_by_id($db, $format, $id);
-    if ($result){
+    if ($result) {
         return true;
     }
+
     return false;
 }
 
@@ -442,25 +498,25 @@ function negativeVoteForStation($db, $format, $id)
 {
     if (!IPVoteChecker($db, $id)) {
         print_station_by_id($db, $format, $id);
+
         return false;
     }
     $stmt = $db->prepare('UPDATE Station SET NegativeVotes=NegativeVotes+1 WHERE StationID=:id');
-    $result = $stmt->execute(['id'=>$id]);
+    $result = $stmt->execute(['id' => $id]);
     print_station_by_id($db, $format, $id);
-    if ($result){
+    if ($result) {
         //$db->query("DELETE FROM Station WHERE NegativeVotes>5");
         return true;
     }
+
     return false;
 }
 
 function print_station_by_id($db, $format, $id)
 {
     $stmt = $db->prepare('SELECT * from Station WHERE Station.StationID=:id');
-    $result = $stmt->execute(['id'=>$id]);
+    $result = $stmt->execute(['id' => $id]);
     if ($result) {
         print_result_stations($stmt, $format);
     }
 }
-
-?>
