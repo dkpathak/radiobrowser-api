@@ -223,7 +223,7 @@ function get_tag_count($db)
 
 function get_click_count_hours($db, $hours)
 {
-    $stmt = $db->prepare('SELECT COUNT(*) FROM Station WHERE Source IS NULL AND ClickTimestamp IS NOT NULL AND TIMEDIFF(NOW(),ClickTimestamp)<MAKETIME(:hours,0,0)');
+    $stmt = $db->prepare('SELECT COUNT(*) FROM StationClick WHERE TIMEDIFF(NOW(),ClickTimestamp)<MAKETIME(:hours,0,0)');
     $result = $stmt->execute(['hours' => $hours]);
     if ($result) {
         return $stmt->fetchColumn(0);
