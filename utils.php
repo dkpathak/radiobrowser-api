@@ -34,7 +34,11 @@ function getLinkContent($url)
         return null;
     }
 
-    return file_get_contents($url);
+    $content = @file_get_contents($url);
+    if ($content){
+        return $content;
+    }
+    return null;
 }
 
 function getBaseUrl($url)
