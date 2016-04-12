@@ -79,11 +79,13 @@ if ($extension == '.m3u') {
         }
         fclose($handle);
 
-        $xml = simplexml_load_string(strtolower($contents));
-        foreach ($xml->entry as $entry) {
-            foreach ($entry->ref as $ref) {
-                if (isset($ref['href'])) {
-                    $audiofile = $ref['href'];
+        $xml = @simplexml_load_string(strtolower($contents));
+        if ($xml !== false){
+            foreach ($xml->entry as $entry) {
+                foreach ($entry->ref as $ref) {
+                    if (isset($ref['href'])) {
+                        $audiofile = $ref['href'];
+                    }
                 }
             }
         }
