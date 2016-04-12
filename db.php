@@ -416,7 +416,7 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
       'state' => $state,
     ]);
 
-    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || $favicon === undefined)){
+    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || $favicon === 'undefined')){
         $stationid = $db->lastInsertId();
         echo "stationid:".$stationid;
         echo "extract from url:".$homepage;
