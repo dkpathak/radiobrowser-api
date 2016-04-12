@@ -416,7 +416,7 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
       'state' => $state,
     ]);
 
-    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || $favicon === 'undefined')){
+    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
         $stationid = $db->lastInsertId();
         echo "stationid:".$stationid;
         echo "extract from url:".$homepage;
@@ -452,7 +452,7 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
     // Delete empty stations
     $db->query("DELETE FROM Station WHERE Url=''");
 
-    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || $favicon === 'undefined')){
+    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
         echo "extract from url:".$homepage;
         $favicon = extractFaviconFromUrl($homepage);
         if ($favicon !== null){
