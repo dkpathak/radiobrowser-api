@@ -38,9 +38,11 @@ if (count($str_arr) > 1) {
     $extension = strtolower(substr($url, -4));
 }
 
+$audiofile = null;
+
 // resolve playlists
 if ($extension == '.m3u') {
-    $handle = fopen($url, 'r');
+    $handle = @fopen($url, 'r');
     if ($handle !== false) {
         while (!feof($handle)) {
             $buffer = fgets($handle, 4096);
@@ -54,7 +56,7 @@ if ($extension == '.m3u') {
         fclose($handle);
     }
 } elseif ($extension == '.pls') {
-    $handle = fopen($url, 'r');
+    $handle = @fopen($url, 'r');
     if ($handle !== false) {
         while (!feof($handle)) {
             $buffer = fgets($handle, 4096);
@@ -69,7 +71,7 @@ if ($extension == '.m3u') {
         fclose($handle);
     }
 } elseif ($extension == '.asx') {
-    $handle = fopen($url, 'r');
+    $handle = @fopen($url, 'r');
     if ($handle !== false) {
         $contents = '';
         while (!feof($handle)) {
@@ -91,7 +93,7 @@ if ($extension == '.m3u') {
 }
 
 //print("audiofile:".$audiofile);
-if (isset($audiofile)) {
+if ($audiofile !== null) {
     $extension = strtolower(substr($audiofile, -4));
 
     // shoutcast handling
