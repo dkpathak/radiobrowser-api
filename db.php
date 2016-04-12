@@ -1,5 +1,7 @@
 <?php
 
+require 'utils.php';
+
 function openDB()
 {
     $db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', '');
@@ -403,7 +405,7 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
     $stmt->execute(['url' => $url]);
 
     $stmt = $db->prepare('INSERT INTO Station(Name,Url,Homepage,Favicon,Country,Language,Tags,Subcountry,Creation) VALUES(:name,:url,:homepage,:favicon,:country,:language,:tags,:state, NOW())');
-    $stmt->execute([
+    $result = $stmt->execute([
       'name' => $name,
       'url' => $url,
       'homepage' => $homepage,
@@ -413,6 +415,19 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
       'tags' => $tags,
       'state' => $state,
     ]);
+
+    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || $favicon === undefined)){
+        echo "extract from url:".$homepage;
+        $favicon = extractFaviconFromUrl($homepage);
+        if ($favicon !== null){
+            echo "extract ok:".$favicon;
+            $stmt = $db->prepare('UDDATE Station SET Favicon=:favicon WHERE StationID=:id');
+            $result = $stmt->execute(['id'=>$db->lastInsertId(),'favicon'=>$favicon]);
+            if ($result){
+                echo "update ok";
+            }
+        }
+    }
 }
 
 function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
@@ -420,7 +435,7 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
     backupStation($db, $stationid);
     // update values
     $stmt = $db->prepare('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state,Creation=NOW() WHERE StationID=:id');
-    $stmt->execute([
+    $result = $stmt->execute([
       'name' => $name,
       'url' => $url,
       'homepage' => $homepage,
@@ -434,6 +449,19 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
 
     // Delete empty stations
     $db->query("DELETE FROM Station WHERE Url=''");
+
+    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || $favicon === 'undefined')){
+        echo "extract from url:".$homepage;
+        $favicon = extractFaviconFromUrl($homepage);
+        if ($favicon !== null){
+            echo "extract ok:".$favicon;
+            $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID=:id');
+            $result = $stmt->execute(['id'=>$stationid,'favicon'=>$favicon]);
+            if ($result){
+                echo "update ok";
+            }
+        }
+    }
 }
 
 function deleteStation($db, $stationid)
