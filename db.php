@@ -417,12 +417,14 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
     ]);
 
     if ($result && $homepage !== null && ($favicon === "" || $favicon === null || $favicon === undefined)){
+        $stationid = $db->lastInsertId();
+        echo "stationid:".$stationid;
         echo "extract from url:".$homepage;
         $favicon = extractFaviconFromUrl($homepage);
         if ($favicon !== null){
             echo "extract ok:".$favicon;
-            $stmt = $db->prepare('UDDATE Station SET Favicon=:favicon WHERE StationID=:id');
-            $result = $stmt->execute(['id'=>$db->lastInsertId(),'favicon'=>$favicon]);
+            $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID=:id');
+            $result = $stmt->execute(['id'=>$stationid,'favicon'=>$favicon]);
             if ($result){
                 echo "update ok";
             }
