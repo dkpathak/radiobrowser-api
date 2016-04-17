@@ -61,11 +61,13 @@ if ($extension == '.m3u') {
         while (!feof($handle)) {
             $buffer = fgets($handle, 4096);
             if (substr(trim($buffer), 0, 4) == 'File') {
-                $line_arr = split('=', $buffer);
-                if (count($line_arr) == 2) {
-                    $audiofile = trim($line_arr[1]);
+                $pos = strpos($buffer,'=');
+                if ($pos !== false)
+                {
+                  $value = substr($buffer,$pos + 1);
+                  $audiofile = trim($value);
+                  break;
                 }
-                break;
             }
         }
         fclose($handle);
