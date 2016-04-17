@@ -7,6 +7,10 @@ RewriteEngine on
 RewriteRule ^webservice/(.*)/countries/(.*)$ /?term=$2&format=$1&action=countries
 RewriteRule ^webservice/(.*)/countries$ /?format=$1&action=countries
 
+# http://site/webservice/<type>/codecs
+RewriteRule ^webservice/(.*)/codecs/(.*)$ /?term=$2&format=$1&action=codecs
+RewriteRule ^webservice/(.*)/codecs$ /?format=$1&action=codecs
+
 # http://site/webservice/<type>/countries
 RewriteRule ^webservice/(.*)/states/(.*)/(.*)$ /?term=$3&country=$2&format=$1&action=states
 RewriteRule ^webservice/(.*)/states/(.*)$ /?term=$2&format=$1&action=states

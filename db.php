@@ -24,6 +24,8 @@ function openDB()
           Votes INT DEFAULT 0,
           NegativeVotes INT DEFAULT 0,
           Source VARCHAR(20),
+          Codec VARCHAR(20),
+          Bitrate INT DEFAULT 0 NOT NULL,
           clickcount INT DEFAULT 0,
           ClickTrend INT DEFAULT 0,
           ClickTimestamp TIMESTAMP NOT NULL)
@@ -133,6 +135,7 @@ function print_result_stations($stmt, $format)
         'language' => 'Language',
         'votes' => 'Votes',
         'negativevotes' => 'NegativeVotes',
+        'codec' => 'Codec',
         'clicktimestamp' => 'ClickTimestamp',
         'clickcount' => 'clickcount',
         'clicktrend' => 'ClickTrend'
