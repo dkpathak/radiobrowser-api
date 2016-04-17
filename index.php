@@ -43,6 +43,10 @@ if (isset($_REQUEST['action'])) {
         print_stations_list_data($db, $format, 'Name', $term);
     }elseif ($action == 'data_search_name_exact') {
         print_stations_list_data_exact($db, $format, 'Name', $term, false);
+    }elseif ($action == 'data_search_bycodec') {
+        print_stations_list_data($db, $format, 'Codec', $term);
+    }elseif ($action == 'data_search_bycodec_exact') {
+        print_stations_list_data_exact($db, $format, 'Codec', $term, false);
     }elseif ($action == 'data_search_bycountry') {
         print_stations_list_data($db, $format, 'Country', $term);
     }elseif ($action == 'data_search_bycountry_exact') {
