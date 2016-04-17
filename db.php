@@ -402,12 +402,12 @@ function backupStation($db, $stationid)
     $result = $stmt->execute(['id' => $stationid]);
 }
 
-function addStation($db, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
+function addStation($db, $name, $url, $homepage, $favicon, $country, $language, $tags, $state, $codec)
 {
     $stmt = $db->prepare('DELETE FROM Station WHERE Url=:url');
     $stmt->execute(['url' => $url]);
 
-    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Homepage,Favicon,Country,Language,Tags,Subcountry,Creation) VALUES(:name,:url,:homepage,:favicon,:country,:language,:tags,:state, NOW())');
+    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Homepage,Favicon,Country,Language,Tags,Subcountry,Creation, Codec) VALUES(:name,:url,:homepage,:favicon,:country,:language,:tags,:state, NOW(),:codec)');
     $result = $stmt->execute([
       'name' => $name,
       'url' => $url,
@@ -417,6 +417,7 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
       'language' => $language,
       'tags' => $tags,
       'state' => $state,
+      'codec' => $codec
     ]);
 
     if ($result && $homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
@@ -435,11 +436,11 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
     }
 }
 
-function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
+function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state, $codec)
 {
     backupStation($db, $stationid);
     // update values
-    $stmt = $db->prepare('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state,Creation=NOW() WHERE StationID=:id');
+    $stmt = $db->prepare('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state,Creation=NOW(),Codec=:codec WHERE StationID=:id');
     $result = $stmt->execute([
       'name' => $name,
       'url' => $url,
@@ -450,6 +451,7 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
       'tags' => $tags,
       'state' => $state,
       'id' => $stationid,
+      'codec' => $codec
     ]);
 
     // Delete empty stations
