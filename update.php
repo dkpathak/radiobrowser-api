@@ -17,7 +17,13 @@ function updateCaches($db)
     updateCacheTags($db);
     updateStationClick($db);
     updateWebpages($db);
+    updateStationHistory($db);
     // updateFavicon($db);
+}
+
+function updateStationHistory($db){
+    // delete clicks older than 30 days
+    $db->query('DELETE FROM StationHistory WHERE TIME_TO_SEC(TIMEDIFF(Now(),Creation))>60*60*24*30;');
 }
 
 function isIconLoadable($url){
