@@ -204,14 +204,14 @@ function updateCacheTags($db)
     while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
         $name = str_replace("\t", ' ', trim($row['Name']));
         if ($name !== $row['Name']) {
-            echo "fixed name:'".escape_string($name)."' from '".$row['Name']."'<br/>";
+            echo "fixed name:'".$name."' from '".$row['Name']."'<br/>";
             $stmt = $db->prepare('UPDATE Station SET Name=:name WHERE StationID='.$row['StationID']);
             $stmt->execute(['name' => $name]);
         }
 
         $url = str_replace("\t", ' ', trim($row['Url']));
         if ($url !== $row['Url']) {
-            echo "fixed url:'".escape_string($url)."' from '".$row['Url']."'<br/>";
+            echo "fixed url:'".$url."' from '".$row['Url']."'<br/>";
             $stmt = $db->prepare('UPDATE Station SET Url=:url WHERE StationID='.$row['StationID']);
             $stmt->execute(['url' => $url]);
         }
