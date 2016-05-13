@@ -31,7 +31,7 @@ if ($foundStation !== true) {
     http_response_code(404);
     exit();
 }
-$str_arr = split("\?", $url);
+$str_arr = explode("\?", $url);
 if (count($str_arr) > 1) {
     $extension = strtolower(substr($str_arr[0], -4));
 } else {
