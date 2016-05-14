@@ -14,6 +14,7 @@ try {
 
 function updateCaches($db)
 {
+    correctCountries($db);
     updateCacheTags($db);
     updateStationClick($db);
     updateWebpages($db);
@@ -278,6 +279,11 @@ function updateCacheTags($db)
             }
         }
     }
+}
+
+function correctCountries($db){
+  $db->query('UPDATE Station SET Country="United States of America" where Country="United States";');
+  $db->query('UPDATE Station SET Country="United States of America" where Country="USA";');
 }
 
 function correctTag($tag)
