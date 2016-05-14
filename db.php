@@ -147,7 +147,7 @@ function print_tags($db, $format, $search_term)
     $stmt = $db->prepare('SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE :search ORDER BY StationCount DESC,TagName ASC');
     $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     if ($result) {
-        print_list($stmt, $format, ['name' => 'TagName', 'stationcount' => 'StationCount'], 'tag');
+        print_list($stmt, $format, ['name' => 'TagName', 'value' => 'TagName', 'stationcount' => 'StationCount'], 'tag');
     }
 }
 
@@ -156,7 +156,7 @@ function print_1_n($db, $format, $column, $outputItemName, $search_term)
     $stmt = $db->prepare('SELECT '.$column.', COUNT(*) AS StationCount FROM Station WHERE '.$column.' LIKE :search AND '.$column."<>'' GROUP BY ".$column.' ORDER BY '.$column);
     $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     if ($result) {
-        print_list($stmt, $format, ['name' => $column, 'stationcount' => 'StationCount'], $outputItemName);
+        print_list($stmt, $format, ['name' => $column, 'value' => $column, 'stationcount' => 'StationCount'], $outputItemName);
     }
 }
 
