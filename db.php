@@ -28,7 +28,9 @@ function openDB()
           Bitrate INT DEFAULT 0 NOT NULL,
           clickcount INT DEFAULT 0,
           ClickTrend INT DEFAULT 0,
-          ClickTimestamp TIMESTAMP NOT NULL)
+          ClickTimestamp TIMESTAMP NOT NULL,
+          LastCheckOK boolean default true NOT NULL,
+          LastCheckTime TIMESTAMP NOT NULL)
           ');
     }
     if (!tableExists($db, 'StationHistory')) {

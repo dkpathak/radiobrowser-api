@@ -22,7 +22,147 @@ function updateCaches($db)
     // updateFavicon($db);
 }
 
-function updateStationHistory($db){
+function getItemFromDict($dict, $keyWanted)
+{
+    foreach ($dict as $key => $value) {
+        if (strtolower($key) === strtolower($keyWanted)) {
+            if (is_array($value)) {
+                if (count($value) > 0) {
+                    $value = $value[0];
+                } else {
+                    $value = false;
+                }
+            }
+
+            return $value;
+        }
+    }
+
+    return false;
+}
+
+function checkStation($url, &$bitrate, &$codec)
+{
+    $realUrl = decodePlaylistUrl($url);
+    if ($realUrl !== $url) {
+        echo ' - URL='.$realUrl."\n";
+        if (trim($realUrl) === ""){
+            echo " - Empty decoded playlist!";
+            return false;
+        }
+    }
+    for ($tries=0;$tries<10;$tries++){
+        $location = false;
+        $headers = @get_headers($realUrl, 1);
+        // print_r($headers);
+        if ($headers === false) {
+            echo " - Headers could not be retrieved!\n";
+            return false;
+        }
+
+        if (count($headers) == 0){
+            echo " - Empty headers!\n\n";
+            return false;
+        }
+
+        $status = $headers[0];
+        $statusArr = explode(" ",$status);
+        if (count($statusArr) < 2){
+            echo " - non standard http header! ".$status."\n";
+            return false;
+        }
+        $statusCode = $statusArr[1];
+        echo " - Status:".$statusCode."\n";
+        if ($statusCode === "200"){
+            break;
+        }else if ($statusCode === "301" || $statusCode === "302"){
+            $location = getItemFromDict($headers, 'Location');
+            if ($location !== false) {
+                echo ' - Redirect:'.$location."\n";
+                $realUrl = $location;
+            }else{
+                echo " - Location header field needed!\n";
+                return false;
+            }
+        }else{
+            echo " - http status code != 200\n";
+            return false;
+        }
+    }
+
+    if ($statusCode !== "200"){
+        return false;
+    }
+
+    $contentType = getItemFromDict($headers, 'content-type');
+    if ($contentType !== false) {
+        echo ' - Content: '.$contentType."\n";
+        $codec = false;
+
+        if (strtolower($contentType === 'audio/mpeg')) {
+            $codec = 'MP3';
+        } elseif (strtolower($contentType === 'audio/aac')) {
+            $codec = 'AAC';
+        } elseif (strtolower($contentType === 'audio/aacp')) {
+            $codec = 'AAC+';
+        } elseif (strtolower($contentType === 'audio/ogg')) {
+            $codec = 'OGG';
+        } elseif (strtolower($contentType === 'application/ogg')) {
+            $codec = 'OGG';
+        } elseif (strtolower($contentType === 'audio/flac')) {
+            $codec = 'FLAC';
+        } else {
+            echo " - Unknown codec for content type\n";
+        }
+
+        if ($codec !== false) {
+            echo ' - Codec: '.$codec."\n";
+        } else {
+            $codec = '';
+        }
+    } else {
+        $codec = '';
+    }
+
+    $bitrate = getItemFromDict($headers, 'icy-br');
+    if ($bitrate !== false) {
+        echo ' - Bitrate: '.$bitrate."\n";
+    } else {
+        $bitrate = 0;
+    }
+
+    return true;
+}
+
+function checkStationUrls($db)
+{
+    ini_set('default_socket_timeout', 4);
+
+    // checkStation("http://listen.radionomy.com/bsbradio.m3u",$bitrate,$codec);
+    // return;
+
+    $select_stmt = $db->query('SELECT StationID, Name, Url FROM Station ORDER BY LastCheckTime ASC');
+    if (!$select_stmt) {
+        echo str(mysql_error());
+        exit;
+    }
+    while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+        $url = trim($row['Url']);
+        echo 'Checking: '.$row['Name'].' -> '.$row['Url']."..\n";
+        $working = checkStation($url, $bitrate, $codec);
+        if ($working === true) {
+            $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec WHERE StationID=:stationid');
+            $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $row['StationID']]);
+        } else {
+            $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=FALSE WHERE StationID=:stationid');
+            $stmt->execute(['stationid' => $row['StationID']]);
+        }
+        echo "\n";
+    }
+}
+
+function updateStationHistory($db)
+{
     // delete clicks older than 30 days
     $db->query('DELETE FROM StationHistory WHERE TIME_TO_SEC(TIMEDIFF(Now(),Creation))>60*60*24*30;');
 }
