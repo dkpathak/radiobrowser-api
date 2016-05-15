@@ -1,5 +1,58 @@
 <?php
 
+function fn_CURLOPT_HEADERFUNCTION($ch, $str){
+    global $headers;
+    $len = strlen($str);
+    $itemArr = explode(":",$str,2);
+    if (count($headers) == 0){
+      $headers[0] = trim($str);
+    }else if (count($itemArr) == 2){
+      $headers[$itemArr[0]] = trim($itemArr[1]);
+    }
+    return $len;
+  }
+
+  // function fn_CURLOPT_WRITEFUNCTION($ch, $str){
+  //   $len = strlen($str);
+  //   echo( $str );
+  //   curl_close($ch);
+  //   return $len;
+  // }
+
+function get_headers_curl($url){
+    global $headers;
+    echo "get headers from :".$url."\n";
+    // erzeuge einen neuen cURL-Handle
+    $ch = curl_init();
+
+    // setze die URL und andere Optionen
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+    curl_setopt($ch, CURLOPT_NOBODY, 1);
+    curl_setopt($ch, CURLOPT_HTTPGET, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    // curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_HEADERFUNCTION, "fn_CURLOPT_HEADERFUNCTION"); // handle received headers
+    // curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'fn_CURLOPT_WRITEFUNCTION'); // callad every CURLOPT_BUFFERSIZE
+    // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    // curl_setopt($ch, CURLOPT_BUFFERSIZE, 128); // more progress info
+    // curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function($DownloadSize, $Downloaded, $UploadSize, $Uploaded){
+    //     echo "downloaded:".$Downloaded."/".$DownloadSize."\n";
+    //     return ($Downloaded > (1 * 1024)) ? 1 : 0;
+    // });
+
+    // führe die Aktion aus und gib die Daten an den Browser weiter
+    $headers = array();
+    $result = curl_exec($ch);
+
+    // schließe den cURL-Handle und gib die Systemresourcen frei
+    curl_close($ch);
+
+    return $headers;
+}
+
 function isContentTypePlaylist($contentType){
     return isContentTypePlaylistM3U($contentType) || isContentTypePlaylistPLS($contentType) || isContentTypePlaylistASX($contentType);
 }
