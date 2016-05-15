@@ -1,12 +1,22 @@
 <?php
 require 'db.php';
 
-if (isset($_REQUEST['action'])) {
+function getParameter($paramName, $defaultValue){
+    if (isset($_GET[$paramName])) {
+        return $_GET[$paramName];
+    }
+    if (isset($_REQUEST[$paramName])) {
+        return $_REQUEST[$paramName];
+    }
+    return $defaultValue;
+}
+
+if (isset($_GET['action'])) {
     // open database
     $db = openDB();
     // check parameters, set default values
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
-    $term = isset($_GET['term']) ? $_GET['term'] : '';
+    $term = getParameter('term','');
     $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
     $stationid = isset($_GET['stationid']) ? $_GET['stationid'] : null;
     $action = $_GET['action'];
