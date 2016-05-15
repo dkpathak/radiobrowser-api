@@ -14,42 +14,44 @@ try {
 
 function updateCaches($db)
 {
+    dbCleanup($db);
+
     correctCountries($db);
     updateCacheTags($db);
-    updateStationClick($db);
+
     updateWebpages($db);
-    updateStationHistory($db);
-    // updateFavicon($db);
+
+    byStationCleanup($db, 10);
+
+    // SLOW methods, for whole database
+    // updateStationClickAll($db);
+    // checkStationUrlsAll($db);
+    // updateFaviconAll($db);
 }
 
-function checkStationUrls($db)
+function byStationCleanup($db, $limit)
 {
-    ini_set('default_socket_timeout', 4);
+    ini_set('default_socket_timeout', 10);
 
-    $select_stmt = $db->query('SELECT StationID, Name, Url FROM Station ORDER BY LastCheckTime ASC, Votes DESC');
+    $select_stmt = $db->query('SELECT StationID, Name, Url FROM Station ORDER BY LastCheckTime ASC, Votes DESC LIMIT '.$limit);
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
     }
     while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+        $stationid = $row["StationID"];
         $url = trim($row['Url']);
+
         echo 'Checking: '.$row['Name'].' -> '.$row['Url']."..\n";
-        $working = checkStation($url, $bitrate, $codec);
-        if ($working === true) {
-            echo " - WORKING\n";
-            $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec WHERE StationID=:stationid');
-            $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $row['StationID']]);
-        } else {
-            echo " - NOT WORKING\n";
-            $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=FALSE WHERE StationID=:stationid');
-            $stmt->execute(['stationid' => $row['StationID']]);
-        }
+        checkStationConnectionById($db, $stationid, $url);
+        updateStationClickById($db, $stationid);
         echo "\n";
     }
 }
 
-function updateStationHistory($db)
-{
+function dbCleanup($db){
+    // delete clicks older than 30 days
+    $db->query('DELETE FROM StationClick WHERE TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*30;');
     // delete clicks older than 30 days
     $db->query('DELETE FROM StationHistory WHERE TIME_TO_SEC(TIMEDIFF(Now(),Creation))>60*60*24*30;');
 }
@@ -108,7 +110,7 @@ function checkUrlHtmlContent($url){
     return false;
 }
 
-function updateFavicon($db)
+function updateFaviconAll($db)
 {
     // generate new list of tags
     $select_stmt = $db->query('SELECT StationID, Name, Homepage, Favicon FROM Station WHERE Favicon="" ORDER BY Creation ASC');
@@ -206,11 +208,18 @@ function updateWebpages($db)
     }
 }
 
-function updateStationClick($db)
+function updateStationClickById($db, $stationid)
 {
-    // delete clicks older than 30 days
-    $db->query('DELETE FROM StationClick WHERE TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*30;');
+    // update stationclick count (last day, and the day before, then diff them)
+    $db->query('UPDATE Station AS st SET clickcount=(SELECT COUNT(StationClick.StationID) FROM StationClick WHERE StationClick.StationID='.$stationid.' AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))<60*60*24*1) WHERE st.StationID='.$stationid.';');
+    $db->query('UPDATE Station AS st SET clicktrend=clickcount-(SELECT count(StationClick.StationID) FROM StationClick WHERE StationClick.StationID='.$stationid.' AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*1 AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))<60*60*24*2) WHERE st.StationID='.$stationid.';');
 
+    // update last click TIMESTAMP
+    $db->query('UPDATE Station AS st SET ClickTimestamp=(SELECT MAX(StationClick.ClickTimestamp) FROM StationClick WHERE StationClick.StationID='.$stationid.') WHERE st.StationID='.$stationid.';');
+}
+
+function updateStationClickAll($db)
+{
     // update stationclick count (last day, and the day before, then diff them)
     $db->query('UPDATE Station AS st SET clickcount=(SELECT COUNT(StationClick.StationID) FROM StationClick WHERE StationClick.StationID=st.StationID AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))<60*60*24*1);');
     $db->query('UPDATE Station AS st SET clicktrend=clickcount-(SELECT count(StationClick.StationID) FROM StationClick WHERE StationClick.StationID=st.StationID AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*1 AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))<60*60*24*2);');
