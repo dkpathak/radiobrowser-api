@@ -419,6 +419,19 @@ function backupStation($db, $stationid)
     $result = $stmt->execute(['id' => $stationid]);
 }
 
+function autosetFavicon($db, $stationid, $homepage){
+    echo "extract from url:".$homepage;
+    $favicon = extractFaviconFromUrl($homepage);
+    if ($favicon !== null){
+        echo "extract ok:".$favicon;
+        $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID=:id');
+        $result = $stmt->execute(['id'=>$stationid,'favicon'=>$favicon]);
+        if ($result){
+            echo "update ok";
+        }
+    }
+}
+
 function addStation($db, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
 {
     $stmt = $db->prepare('DELETE FROM Station WHERE Url=:url');
@@ -436,19 +449,12 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
       'state' => $state
     ]);
 
+    $stationid = $db->lastInsertId();
+    echo "stationid:".$stationid;
+
+    checkStationConnectionById($db, $stationid, $url);
     if ($result && $homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
-        $stationid = $db->lastInsertId();
-        echo "stationid:".$stationid;
-        echo "extract from url:".$homepage;
-        $favicon = extractFaviconFromUrl($homepage);
-        if ($favicon !== null){
-            echo "extract ok:".$favicon;
-            $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID=:id');
-            $result = $stmt->execute(['id'=>$stationid,'favicon'=>$favicon]);
-            if ($result){
-                echo "update ok";
-            }
-        }
+        autosetFavicon($db, $stationid, $homepage);
     }
 }
 
@@ -472,17 +478,9 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
     // Delete empty stations
     $db->query("DELETE FROM Station WHERE Url=''");
 
+    checkStationConnectionById($db, $stationid, $url);
     if ($result && $homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
-        echo "extract from url:".$homepage;
-        $favicon = extractFaviconFromUrl($homepage);
-        if ($favicon !== null){
-            echo "extract ok:".$favicon;
-            $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID=:id');
-            $result = $stmt->execute(['id'=>$stationid,'favicon'=>$favicon]);
-            if ($result){
-                echo "update ok";
-            }
-        }
+        autosetFavicon($db, $stationid, $homepage);
     }
 }
 

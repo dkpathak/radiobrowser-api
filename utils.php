@@ -107,6 +107,145 @@ function decodePlaylistUrl($url, $contentType)
     return false;
 }
 
+function getItemFromDict($dict, $keyWanted)
+{
+    foreach ($dict as $key => $value) {
+        if (strtolower($key) === strtolower($keyWanted)) {
+            if (is_array($value)) {
+                if (count($value) > 0) {
+                    $value = $value[0];
+                } else {
+                    $value = false;
+                }
+            }
+
+            return $value;
+        }
+    }
+
+    return false;
+}
+
+function checkStationConnectionById($db, $stationid, $url){
+    $working = checkStation($url, $bitrate, $codec);
+    if ($working === true) {
+        echo " - WORKING\n";
+        $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec WHERE StationID=:stationid');
+        $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $stationid]);
+    } else {
+        echo " - NOT WORKING\n";
+        $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=FALSE WHERE StationID=:stationid');
+        $stmt->execute(['stationid' => $stationid]);
+    }
+}
+
+function checkStation($url, &$bitrate, &$codec)
+{
+    for ($tries=0;$tries<10;$tries++){
+        if (!hasCorrectScheme($url)){
+            echo " - Incorrect url scheme!\n";
+            return false;
+        }
+
+        $location = false;
+        $headers = @get_headers($url, 1);
+        // print_r($headers);
+        if ($headers === false) {
+            echo " - Headers could not be retrieved!\n";
+            return false;
+        }
+
+        if (count($headers) == 0){
+            echo " - Empty headers!\n\n";
+            return false;
+        }
+
+        $status = $headers[0];
+        $statusArr = explode(" ",$status);
+        if (count($statusArr) < 2){
+            echo " - non standard http header! ".$status."\n";
+            return false;
+        }
+        $statusCode = $statusArr[1];
+        echo " - Status:".$statusCode."\n";
+        if ($statusCode === "200"){
+            $contentType = strtolower(getItemFromDict($headers, 'content-type'));
+
+            if ($contentType !== false) {
+                $contentTypeArray = explode(";",$contentType);
+                if (count($contentTypeArray) > 1){
+                    $contentType = $contentTypeArray[0];
+                }
+                echo ' - Content: '.$contentType."\n";
+                $codec = false;
+
+                if ($contentType === 'audio/mpeg' || $contentType === 'audio/mp3') {
+                    $codec = 'MP3';
+                } elseif ($contentType === 'audio/aac') {
+                    $codec = 'AAC';
+                } elseif ($contentType === 'audio/aacp') {
+                    $codec = 'AAC+';
+                } elseif ($contentType === 'audio/ogg') {
+                    $codec = 'OGG';
+                } elseif ($contentType === 'application/ogg') {
+                    $codec = 'OGG';
+                } elseif ($contentType === 'audio/flac') {
+                    $codec = 'FLAC';
+                } elseif ($contentType === 'application/octet-stream') {
+                    $codec = 'UNKNOWN';
+                } elseif ($contentType === 'text/html') {
+                    $codec = '';
+                    return false;
+                } elseif (isContentTypePlaylist($contentType)) {
+                    $url = decodePlaylistUrl($url,$contentType);
+                    if ($url === false){
+                        echo " - could not decode playlist\n";
+                        return false;
+                    }
+                    echo " - Playlist URL: ".$url."\n";
+                    continue;
+                } else {
+                    echo " - Unknown codec for content type\n";
+                }
+
+                if ($codec !== false) {
+                    echo ' - Codec: '.$codec."\n";
+                } else {
+                    $codec = '';
+                }
+            } else {
+                $codec = '';
+            }
+
+            $bitrate = getItemFromDict($headers, 'icy-br');
+            if ($bitrate !== false) {
+                echo ' - Bitrate: '.$bitrate."\n";
+            } else {
+                $bitrate = 0;
+            }
+            break;
+        }else if ($statusCode === "301" || $statusCode === "302"){
+            $location = getItemFromDict($headers, 'Location');
+            if ($location !== false) {
+                echo ' - Redirect:'.$location."\n";
+                $url = $location;
+            }else{
+                echo " - Location header field needed!\n";
+                return false;
+            }
+        }else{
+            echo " - http status code != 200\n";
+            return false;
+        }
+    }
+
+    if ($statusCode !== "200"){
+        return false;
+    }
+
+    return true;
+}
+
 function hasCorrectScheme($url)
 {
     if ((strtolower(substr($url, 0, 7)) === 'http://') || (strtolower(substr($url, 0, 8)) === 'https://')) {
