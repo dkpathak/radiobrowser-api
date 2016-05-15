@@ -81,7 +81,7 @@ function checkStation($url, &$bitrate, &$codec)
                 echo ' - Content: '.$contentType."\n";
                 $codec = false;
 
-                if ($contentType === 'audio/mpeg') {
+                if ($contentType === 'audio/mpeg' || $contentType === 'audio/mp3') {
                     $codec = 'MP3';
                 } elseif ($contentType === 'audio/aac') {
                     $codec = 'AAC';
