@@ -5,8 +5,8 @@ function getParameter($paramName, $defaultValue){
     if (isset($_GET[$paramName])) {
         return $_GET[$paramName];
     }
-    if (isset($_REQUEST[$paramName])) {
-        return $_REQUEST[$paramName];
+    if (isset($_POST[$paramName])) {
+        return $_POST[$paramName];
     }
     return $defaultValue;
 }
