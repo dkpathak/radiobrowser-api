@@ -23,7 +23,8 @@ function isContentTypePlaylistPLS($contentType){
     $contentType = strtolower($contentType);
 
     $types = array(
-      "audio/x-scpls"
+      "audio/x-scpls",
+      "application/pls+xml"
     );
 
     return in_array($contentType, $types);
