@@ -1,72 +1,109 @@
 <?php
 
-function decodePlaylistUrl($url)
+function isContentTypePlaylist($contentType){
+    return isContentTypePlaylistM3U($contentType) || isContentTypePlaylistPLS($contentType) || isContentTypePlaylistASX($contentType);
+}
+
+function isContentTypePlaylistM3U($contentType){
+    $contentType = strtolower($contentType);
+
+    $types = array(
+      "application/mpegurl",
+      "application/x-mpegurl",
+      "audio/mpegurl",
+      "audio/x-mpegurl",
+      "application/vnd.apple.mpegurl",
+      "application/vnd.apple.mpegurl.audio"
+    );
+
+    return in_array($contentType, $types);
+}
+
+function isContentTypePlaylistPLS($contentType){
+    $contentType = strtolower($contentType);
+
+    $types = array(
+      "audio/x-scpls"
+    );
+
+    return in_array($contentType, $types);
+}
+
+function isContentTypePlaylistASX($contentType){
+    $contentType = strtolower($contentType);
+
+    $types = array(
+      "video/x-ms-asf"
+    );
+
+    return in_array($contentType, $types);
+}
+
+function decodePlaylistUrlM3U($content){
+    // replace different kinds of newline with the default
+    $content = str_replace(array("\r\n","\n\r","\r"),"\n",$content);
+    $lines = explode("\n",$content);
+
+    foreach ($lines as $line) {
+        if (substr(trim($line), 0, 1) != '#') {
+            if (trim($line) !== '') {
+                return trim($line);
+            }
+        }
+    }
+    return null;
+}
+
+function decodePlaylistUrlPLS($content){
+    // replace different kinds of newline with the default
+    $content = str_replace(array("\r\n","\n\r","\r"),"\n",$content);
+    $lines = explode("\n",$content);
+
+    foreach ($lines as $line) {
+        if (substr(trim($line), 0, 4) == 'File') {
+            $pos = strpos($line, '=');
+            if ($pos !== false) {
+                $value = substr($line, $pos + 1);
+                return trim($value);
+            }
+        }
+    }
+    return null;
+}
+
+function decodePlaylistUrlASX($content){
+    $xml = @simplexml_load_string(strtolower($content));
+    if ($xml !== false) {
+        foreach ($xml->entry as $entry) {
+            foreach ($entry->ref as $ref) {
+                if (isset($ref['href'])) {
+                    return $ref['href'];
+                }
+            }
+        }
+    }
+    return null;
+}
+
+
+function decodePlaylistUrl($url, $contentType)
 {
-    $str_arr = explode("\?", $url);
-    if (count($str_arr) > 1) {
-        $extension = strtolower(substr($str_arr[0], -4));
-    } else {
-        $extension = strtolower(substr($url, -4));
+    // read max 4KB
+    $content = @file_get_contents($url, false, NULL, -1, 4096);
+
+    if ($content !== false){
+        if (isContentTypePlaylistM3U($contentType)){
+            return decodePlaylistUrlM3U($content);
+        }
+        if (isContentTypePlaylistPLS($contentType)){
+            return decodePlaylistUrlPLS($content);
+        }
+        if (isContentTypePlaylistASX($contentType)){
+            return decodePlaylistUrlASX($content);
+        }
     }
 
-    $audiofile = false;
-
-    // resolve playlists
-    if ($extension == '.m3u') {
-        $handle = @fopen($url, 'r');
-        if ($handle !== false) {
-            while (!feof($handle)) {
-                $buffer = fgets($handle, 4096);
-                if (substr(trim($buffer), 0, 1) != '#') {
-                    if (trim($buffer) !== '') {
-                        $audiofile = trim($buffer);
-                        break;
-                    }
-                }
-            }
-            fclose($handle);
-        }
-    } elseif ($extension == '.pls') {
-        $handle = @fopen($url, 'r');
-        if ($handle !== false) {
-            while (!feof($handle)) {
-                $buffer = fgets($handle, 4096);
-                if (substr(trim($buffer), 0, 4) == 'File') {
-                    $pos = strpos($buffer, '=');
-                    if ($pos !== false) {
-                        $value = substr($buffer, $pos + 1);
-                        $audiofile = trim($value);
-                        break;
-                    }
-                }
-            }
-            fclose($handle);
-        }
-    } elseif ($extension == '.asx') {
-        $handle = @fopen($url, 'r');
-        if ($handle !== false) {
-            $contents = '';
-            while (!feof($handle)) {
-                $contents .= fread($handle, 8192);
-            }
-            fclose($handle);
-
-            $xml = @simplexml_load_string(strtolower($contents));
-            if ($xml !== false) {
-                foreach ($xml->entry as $entry) {
-                    foreach ($entry->ref as $ref) {
-                        if (isset($ref['href'])) {
-                            $audiofile = $ref['href'];
-                        }
-                    }
-                }
-            }
-        }
-    } else {
-        $audiofile = $url;
-    }
-
-    return $audiofile;
+    return false;
 }
 
 function hasCorrectScheme($url)
