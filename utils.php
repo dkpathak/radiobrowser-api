@@ -77,6 +77,7 @@ function isContentTypePlaylistPLS($contentType){
 
     $types = array(
       "audio/x-scpls",
+      "application/x-scpls",
       "application/pls+xml"
     );
 
@@ -87,7 +88,8 @@ function isContentTypePlaylistASX($contentType){
     $contentType = strtolower($contentType);
 
     $types = array(
-      "video/x-ms-asf"
+      "video/x-ms-asf",
+      "video/x-ms-asx"
     );
 
     return in_array($contentType, $types);
