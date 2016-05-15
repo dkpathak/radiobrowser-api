@@ -42,21 +42,21 @@ RewriteRule ^webservice/(.*)/stations/lastchange$ /?format=$1&action=data_search
 RewriteRule ^webservice/(.*)/stations/broken/(.*)$ /?format=$1&limit=$2&action=data_search_broken
 RewriteRule ^webservice/(.*)/stations/broken$ /?format=$1&action=data_search_broken
 
-RewriteRule ^webservice/(.*)/stations/byid/(.*)$ /?format=$1&term=$2&action=data_search_byid
-RewriteRule ^webservice/(.*)/stations/byname/(.*)$ /?format=$1&term=$2&action=data_search_name
-RewriteRule ^webservice/(.*)/stations/bynameexact/(.*)$ /?format=$1&term=$2&action=data_search_name_exact
-RewriteRule ^webservice/(.*)/stations/bycodec/(.*)$ /?format=$1&term=$2&action=data_search_bycodec
-RewriteRule ^webservice/(.*)/stations/bycodecexact/(.*)$ /?format=$1&term=$2&action=data_search_bycodec_exact
-RewriteRule ^webservice/(.*)/stations/bycountry/(.*)$ /?format=$1&term=$2&action=data_search_bycountry
-RewriteRule ^webservice/(.*)/stations/bycountryexact/(.*)$ /?format=$1&term=$2&action=data_search_bycountry_exact
-RewriteRule ^webservice/(.*)/stations/bystate/(.*)$ /?format=$1&term=$2&action=data_search_bystate
-RewriteRule ^webservice/(.*)/stations/bystateexact/(.*)$ /?format=$1&term=$2&action=data_search_bystate_exact
-RewriteRule ^webservice/(.*)/stations/bylanguage/(.*)$ /?format=$1&term=$2&action=data_search_bylanguage
-RewriteRule ^webservice/(.*)/stations/bylanguageexact/(.*)$ /?format=$1&term=$2&action=data_search_bylanguage_exact
-RewriteRule ^webservice/(.*)/stations/bytag/(.*)$ /?format=$1&term=$2&action=data_search_bytag
-RewriteRule ^webservice/(.*)/stations/bytagexact/(.*)$ /?format=$1&term=$2&action=data_search_bytag_exact
-RewriteRule ^webservice/(.*)/stations/(.*)$ /?format=$1&term=$2&action=data_search
-RewriteRule ^webservice/(.*)/stations$ /?format=$1&action=data_search
+RewriteRule ^webservice/(.*)/stations/byid/(.*)$ /?format=$1&term=$2&action=data_search_byid [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/byname/(.*)$ /?format=$1&term=$2&action=data_search_name [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bynameexact/(.*)$ /?format=$1&term=$2&action=data_search_name_exact [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bycodec/(.*)$ /?format=$1&term=$2&action=data_search_bycodec [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bycodecexact/(.*)$ /?format=$1&term=$2&action=data_search_bycodec_exact [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bycountry/(.*)$ /?format=$1&term=$2&action=data_search_bycountry [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bycountryexact/(.*)$ /?format=$1&term=$2&action=data_search_bycountry_exact [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bystate/(.*)$ /?format=$1&term=$2&action=data_search_bystate [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bystateexact/(.*)$ /?format=$1&term=$2&action=data_search_bystate_exact [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bylanguage/(.*)$ /?format=$1&term=$2&action=data_search_bylanguage [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bylanguageexact/(.*)$ /?format=$1&term=$2&action=data_search_bylanguage_exact [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bytag/(.*)$ /?format=$1&term=$2&action=data_search_bytag [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/bytagexact/(.*)$ /?format=$1&term=$2&action=data_search_bytag_exact [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/(.*)$ /?format=$1&term=$2&action=data_search [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations$ /?format=$1&action=data_search [B,L,QSD]
 
 # compatibility with old rhytmbox-radio-browser
 RewriteRule ^xml.php$ /?format=xml&action=data_search
