@@ -14,7 +14,6 @@ if (isset($_REQUEST['action'])) {
     $country = isset($_REQUEST['country']) ? $_REQUEST['country'] : '';
     $state = isset($_REQUEST['state']) ? $_REQUEST['state'] : '';
     $language = isset($_REQUEST['language']) ? $_REQUEST['language'] : '';
-    $codec = isset($_REQUEST['codec']) ? $_REQUEST['codec'] : '';
     $tags = isset($_REQUEST['tags']) ? $_REQUEST['tags'] : '';
 
     if ($action == 'tags') {
@@ -66,9 +65,9 @@ if (isset($_REQUEST['action'])) {
     }elseif ($action == 'data_search_byid') {
         print_stations_list_data_exact($db, $format, 'StationID', $term, false);
     }elseif ($action == 'add') {
-        addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state, $codec);
+        addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
     }elseif ($action == 'edit') {
-        editStation($db, $_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state, $codec);
+        editStation($db, $_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
     }elseif ($action == 'delete') {
         deleteStation($db, $stationid);
     }elseif ($action == 'vote') {
