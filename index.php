@@ -7,7 +7,7 @@ if (isset($_REQUEST['action'])) {
     // check parameters, set default values
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $term = isset($_GET['term']) ? $_GET['term'] : '';
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
     $stationid = isset($_GET['stationid']) ? $_GET['stationid'] : null;
     $action = $_GET['action'];
 
@@ -64,6 +64,8 @@ if (isset($_REQUEST['action'])) {
         print_stations_list_data_exact($db, $format, 'Tags', $term, true);
     }elseif ($action == 'data_search_byid') {
         print_stations_list_data_exact($db, $format, 'StationID', $term, false);
+    }elseif ($action == 'data_search_broken') {
+        print_stations_list_broken($db, $format, $limit);
     }elseif ($action == 'add') {
         addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
     }elseif ($action == 'edit') {

@@ -39,6 +39,8 @@ RewriteRule ^webservice/(.*)/stations/lastclick/(.*)$ /?format=$1&limit=$2&actio
 RewriteRule ^webservice/(.*)/stations/lastclick$ /?format=$1&action=data_search_lastclick
 RewriteRule ^webservice/(.*)/stations/lastchange/(.*)$ /?format=$1&limit=$2&action=data_search_lastchange
 RewriteRule ^webservice/(.*)/stations/lastchange$ /?format=$1&action=data_search_lastchange
+RewriteRule ^webservice/(.*)/stations/broken/(.*)$ /?format=$1&limit=$2&action=data_search_broken
+RewriteRule ^webservice/(.*)/stations/broken$ /?format=$1&action=data_search_broken
 
 RewriteRule ^webservice/(.*)/stations/byid/(.*)$ /?format=$1&term=$2&action=data_search_byid
 RewriteRule ^webservice/(.*)/stations/byname/(.*)$ /?format=$1&term=$2&action=data_search_name

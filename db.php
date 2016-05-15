@@ -313,6 +313,18 @@ function print_stations_list_data_exact($db, $format, $column, $search_term, $mu
     }
 }
 
+function print_stations_list_broken($db, $format, $limit)
+{
+    $result = false;
+    $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND LastCheckOK=0 LIMIT :limit');
+    $stmt->bindValue(':limit', intval($limit), PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result) {
+        print_result_stations($stmt, $format);
+    }
+}
+
 function print_output_item_dict_sep($format)
 {
     if ($format == 'xml') {
