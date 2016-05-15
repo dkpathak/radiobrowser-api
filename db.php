@@ -449,12 +449,18 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
       'state' => $state
     ]);
 
-    $stationid = $db->lastInsertId();
-    echo "stationid:".$stationid;
+    // Delete empty stations
+    $db->query("DELETE FROM Station WHERE Url=''");
 
-    checkStationConnectionById($db, $stationid, $url);
-    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
-        autosetFavicon($db, $stationid, $homepage);
+    if ($result){
+        $stationid = $db->lastInsertId();
+        echo "stationid:".$stationid;
+
+        checkStationConnectionById($db, $stationid, $url);
+
+        if ($homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
+            autosetFavicon($db, $stationid, $homepage);
+        }
     }
 }
 
@@ -478,9 +484,12 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
     // Delete empty stations
     $db->query("DELETE FROM Station WHERE Url=''");
 
-    checkStationConnectionById($db, $stationid, $url);
-    if ($result && $homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
-        autosetFavicon($db, $stationid, $homepage);
+    if ($result){
+        checkStationConnectionById($db, $stationid, $url);
+
+        if ($homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
+            autosetFavicon($db, $stationid, $homepage);
+        }
     }
 }
 
