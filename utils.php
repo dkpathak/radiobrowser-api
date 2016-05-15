@@ -278,7 +278,7 @@ function checkStation($url, &$bitrate, &$codec)
             } else {
                 $bitrate = 0;
             }
-            break;
+            return true;
         }else if ($statusCode === "301" || $statusCode === "302"){
             $location = getItemFromDict($headers, 'Location');
             if ($location !== false) {
@@ -294,11 +294,7 @@ function checkStation($url, &$bitrate, &$codec)
         }
     }
 
-    if ($statusCode !== "200"){
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 function hasCorrectScheme($url)
