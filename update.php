@@ -155,7 +155,7 @@ function checkStationUrls($db)
     // checkStation("http://listen.radionomy.com/bsbradio.m3u",$bitrate,$codec);
     // return;
 
-    $select_stmt = $db->query('SELECT StationID, Name, Url FROM Station ORDER BY LastCheckTime ASC');
+    $select_stmt = $db->query('SELECT StationID, Name, Url FROM Station ORDER BY LastCheckTime ASC, Votes DESC');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
