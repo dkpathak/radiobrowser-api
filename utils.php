@@ -246,6 +246,8 @@ function checkStation($url, &$bitrate, &$codec)
                     $codec = 'OGG';
                 } elseif ($contentType === 'audio/flac') {
                     $codec = 'FLAC';
+                } elseif ($contentType === 'application/flv') {
+                    $codec = 'FLV';
                 } elseif ($contentType === 'application/octet-stream') {
                     $codec = 'UNKNOWN';
                 } elseif ($contentType === 'text/html') {
@@ -260,14 +262,15 @@ function checkStation($url, &$bitrate, &$codec)
                     echo " - Playlist URL: ".$url."\n";
                     continue;
                 } else {
+                    $codec = 'UNKNOWN';
                     echo " - Unknown codec for content type\n";
                 }
 
-                if ($codec !== false) {
-                    echo ' - Codec: '.$codec."\n";
-                } else {
-                    $codec = '';
-                }
+                // if ($codec !== false) {
+                //     echo ' - Codec: '.$codec."\n";
+                // } else {
+                //     $codec = '';
+                // }
             } else {
                 $codec = '';
             }
