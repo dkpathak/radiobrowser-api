@@ -217,7 +217,7 @@ function checkStation($url, &$bitrate, &$codec)
 
         $location = false;
 
-        $headers = get_headers($url,1);
+        $headers = @get_headers($url,1);
         $statusCode = decodeStatusCode($headers);
         if ($statusCode === "404" || $statusCode === false) {
           echo " - try to connect with curl\n";
