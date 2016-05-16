@@ -21,7 +21,7 @@ function updateCaches($db)
 
     updateWebpages($db);
 
-    byStationCleanup($db, 10);
+    byStationCleanup($db, 40);
 
     // SLOW methods, for whole database
     // updateStationClickAll($db);
@@ -46,6 +46,7 @@ function byStationCleanup($db, $limit)
         $log = array();
         checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $log);
         updateStationClickById($db, $stationid);
+        print_r($log);
         echo "\n";
     }
 }
