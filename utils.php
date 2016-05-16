@@ -12,16 +12,9 @@ function fn_CURLOPT_HEADERFUNCTION($ch, $str){
     return $len;
   }
 
-  // function fn_CURLOPT_WRITEFUNCTION($ch, $str){
-  //   $len = strlen($str);
-  //   echo( $str );
-  //   curl_close($ch);
-  //   return $len;
-  // }
-
 function get_headers_curl($url){
     global $headers;
-    echo "get headers from :".$url."\n";
+    echo " - CURL: get headers from: ".$url."\n";
     // erzeuge einen neuen cURL-Handle
     $ch = curl_init();
 
@@ -193,7 +186,27 @@ function checkStationConnectionById($db, $stationid, $url){
         $stmt->execute(['stationid' => $stationid]);
     }
 }
+function decodeStatusCode($headers){
+  if ($headers === false) {
+      echo " - Headers could not be retrieved!\n";
+      return false;
+  }
 
+  if (count($headers) == 0){
+      echo " - Empty headers!\n\n";
+      return false;
+  }
+
+  $status = $headers[0];
+  $statusArr = explode(" ",$status);
+  if (count($statusArr) < 2){
+      echo " - non standard http header! ".$status."\n";
+      return false;
+  }
+  $statusCode = $statusArr[1];
+  echo " - Status:".$statusCode."\n";
+  return $statusCode;
+}
 function checkStation($url, &$bitrate, &$codec)
 {
     for ($tries=0;$tries<10;$tries++){
@@ -203,26 +216,19 @@ function checkStation($url, &$bitrate, &$codec)
         }
 
         $location = false;
-        $headers = @get_headers($url, 1);
+
+        $headers = get_headers($url,1);
+        $statusCode = decodeStatusCode($headers);
+        if ($statusCode === "404" || $statusCode === false) {
+          echo " - try to connect with curl\n";
+          $headers = get_headers_curl($url);
+          $statusCode = decodeStatusCode($headers);
+          if ($statusCode === "404" || $statusCode === false) {
+            return false;
+          }
+        }
         // print_r($headers);
-        if ($headers === false) {
-            echo " - Headers could not be retrieved!\n";
-            return false;
-        }
 
-        if (count($headers) == 0){
-            echo " - Empty headers!\n\n";
-            return false;
-        }
-
-        $status = $headers[0];
-        $statusArr = explode(" ",$status);
-        if (count($statusArr) < 2){
-            echo " - non standard http header! ".$status."\n";
-            return false;
-        }
-        $statusCode = $statusArr[1];
-        echo " - Status:".$statusCode."\n";
         if ($statusCode === "200"){
             $contentType = strtolower(getItemFromDict($headers, 'content-type'));
 
