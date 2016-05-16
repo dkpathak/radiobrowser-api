@@ -419,17 +419,21 @@ function backupStation($db, $stationid)
     $result = $stmt->execute(['id' => $stationid]);
 }
 
-function autosetFavicon($db, $stationid, $homepage){
-    echo "extract from url:".$homepage;
-    $favicon = extractFaviconFromUrl($homepage);
+function autosetFavicon($db, $stationid, $homepage, &$log){
+    $log = array();
+    array_push($log, "extract from url: ".$homepage);
+    $favicon = extractFaviconFromUrl($homepage, $logExtract);
+    $log = array_merge($log,$logExtract);
     if ($favicon !== null){
-        echo "extract ok:".$favicon;
+        array_push($log, "extract ok: ".$favicon);
         $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID=:id');
         $result = $stmt->execute(['id'=>$stationid,'favicon'=>$favicon]);
         if ($result){
-            echo "update ok";
+            array_push($log, "database update ok");
+            return true;
         }
     }
+    return false;
 }
 
 function addStation($db, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
@@ -451,13 +455,26 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
 
     if ($result){
         $stationid = $db->lastInsertId();
-        echo "stationid:".$stationid;
+        // echo "stationid:".$stationid;
 
-        checkStationConnectionById($db, $stationid, $url);
+        $log = array();
+        $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
+        $returnValue = array(
+          'stream_bitrate' => intval($bitrate),
+          'stream_codec' => $codec,
+          'stream_ok' => $working,
+          'stream_log' => $logConnection
+        );
 
         if ($homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
-            autosetFavicon($db, $stationid, $homepage);
+            $returnValue["faviconCheckOK"] = autosetFavicon($db, $stationid, $homepage, $logFavicon);
+            $returnValue["faviconCheckDone"] = true;
+            $returnValue["faviconCheckLog"] = $logFavicon;
+        }else{
+            $returnValue["faviconCheckDone"] = false;
         }
+
+        echo json_encode($returnValue);
     }
 
     // Delete empty stations
@@ -485,11 +502,24 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
     $db->query("DELETE FROM Station WHERE Url=''");
 
     if ($result){
-        checkStationConnectionById($db, $stationid, $url);
+        $log = array();
+        $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
+        $returnValue = array(
+          'stream_bitrate' => intval($bitrate),
+          'stream_codec' => $codec,
+          'stream_ok' => $working,
+          'stream_log' => $logConnection
+        );
 
         if ($homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
-            autosetFavicon($db, $stationid, $homepage);
+            $returnValue["faviconCheckOK"] = autosetFavicon($db, $stationid, $homepage, $logFavicon);
+            $returnValue["faviconCheckDone"] = true;
+            $returnValue["faviconCheckLog"] = $logFavicon;
+        }else{
+            $returnValue["faviconCheckDone"] = false;
         }
+
+        echo json_encode($returnValue);
     }
 }
 

@@ -43,7 +43,8 @@ function byStationCleanup($db, $limit)
         $url = trim($row['Url']);
 
         echo 'Checking: '.$row['Name'].' -> '.$row['Url']."..\n";
-        checkStationConnectionById($db, $stationid, $url);
+        $log = array();
+        checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $log);
         updateStationClickById($db, $stationid);
         echo "\n";
     }
@@ -165,7 +166,7 @@ function fixFavicon($icon, $hp) {
                 if (checkUrlHtmlContent($hp)){
                     $hpContent = getLinkContent($hp);
                     if ($hpContent !== null){
-                        $icon = extractIconLink($hpContent,$base);
+                        $icon = extractIconLink($hpContent,$base, $logExtractIcon);
                         if ($icon === null){
                             $icon = "";
                         }

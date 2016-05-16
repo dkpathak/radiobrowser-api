@@ -14,7 +14,6 @@ function fn_CURLOPT_HEADERFUNCTION($ch, $str){
 
 function get_headers_curl($url){
     global $headers;
-    echo " - CURL: get headers from: ".$url."\n";
     // erzeuge einen neuen cURL-Handle
     $ch = curl_init();
 
@@ -32,7 +31,6 @@ function get_headers_curl($url){
     // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     // curl_setopt($ch, CURLOPT_BUFFERSIZE, 128); // more progress info
     // curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function($DownloadSize, $Downloaded, $UploadSize, $Uploaded){
-    //     echo "downloaded:".$Downloaded."/".$DownloadSize."\n";
     //     return ($Downloaded > (1 * 1024)) ? 1 : 0;
     // });
 
@@ -174,62 +172,69 @@ function getItemFromDict($dict, $keyWanted)
     return false;
 }
 
-function checkStationConnectionById($db, $stationid, $url){
-    $working = checkStation($url, $bitrate, $codec);
+function checkStationConnectionById($db, $stationid, $url, &$bitrate, &$codec, &$log){
+    $working = checkStation($url, $bitrate, $codec, $log);
     if ($working === true) {
-        echo " - WORKING\n";
         $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec WHERE StationID=:stationid');
         $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $stationid]);
+        return true;
     } else {
-        echo " - NOT WORKING\n";
         $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=FALSE WHERE StationID=:stationid');
         $stmt->execute(['stationid' => $stationid]);
+        return true;
     }
 }
-function decodeStatusCode($headers){
-  if ($headers === false) {
-      echo " - Headers could not be retrieved!\n";
-      return false;
-  }
 
-  if (count($headers) == 0){
-      echo " - Empty headers!\n\n";
-      return false;
-  }
+function decodeStatusCode($headers, &$log){
+    $log = array();
+    if ($headers === false) {
+        array_push($log, " - Headers could not be retrieved!");
+        return false;
+    }
 
-  $status = $headers[0];
-  $statusArr = explode(" ",$status);
-  if (count($statusArr) < 2){
-      echo " - non standard http header! ".$status."\n";
-      return false;
-  }
-  $statusCode = $statusArr[1];
-  echo " - Status:".$statusCode."\n";
-  return $statusCode;
+    if (count($headers) == 0){
+        array_push($log, " - Empty headers!");
+        return false;
+    }
+
+    $status = $headers[0];
+    $statusArr = explode(" ",$status);
+    if (count($statusArr) < 2){
+        array_push($log, " - non standard http header! ".$status);
+        return false;
+    }
+    $statusCode = intval($statusArr[1]);
+    array_push($log, " - Status:".$statusCode);
+    return $statusCode;
 }
-function checkStation($url, &$bitrate, &$codec)
+
+function checkStation($url, &$bitrate, &$codec, &$log)
 {
+    $log = array();
     for ($tries=0;$tries<10;$tries++){
         if (!hasCorrectScheme($url)){
-            echo " - Incorrect url scheme!\n";
+            array_push($log, " - Incorrect url scheme!");
             return false;
         }
 
         $location = false;
 
+        array_push($log, " - Get headers from: ".$url);
         $headers = @get_headers($url,1);
-        $statusCode = decodeStatusCode($headers);
-        if ($statusCode === "404" || $statusCode === false) {
-          echo " - try to connect with curl\n";
+        $statusCode = decodeStatusCode($headers, $logStatusCode);
+        $log = array_merge($log,$logStatusCode);
+        if ($statusCode === 404 || $statusCode === false) {
+          array_push($log, " - try to connect with curl: ".$url);
           $headers = get_headers_curl($url);
-          $statusCode = decodeStatusCode($headers);
-          if ($statusCode === "404" || $statusCode === false) {
-            return false;
+          $statusCode = decodeStatusCode($headers, $logStatusCode);
+          $log = array_merge($log,$logStatusCode);
+          if ($statusCode === 404 || $statusCode === false) {
+              return false;
           }
         }
         // print_r($headers);
 
-        if ($statusCode === "200"){
+        if ($statusCode === 200){
             $contentType = strtolower(getItemFromDict($headers, 'content-type'));
 
             if ($contentType !== false) {
@@ -237,7 +242,7 @@ function checkStation($url, &$bitrate, &$codec)
                 if (count($contentTypeArray) > 1){
                     $contentType = $contentTypeArray[0];
                 }
-                echo ' - Content: '.$contentType."\n";
+                array_push($log, ' - Content: '.$contentType);
                 $codec = false;
 
                 if ($contentType === 'audio/mpeg' || $contentType === 'audio/mp3') {
@@ -262,43 +267,39 @@ function checkStation($url, &$bitrate, &$codec)
                 } elseif (isContentTypePlaylist($contentType)) {
                     $url = decodePlaylistUrl($url,$contentType);
                     if ($url === false){
-                        echo " - could not decode playlist\n";
+                        array_push($log, " - could not decode playlist");
                         return false;
                     }
-                    echo " - Playlist URL: ".$url."\n";
+                    array_push($log, " - Playlist URL: ".$url);
                     continue;
                 } else {
                     $codec = 'UNKNOWN';
-                    echo " - Unknown codec for content type\n";
+                    array_push($log, " - Unknown codec for content type");
                 }
 
-                // if ($codec !== false) {
-                //     echo ' - Codec: '.$codec."\n";
-                // } else {
-                //     $codec = '';
-                // }
+                array_push($log, ' - Codec: '.$codec);
             } else {
                 $codec = '';
             }
 
             $bitrate = getItemFromDict($headers, 'icy-br');
             if ($bitrate !== false) {
-                echo ' - Bitrate: '.$bitrate."\n";
+                array_push($log, ' - Bitrate: '.$bitrate);
             } else {
                 $bitrate = 0;
             }
             return true;
-        }else if ($statusCode === "301" || $statusCode === "302"){
+        }else if ($statusCode === 301 || $statusCode === 302){
             $location = getItemFromDict($headers, 'Location');
             if ($location !== false) {
-                echo ' - Redirect:'.$location."\n";
+                array_push($log, ' - Redirect:'.$location);
                 $url = $location;
             }else{
-                echo " - Location header field needed!\n";
+                array_push($log, " - Location header field needed!");
                 return false;
             }
         }else{
-            echo " - http status code != 200\n";
+            array_push($log, " - http status code != 200");
             return false;
         }
     }
@@ -360,7 +361,8 @@ function getBaseUrl($url)
     return null;
 }
 
-function extractIconLink($html, $base){
+function extractIconLink($html, $base, &$log){
+    $log = array();
     $dom = new DOMDocument();
     @$dom->loadHTML($html);
 
@@ -378,18 +380,23 @@ function extractIconLink($html, $base){
         // <meta name="msapplication-TileImage" content="http://..." />
         $name = $link->getAttribute('name');
         if ($name === "msapplication-TileImage"){
+            array_push($log, "Found meta-tag msapplication-TileImage");
             return FixUrl($link->getAttribute('content'),$base);
         }
         if ($name === "msapplication-square70x70logo"){
+            array_push($log, "Found meta-tag msapplication-square70x70logo");
             return FixUrl($link->getAttribute('content'),$base);
         }
         if ($name === "msapplication-square150x150logo"){
+            array_push($log, "Found meta-tag msapplication-square150x150logo");
             return FixUrl($link->getAttribute('content'),$base);
         }
         if ($name === "msapplication-square310x310logo"){
+            array_push($log, "Found meta-tag msapplication-square310x310logo");
             return FixUrl($link->getAttribute('content'),$base);
         }
         if ($name === "msapplication-wide310x150logo"){
+            array_push($log, "Found meta-tag msapplication-wide310x150logo");
             return FixUrl($link->getAttribute('content'),$base);
         }
 
@@ -397,6 +404,7 @@ function extractIconLink($html, $base){
         // <meta property="og:image" content="http://..." />
         $property = $link->getAttribute('property');
         if ($property === "og:image"){
+            array_push($log, "Found meta-tag property='og:image'");
             return FixUrl($link->getAttribute('content'),$base);
         }
     }
@@ -406,6 +414,7 @@ function extractIconLink($html, $base){
         $rel = $link->getAttribute('rel');
 
         if ($rel === "apple-touch-icon"){
+            array_push($log, "Found link-tag rel='apple-touch-icon'");
             return FixUrl($link->getAttribute('href'),$base);
         }
     }
@@ -415,26 +424,37 @@ function extractIconLink($html, $base){
         $rel = $link->getAttribute('rel');
 
         if ($rel === "shortcut icon"){
+            array_push($log, "Found link-tag rel='shortcut icon'");
             return FixUrl($link->getAttribute('href'),$base);
         }
         if ($rel === "icon"){
+            array_push($log, "Found link-tag rel='icon'");
             return FixUrl($link->getAttribute('href'),$base);
         }
     }
+    array_push($log, "Did not find any usable html tags with structured icon information on page");
     return null;
 }
 
-function extractFaviconFromUrl($hp){
+function extractFaviconFromUrl($hp, &$log){
+    $log = array();
     if (hasCorrectScheme($hp))
     {
         $base = getBaseUrl($hp);
         if ($base !== null)
         {
+            array_push($log, "Extracted base adress: ".$base);
             $hpContent = getLinkContent($hp);
             if ($hpContent !== null){
-                return extractIconLink($hpContent, $base);
+                $extractOK = extractIconLink($hpContent, $base, $logExtract);
+                $log = array_merge($log, $logExtract);
+                return $extractOK;
             }
+        }else{
+          array_push($log, "Could not extract host from link");
         }
+    }else{
+        array_push($log, "Incorrect link scheme, use only http:// or https://");
     }
     return null;
 }
