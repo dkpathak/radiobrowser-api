@@ -449,9 +449,6 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
       'state' => $state
     ]);
 
-    // Delete empty stations
-    $db->query("DELETE FROM Station WHERE Url=''");
-
     if ($result){
         $stationid = $db->lastInsertId();
         echo "stationid:".$stationid;
@@ -462,6 +459,9 @@ function addStation($db, $name, $url, $homepage, $favicon, $country, $language, 
             autosetFavicon($db, $stationid, $homepage);
         }
     }
+
+    // Delete empty stations
+    $db->query("DELETE FROM Station WHERE Url=''");
 }
 
 function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
