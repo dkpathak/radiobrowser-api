@@ -132,6 +132,30 @@ function decodePlaylistUrlASX($content){
     return null;
 }
 
+function decodePlaylistUrlALL($content){
+    $resultXML = decodePlaylistUrlASX($content);
+    if ($resultXML != null){
+      return $resultXML;
+    }
+    // replace different kinds of newline with the default
+    $content = str_replace(array("\r\n","\n\r","\r"),"\n",$content);
+    $lines = explode("\n",$content);
+
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if (substr($line, 0, 4) == 'File') {
+            $pos = strpos($line, '=');
+            if ($pos !== false) {
+                $value = substr($line, $pos + 1);
+                return trim($value);
+            }
+        }
+        if (hasCorrectScheme($line)){
+            return $line;
+        }
+    }
+    return null;
+}
 
 function decodePlaylistUrl($url, $contentType)
 {
@@ -140,13 +164,25 @@ function decodePlaylistUrl($url, $contentType)
 
     if ($content !== false){
         if (isContentTypePlaylistM3U($contentType)){
-            return decodePlaylistUrlM3U($content);
+            $result = decodePlaylistUrlM3U($content);
+            if ($result !== null){
+                return $result;
+            }
+            return decodePlaylistUrlALL($content);
         }
         if (isContentTypePlaylistPLS($contentType)){
-            return decodePlaylistUrlPLS($content);
+            $result = decodePlaylistUrlPLS($content);
+            if ($result !== null){
+                return $result;
+            }
+            return decodePlaylistUrlALL($content);
         }
         if (isContentTypePlaylistASX($contentType)){
-            return decodePlaylistUrlASX($content);
+            $result = decodePlaylistUrlASX($content);
+            if ($result !== null){
+                return $result;
+            }
+            return decodePlaylistUrlALL($content);
         }
     }
 
@@ -173,8 +209,8 @@ function getItemFromDict($dict, $keyWanted)
 }
 
 function checkStationConnectionById($db, $stationid, $url, &$bitrate, &$codec, &$log){
-    $working = checkStation($url, $bitrate, $codec, $log);
-    if ($working === true) {
+    $audiofile = checkStation($url, $bitrate, $codec, $log);
+    if ($audiofile !== false) {
         $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec WHERE StationID=:stationid');
         $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $stationid]);
         return true;
@@ -288,7 +324,7 @@ function checkStation($url, &$bitrate, &$codec, &$log)
             } else {
                 $bitrate = 0;
             }
-            return true;
+            return $url;
         }else if ($statusCode === 301 || $statusCode === 302){
             $location = getItemFromDict($headers, 'Location');
             if ($location !== false) {

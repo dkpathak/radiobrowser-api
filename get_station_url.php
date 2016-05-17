@@ -38,66 +38,10 @@ if (count($str_arr) > 1) {
     $extension = strtolower(substr($url, -4));
 }
 
-$audiofile = null;
-
-// resolve playlists
-if ($extension == '.m3u') {
-    $handle = @fopen($url, 'r');
-    if ($handle !== false) {
-        while (!feof($handle)) {
-            $buffer = fgets($handle, 4096);
-            if (substr(trim($buffer), 0, 1) != '#') {
-                if (trim($buffer) !== '') {
-                    $audiofile = trim($buffer);
-                    break;
-                }
-            }
-        }
-        fclose($handle);
-    }
-} elseif ($extension == '.pls') {
-    $handle = @fopen($url, 'r');
-    if ($handle !== false) {
-        while (!feof($handle)) {
-            $buffer = fgets($handle, 4096);
-            if (substr(trim($buffer), 0, 4) == 'File') {
-                $pos = strpos($buffer,'=');
-                if ($pos !== false)
-                {
-                  $value = substr($buffer,$pos + 1);
-                  $audiofile = trim($value);
-                  break;
-                }
-            }
-        }
-        fclose($handle);
-    }
-} elseif ($extension == '.asx') {
-    $handle = @fopen($url, 'r');
-    if ($handle !== false) {
-        $contents = '';
-        while (!feof($handle)) {
-            $contents .= fread($handle, 8192);
-        }
-        fclose($handle);
-
-        $xml = @simplexml_load_string(strtolower($contents));
-        if ($xml !== false){
-            foreach ($xml->entry as $entry) {
-                foreach ($entry->ref as $ref) {
-                    if (isset($ref['href'])) {
-                        $audiofile = $ref['href'];
-                    }
-                }
-            }
-        }
-    }
-} else {
-    $audiofile = $url;
-}
+$audiofile = checkStation($url,$bitrate,$codec,$log);
 
 //print("audiofile:".$audiofile);
-if ($audiofile !== null) {
+if ($audiofile !== false) {
     $extension = strtolower(substr($audiofile, -4));
 
     // shoutcast handling
