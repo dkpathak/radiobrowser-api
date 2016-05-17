@@ -164,21 +164,21 @@ function decodePlaylistUrl($url, $contentType)
 
     if ($content !== false){
         if (isContentTypePlaylistM3U($contentType)){
-            $result = decodePlaylistUrlM3U($content);
+            $result = fixPlaylistItem($url,decodePlaylistUrlM3U($content));
             if ($result !== null){
                 return $result;
             }
             return decodePlaylistUrlALL($content);
         }
         if (isContentTypePlaylistPLS($contentType)){
-            $result = decodePlaylistUrlPLS($content);
+            $result = fixPlaylistItem($url, decodePlaylistUrlPLS($content));
             if ($result !== null){
                 return $result;
             }
             return decodePlaylistUrlALL($content);
         }
         if (isContentTypePlaylistASX($contentType)){
-            $result = decodePlaylistUrlASX($content);
+            $result = fixPlaylistItem($url, decodePlaylistUrlASX($content));
             if ($result !== null){
                 return $result;
             }
@@ -187,6 +187,19 @@ function decodePlaylistUrl($url, $contentType)
     }
 
     return false;
+}
+
+function fixPlaylistItem($url, $playlistItem){
+    if ($playlistItem !== false){
+        if (!hasCorrectScheme($playlistItem)){
+            $remoteDir = getRemoteDirUrl($url);
+            if ($remoteDir !== false){
+                return $remoteDir."/".$playlistItem;
+            }
+            return false;
+        }
+    }
+    return $playlistItem;
 }
 
 function getItemFromDict($dict, $keyWanted)
@@ -284,6 +297,8 @@ function checkStation($url, &$bitrate, &$codec, &$log)
                 if ($contentType === 'audio/mpeg' || $contentType === 'audio/mp3') {
                     $codec = 'MP3';
                 } elseif ($contentType === 'audio/aac') {
+                    $codec = 'AAC';
+                } elseif ($contentType === 'audio/x-aac') {
                     $codec = 'AAC';
                 } elseif ($contentType === 'audio/aacp') {
                     $codec = 'AAC+';
@@ -392,6 +407,21 @@ function getBaseUrl($url)
         $host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
         $port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
         return "$scheme$host$port";
+    }
+
+    return null;
+}
+
+function getRemoteDirUrl($url)
+{
+    $parsed_url = parse_url($url);
+    if ($parsed_url) {
+        print_r($parsed_url);
+        $scheme = isset($parsed_url['scheme']) ? $parsed_url['scheme'].'://' : '';
+        $host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+        $port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
+        $path = isset($parsed_url['path']) ? dirname($parsed_url['path']) : '';
+        return "$scheme$host$port$path";
     }
 
     return null;
