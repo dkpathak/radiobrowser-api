@@ -60,6 +60,7 @@ RewriteRule ^webservice/(.*)/stations$ /?format=$1&action=data_search [B,L,QSD]
 
 # compatibility with old rhytmbox-radio-browser
 RewriteRule ^xml.php$ /?format=xml&action=data_search
+RewriteRule ^topclick.php$ /?format=xml&action=data_search_topclick
 
 # http://site/webservice/<type>/stats
 RewriteRule ^webservice/(.*)/stats$ /?format=$1&action=stats
