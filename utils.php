@@ -260,6 +260,7 @@ function decodeStatusCode($headers, &$log){
 
 function checkStation($url, &$bitrate, &$codec, &$log)
 {
+    ini_set("user_agent","VLC/2.2.2 LibVLC/2.2.2");
     $log = array();
     for ($tries=0;$tries<10;$tries++){
         if (!hasCorrectScheme($url)){
