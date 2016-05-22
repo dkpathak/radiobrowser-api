@@ -222,6 +222,16 @@ function get_station_count($db)
     return 0;
 }
 
+function get_station_broken_count($db)
+{
+    $result = $db->query('SELECT COUNT(*) FROM Station WHERE Source is NULL AND LastCheckOK=FALSE');
+    if ($result) {
+        return $result->fetchColumn(0);
+    }
+
+    return 0;
+}
+
 function get_tag_count($db)
 {
     $result = $db->query('SELECT COUNT(*) FROM TagCache');
@@ -268,6 +278,8 @@ function print_stats($db, $format)
     print_output_header($format);
     print_output_item_start($format, 'stats');
     print_output_item_content($format, 'stations', get_station_count($db));
+    print_output_item_dict_sep($format);
+    print_output_item_content($format, 'stations_broken', get_station_broken_count($db));
     print_output_item_dict_sep($format);
     print_output_item_content($format, 'tags', get_tag_count($db));
     print_output_item_dict_sep($format);
