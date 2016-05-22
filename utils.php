@@ -27,6 +27,7 @@ function get_headers_curl($url){
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     curl_setopt($ch, CURLOPT_HEADERFUNCTION, "fn_CURLOPT_HEADERFUNCTION"); // handle received headers
+    curl_setopt($ch, CURLOPT_USERAGENT, "VLC/2.2.2 LibVLC/2.2.2");
     // curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'fn_CURLOPT_WRITEFUNCTION'); // callad every CURLOPT_BUFFERSIZE
     // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     // curl_setopt($ch, CURLOPT_BUFFERSIZE, 128); // more progress info
@@ -272,7 +273,7 @@ function checkStation($url, &$bitrate, &$codec, &$log)
         $headers = @get_headers($url,1);
         $statusCode = decodeStatusCode($headers, $logStatusCode);
         $log = array_merge($log,$logStatusCode);
-        if ($statusCode === 404 || $statusCode === false) {
+        if ($statusCode === 404 || $statusCode === 500 || $statusCode === false) {
           array_push($log, " - try to connect with curl: ".$url);
           $headers = get_headers_curl($url);
           $statusCode = decodeStatusCode($headers, $logStatusCode);

@@ -14,6 +14,7 @@ try {
 
 function updateCaches($db)
 {
+  ini_set("user_agent","VLC/2.2.2 LibVLC/2.2.2");
     dbCleanup($db);
 
     correctCountries($db);
