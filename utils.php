@@ -93,6 +93,9 @@ function decodePlaylistUrlM3U($content){
     $lines = explode("\n",$content);
 
     foreach ($lines as $line) {
+        if (strtolower(trim($line)) === "[playlist]"){
+          return null;
+        }
         if (substr(trim($line), 0, 1) != '#') {
             if (trim($line) !== '') {
                 return trim($line);
@@ -191,7 +194,7 @@ function decodePlaylistUrl($url, $contentType)
 }
 
 function fixPlaylistItem($url, $playlistItem){
-    if ($playlistItem !== false){
+    if ($playlistItem !== false && $playlistItem !== null){
         if (!hasCorrectScheme($playlistItem)){
             $remoteDir = getRemoteDirUrl($url);
             if ($remoteDir !== false){
