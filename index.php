@@ -48,7 +48,7 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'data_search_lastclick') {
         print_stations_list_data_all($db, $format, "clicktimestamp", "true", $offset, $limit);
     }elseif ($action == 'data_search_lastchange') {
-        print_stations_list_data_all($db, $format, "Creation", "true", $offset, $limit);
+        print_stations_list_data_all($db, $format, "lastchangetime", "true", $offset, $limit);
     }elseif ($action == 'data_search') {
         print_stations_list_data($db, $format, 'Name', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_name') {

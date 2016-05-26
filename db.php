@@ -20,7 +20,8 @@ $columnMapping = [
     'lastchecktime' => 'LastCheckTime',
     'clicktimestamp' => 'ClickTimestamp',
     'clickcount' => 'clickcount',
-    'clicktrend' => 'ClickTrend'
+    'clicktrend' => 'ClickTrend',
+    'lastchangetime' => 'Creation'
 ];
 
 function openDB()
