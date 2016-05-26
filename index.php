@@ -18,7 +18,7 @@ if (isset($_GET['action'])) {
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $term = getParameter('term','');
     $offset = getParameter('offset', 0);
-    $limit = getParameter('limit', 25);
+    $limit = getParameter('limit', 100000);
     $reverse = getParameter('reverse',"false");
     $order = getParameter('order',"");
     $stationid = isset($_GET['stationid']) ? $_GET['stationid'] : null;
@@ -80,7 +80,7 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'data_search_improvable') {
         print_stations_list_improvable($db, $format, $limit);
     }elseif ($action == 'data_stations_all') {
-        print_stations_list_data_all($db, $format, $order, $reverse, 0, 100000);
+        print_stations_list_data_all($db, $format, $order, $reverse, $offset, $limit);
     }elseif ($action == 'add') {
         addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
     }elseif ($action == 'edit') {

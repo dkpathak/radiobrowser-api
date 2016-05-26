@@ -179,7 +179,7 @@
         </tr>
         <tr>
           <td>limit</td>
-          <td>25</td>
+          <td>100000</td>
           <td>0,1,2,....</td>
           <td>number of returned datarows (stations) starting with offset</td>
         </tr>
@@ -229,6 +229,18 @@
           <td>false</td>
           <td>true, false</td>
           <td>rerverses the result list if set to true</td>
+        </tr>
+        <tr>
+          <td>offset</td>
+          <td>0</td>
+          <td>0,1,2,3,4,..</td>
+          <td>starting value of the result list from the database, for example if you want to do paging on the serverside</td>
+        </tr>
+        <tr>
+          <td>limit</td>
+          <td>100000</td>
+          <td>0,1,2,....</td>
+          <td>number of returned datarows (stations) starting with offset</td>
         </tr>
       </tbody>
     </table>
