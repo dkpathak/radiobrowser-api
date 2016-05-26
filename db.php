@@ -154,7 +154,7 @@ function print_result_stations($stmt, $format)
 function print_tags($db, $format, $search_term, $order, $reverse)
 {
     $reverseDb = filterOrderReverse($reverse);
-    if ($order !== "value"){
+    if ($order === "stationcount"){
         $orderDb = "StationCount";
         $orderDb2 = "TagName";
     }else{
@@ -171,7 +171,7 @@ function print_tags($db, $format, $search_term, $order, $reverse)
 function print_1_n($db, $format, $column, $outputItemName, $search_term, $order, $reverse)
 {
     $reverseDb = filterOrderReverse($reverse);
-    if ($order !== "value"){
+    if ($order === "stationcount"){
         $orderDb = "StationCount";
         $orderDb2 = $column;
     }else{
@@ -188,7 +188,7 @@ function print_1_n($db, $format, $column, $outputItemName, $search_term, $order,
 function print_states($db, $format, $search_term, $country, $order, $reverse)
 {
     $reverseDb = filterOrderReverse($reverse);
-    if ($order !== "value"){
+    if ($order === "stationcount"){
         $orderDb = "StationCount";
         $orderDb2 = "SubCountry";
     }else{
