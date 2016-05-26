@@ -30,15 +30,15 @@ if (isset($_GET['action'])) {
     $tags = isset($_REQUEST['tags']) ? $_REQUEST['tags'] : '';
 
     if ($action == 'tags') {
-        print_tags($db, $format, $term);
+        print_tags($db, $format, $term, $order, $reverse);
     }elseif ($action == 'countries') {
-        print_1_n($db, $format, 'Country', 'country', $term);
+        print_1_n($db, $format, 'Country', 'country', $term, $order, $reverse);
     }elseif ($action == 'codecs') {
-        print_1_n($db, $format, 'Codec', 'codec', $term);
+        print_1_n($db, $format, 'Codec', 'codec', $term, $order, $reverse);
     }elseif ($action == 'states') {
-        print_states($db, $format, $term, $country);
+        print_states($db, $format, $term, $country, $order, $reverse);
     }elseif ($action == 'languages') {
-        print_1_n($db, $format, 'Language', 'language', $term);
+        print_1_n($db, $format, 'Language', 'language', $term, $order, $reverse);
     }elseif ($action == 'stats') {
         print_stats($db, $format);
     }elseif ($action == 'data_search_topvote') {

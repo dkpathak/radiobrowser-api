@@ -151,36 +151,60 @@ function print_result_stations($stmt, $format)
     print_list($stmt, $format, $columnMapping, 'station');
 }
 
-function print_tags($db, $format, $search_term)
+function print_tags($db, $format, $search_term, $order, $reverse)
 {
-    $stmt = $db->prepare('SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE :search ORDER BY StationCount DESC,TagName ASC');
+    $reverseDb = filterOrderReverse($reverse);
+    if ($order === "value"){
+        $orderDb = "TagName";
+        $orderDb2 = "StationCount";
+    }else{
+        $orderDb = "StationCount";
+        $orderDb2 = "TagName";
+    }
+    $stmt = $db->prepare('SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE :search ORDER BY '.$orderDb.' '.$reverseDb.', '.$orderDb2.' ASC');
     $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     if ($result) {
         print_list($stmt, $format, ['name' => 'TagName', 'value' => 'TagName', 'stationcount' => 'StationCount'], 'tag');
     }
 }
 
-function print_1_n($db, $format, $column, $outputItemName, $search_term)
+function print_1_n($db, $format, $column, $outputItemName, $search_term, $order, $reverse)
 {
-    $stmt = $db->prepare('SELECT '.$column.', COUNT(*) AS StationCount FROM Station WHERE '.$column.' LIKE :search AND '.$column."<>'' GROUP BY ".$column.' ORDER BY '.$column);
+    $reverseDb = filterOrderReverse($reverse);
+    if ($order === "value"){
+        $orderDb = $column;
+        $orderDb2 = "StationCount";
+    }else{
+        $orderDb = "StationCount";
+        $orderDb2 = $column;
+    }
+    $stmt = $db->prepare('SELECT '.$column.', COUNT(*) AS StationCount FROM Station WHERE '.$column.' LIKE :search AND '.$column."<>'' GROUP BY ".$column.' ORDER BY '.$orderDb.' '.$reverseDb.', '.$orderDb2.' ASC');
     $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     if ($result) {
         print_list($stmt, $format, ['name' => $column, 'value' => $column, 'stationcount' => 'StationCount'], $outputItemName);
     }
 }
 
-function print_states($db, $format, $search_term, $country)
+function print_states($db, $format, $search_term, $country, $order, $reverse)
 {
+    $reverseDb = filterOrderReverse($reverse);
+    if ($order === "value"){
+        $orderDb = "SubCountry";
+        $orderDb2 = "StationCount";
+    }else{
+        $orderDb = "StationCount";
+        $orderDb2 = "SubCountry";
+    }
     if ($country !== '') {
-        $stmt = $db->prepare("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Country=:country AND Subcountry LIKE :search AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
+        $stmt = $db->prepare('SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Country=:country AND Subcountry LIKE :search AND Country<>"" AND Subcountry<>"" GROUP BY Country, Subcountry ORDER BY '.$orderDb.' '.$reverseDb.', '.$orderDb2.' ASC');
         $result = $stmt->execute(['search' => '%'.$search_term.'%', 'country' => $country]);
     } else {
-        $stmt = $db->prepare("SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Subcountry LIKE :search AND Country<>'' AND Subcountry<>'' GROUP BY Country, Subcountry ORDER BY Subcountry");
+        $stmt = $db->prepare('SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Subcountry LIKE :search AND Country<>"" AND Subcountry<>"" GROUP BY Country, Subcountry ORDER BY '.$orderDb.' '.$reverseDb.', '.$orderDb2.' ASC');
         $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     }
 
     if ($result) {
-        print_list($stmt, $format, ['name' => 'Subcountry', 'country' => 'Country', 'stationcount' => 'StationCount'], 'state');
+        print_list($stmt, $format, ['name' => 'Subcountry', 'value' => 'Subcountry', 'country' => 'Country', 'stationcount' => 'StationCount'], 'state');
     }
 }
 
