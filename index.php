@@ -42,11 +42,11 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'stats') {
         print_stats($db, $format);
     }elseif ($action == 'data_search_topvote') {
-        print_stations_list_data_all($db, $format, "Votes", "true", $offset, $limit);
+        print_stations_list_data_all($db, $format, "votes", "true", $offset, $limit);
     }elseif ($action == 'data_search_topclick') {
         print_stations_list_data_all($db, $format, "clickcount", "true", $offset, $limit);
     }elseif ($action == 'data_search_lastclick') {
-        print_stations_list_data_all($db, $format, "ClickTimestamp", "true", $offset, $limit);
+        print_stations_list_data_all($db, $format, "clicktimestamp", "true", $offset, $limit);
     }elseif ($action == 'data_search_lastchange') {
         print_stations_list_data_all($db, $format, "Creation", "true", $offset, $limit);
     }elseif ($action == 'data_search') {
