@@ -322,7 +322,7 @@ function print_stations_list_data_exact($db, $format, $column, $search_term, $mu
     $result = false;
     if ($search_term !== '' && $search_term !== null && $search_term !== false) {
         if ($multivalue === true) {
-            $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND ('.$column.'=:searchSingle OR '.$column.' LIKE :searchRight OR '.$column.' LIKE :searchLeft OR '.$column.' LIKE :searchMiddle) ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :$limit OFFSET :offset');
+            $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND ('.$column.'=:searchSingle OR '.$column.' LIKE :searchRight OR '.$column.' LIKE :searchLeft OR '.$column.' LIKE :searchMiddle) ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :limit OFFSET :offset');
             $stmt->bindValue(':limit', intval($limit), PDO::PARAM_INT);
             $stmt->bindValue(':offset', intval($offset), PDO::PARAM_INT);
             $stmt->bindValue(':searchSingle', $search_term, PDO::PARAM_STR);
