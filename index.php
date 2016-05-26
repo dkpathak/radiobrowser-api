@@ -1,7 +1,18 @@
 <?php
 require 'db.php';
+if (isset($_SERVER["CONTENT_TYPE"])){
+    if (strpos($_SERVER["CONTENT_TYPE"],"application/json") === 0)
+    {
+        $rawData = file_get_contents('php://input');
+        $JSON = json_decode($rawData, true);
+    }
+}
 
 function getParameter($paramName, $defaultValue){
+    global $JSON;
+    if (isset($JSON[$paramName])) {
+        return $JSON[$paramName];
+    }
     if (isset($_GET[$paramName])) {
         return $_GET[$paramName];
     }
