@@ -345,7 +345,7 @@ function checkStation($url, &$bitrate, &$codec, &$log)
                 $bitrate = 0;
             }
             return $url;
-        }else if ($statusCode === 301 || $statusCode === 302){
+        }else if ($statusCode === 301 || $statusCode === 302 || $statusCode === 307){
             $location = getItemFromDict($headers, 'Location');
             if ($location !== false) {
                 array_push($log, ' - Redirect:'.$location);
