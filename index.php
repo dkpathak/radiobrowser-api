@@ -17,7 +17,10 @@ if (isset($_GET['action'])) {
     // check parameters, set default values
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $term = getParameter('term','');
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
+    $offset = getParameter('offset', 0);
+    $limit = getParameter('limit', 25);
+    $reverse = getParameter('reverse',"false");
+    $order = getParameter('order',"");
     $stationid = isset($_GET['stationid']) ? $_GET['stationid'] : null;
     $action = $_GET['action'];
 
@@ -39,43 +42,47 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'stats') {
         print_stats($db, $format);
     }elseif ($action == 'data_search_topvote') {
-        print_stations_top_vote_data($db, $format, $limit);
+        print_stations_list_data_all($db, $format, "Votes", "true", $offset, $limit);
     }elseif ($action == 'data_search_topclick') {
-        print_stations_top_click_data($db, $format, $limit);
+        print_stations_list_data_all($db, $format, "clickcount", "true", $offset, $limit);
     }elseif ($action == 'data_search_lastclick') {
-        print_stations_last_click_data($db, $format, $limit);
+        print_stations_list_data_all($db, $format, "ClickTimestamp", "true", $offset, $limit);
     }elseif ($action == 'data_search_lastchange') {
-        print_stations_last_change_data($db, $format, $limit);
+        print_stations_list_data_all($db, $format, "Creation", "true", $offset, $limit);
     }elseif ($action == 'data_search') {
-        print_stations_list_data($db, $format, 'Name', $term);
+        print_stations_list_data($db, $format, 'Name', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_name') {
-        print_stations_list_data($db, $format, 'Name', $term);
+        print_stations_list_data($db, $format, 'Name', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_name_exact') {
-        print_stations_list_data_exact($db, $format, 'Name', $term, false);
+        print_stations_list_data_exact($db, $format, 'Name', $term, false, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bycodec') {
-        print_stations_list_data($db, $format, 'Codec', $term);
+        print_stations_list_data($db, $format, 'Codec', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bycodec_exact') {
-        print_stations_list_data_exact($db, $format, 'Codec', $term, false);
+        print_stations_list_data_exact($db, $format, 'Codec', $term, false, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bycountry') {
-        print_stations_list_data($db, $format, 'Country', $term);
+        print_stations_list_data($db, $format, 'Country', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bycountry_exact') {
-        print_stations_list_data_exact($db, $format, 'Country', $term, false);
+        print_stations_list_data_exact($db, $format, 'Country', $term, false, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bystate') {
-        print_stations_list_data($db, $format, 'Subcountry', $term);
+        print_stations_list_data($db, $format, 'Subcountry', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bystate_exact') {
-        print_stations_list_data_exact($db, $format, 'Subcountry', $term, false);
+        print_stations_list_data_exact($db, $format, 'Subcountry', $term, false, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bylanguage') {
-        print_stations_list_data($db, $format, 'Language', $term);
+        print_stations_list_data($db, $format, 'Language', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bylanguage_exact') {
-        print_stations_list_data_exact($db, $format, 'Language', $term, false);
+        print_stations_list_data_exact($db, $format, 'Language', $term, false, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bytag') {
-        print_stations_list_data($db, $format, 'Tags', $term);
+        print_stations_list_data($db, $format, 'Tags', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bytag_exact') {
-        print_stations_list_data_exact($db, $format, 'Tags', $term, true);
+        print_stations_list_data_exact($db, $format, 'Tags', $term, true, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_byid') {
-        print_stations_list_data_exact($db, $format, 'StationID', $term, false);
+        print_stations_list_data_exact($db, $format, 'StationID', $term, false, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_broken') {
         print_stations_list_broken($db, $format, $limit);
+    }elseif ($action == 'data_search_improvable') {
+        print_stations_list_improvable($db, $format, $limit);
+    }elseif ($action == 'data_stations_all') {
+        print_stations_list_data_all($db, $format, $order, $reverse, $offset, $limit);
     }elseif ($action == 'add') {
         addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
     }elseif ($action == 'edit') {

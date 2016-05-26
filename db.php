@@ -2,6 +2,27 @@
 
 require 'utils.php';
 
+$columnMapping = [
+    'id' => 'StationID',
+    'name' => 'Name',
+    'url' => 'Url',
+    'homepage' => 'Homepage',
+    'favicon' => 'Favicon',
+    'tags' => 'Tags',
+    'country' => 'Country',
+    'state' => 'Subcountry',
+    'language' => 'Language',
+    'votes' => 'Votes',
+    'negativevotes' => 'NegativeVotes',
+    'codec' => 'Codec',
+    'bitrate' => 'Bitrate',
+    'lastcheckok' => 'LastCheckOK',
+    'lastchecktime' => 'LastCheckTime',
+    'clicktimestamp' => 'ClickTimestamp',
+    'clickcount' => 'clickcount',
+    'clicktrend' => 'ClickTrend'
+];
+
 function openDB()
 {
     $db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', '');
@@ -125,26 +146,8 @@ Print a result set with many stations in the given format
 */
 function print_result_stations($stmt, $format)
 {
-    print_list($stmt, $format, [
-        'id' => 'StationID',
-        'name' => 'Name',
-        'url' => 'Url',
-        'homepage' => 'Homepage',
-        'favicon' => 'Favicon',
-        'tags' => 'Tags',
-        'country' => 'Country',
-        'state' => 'Subcountry',
-        'language' => 'Language',
-        'votes' => 'Votes',
-        'negativevotes' => 'NegativeVotes',
-        'codec' => 'Codec',
-        'bitrate' => 'Bitrate',
-        'lastcheckok' => 'LastCheckOK',
-        'lastchecktime' => 'LastCheckTime',
-        'clicktimestamp' => 'ClickTimestamp',
-        'clickcount' => 'clickcount',
-        'clicktrend' => 'ClickTrend'
-    ], 'station');
+    global $columnMapping;
+    print_list($stmt, $format, $columnMapping, 'station');
 }
 
 function print_tags($db, $format, $search_term)
@@ -177,38 +180,6 @@ function print_states($db, $format, $search_term, $country)
 
     if ($result) {
         print_list($stmt, $format, ['name' => 'Subcountry', 'country' => 'Country', 'stationcount' => 'StationCount'], 'state');
-    }
-}
-
-function print_stations_last_click_data($db, $format, $limit)
-{
-    $result = $db->query('SELECT * FROM Station WHERE Station.Source IS NULL ORDER BY ClickTimestamp DESC LIMIT '.$limit);
-    if ($result) {
-        print_result_stations($result, $format);
-    }
-}
-
-function print_stations_last_change_data($db, $format, $limit)
-{
-    $result = $db->query('SELECT * FROM Station WHERE Station.Source IS NULL ORDER BY Creation DESC LIMIT '.$limit);
-    if ($result) {
-        print_result_stations($result, $format);
-    }
-}
-
-function print_stations_top_click_data($db, $format, $limit)
-{
-    $result = $db->query('SELECT * FROM Station WHERE Station.Source IS NULL ORDER BY clickcount DESC LIMIT '.$limit);
-    if ($result) {
-        print_result_stations($result, $format);
-    }
-}
-
-function print_stations_top_vote_data($db, $format, $limit)
-{
-    $result = $db->query('SELECT * FROM Station WHERE Source IS NULL ORDER BY Votes DESC,NegativeVotes ASC,Name LIMIT '.$limit);
-    if ($result) {
-        print_result_stations($result, $format);
     }
 }
 
@@ -294,31 +265,82 @@ function print_stats($db, $format)
     print_output_footer($format);
 }
 
-function print_stations_list_data($db, $format, $column, $search_term)
-{
-    if ($search_term != '') {
-        $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.' LIKE :search');
-        $result = $stmt->execute(['search' => '%'.$search_term.'%']);
-    } else {
-        $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL');
-        $result = $stmt->execute();
+function filterOrderColumnName($columnName){
+    global $columnMapping;
+
+    foreach ($columnMapping as $apiName => $dbColumnName) {
+        if ($apiName === $columnName){
+            return $dbColumnName;
+        }
     }
+    return "Name";
+}
+
+function filterOrderReverse($reverse){
+    if (strtolower($reverse) === "true"){
+        return "DESC";
+    }
+    return "ASC";
+}
+
+function print_stations_list_data_all($db, $format, $order, $reverse, $offset, $limit)
+{
+    $orderDb = filterOrderColumnName($order);
+    $reverseDb = filterOrderReverse($reverse);
+    $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :limit OFFSET :offset');
+    $stmt->bindValue(':limit', intval($limit), PDO::PARAM_INT);
+    $stmt->bindValue(':offset', intval($offset), PDO::PARAM_INT);
+    $result = $stmt->execute();
     if ($result) {
         print_result_stations($stmt, $format);
     }
 }
 
-function print_stations_list_data_exact($db, $format, $column, $search_term, $multivalue)
+function print_stations_list_data($db, $format, $column, $search_term, $order, $reverse, $offset, $limit)
 {
+    $orderDb = filterOrderColumnName($order);
+    $reverseDb = filterOrderReverse($reverse);
+    if ($search_term !== "" && $search_term !== null && $search_term !== false) {
+        $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.' LIKE :search ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :limit OFFSET :offset');
+        $stmt->bindValue(':search', '%'.$search_term.'%', PDO::PARAM_STR);
+    } else {
+        $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.'="" ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :limit OFFSET :offset');
+    }
+    $stmt->bindValue(':limit', intval($limit), PDO::PARAM_INT);
+    $stmt->bindValue(':offset', intval($offset), PDO::PARAM_INT);
+    $result = $stmt->execute();
+    if ($result) {
+        print_result_stations($stmt, $format);
+    }
+}
+
+function print_stations_list_data_exact($db, $format, $column, $search_term, $multivalue, $order, $reverse, $offset, $limit)
+{
+    $orderDb = filterOrderColumnName($order);
+    $reverseDb = filterOrderReverse($reverse);
     $result = false;
-    if ($search_term != '') {
+    if ($search_term !== '' && $search_term !== null && $search_term === false) {
         if ($multivalue === true) {
-            $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND ('.$column.'=:searchSingle OR '.$column.' LIKE :searchRight OR '.$column.' LIKE :searchLeft OR '.$column.' LIKE :searchMiddle)');
-            $result = $stmt->execute(['searchSingle' => $search_term, 'searchLeft' => '%,'.$search_term, 'searchRight' => $search_term.',%', 'searchMiddle' => '%,'.$search_term.',%']);
+            $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND ('.$column.'=:searchSingle OR '.$column.' LIKE :searchRight OR '.$column.' LIKE :searchLeft OR '.$column.' LIKE :searchMiddle) ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :$limit OFFSET :offset');
+            $stmt->bindValue(':limit', intval($limit), PDO::PARAM_INT);
+            $stmt->bindValue(':offset', intval($offset), PDO::PARAM_INT);
+            $stmt->bindValue(':searchSingle', $search_term, PDO::PARAM_STR);
+            $stmt->bindValue(':searchLeft', '%,'.$search_term, PDO::PARAM_STR);
+            $stmt->bindValue(':searchRight', $search_term.',%', PDO::PARAM_STR);
+            $stmt->bindValue(':searchMiddle', '%,'.$search_term.',%', PDO::PARAM_STR);
+            $result = $stmt->execute();
         } else {
-            $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.'=:search');
-            $result = $stmt->execute(['search' => $search_term]);
+            $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.'=:search ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :limit OFFSET :offset');
+            $stmt->bindValue(':limit', intval($limit), PDO::PARAM_INT);
+            $stmt->bindValue(':offset', intval($offset), PDO::PARAM_INT);
+            $stmt->bindValue(':search', $search_term, PDO::PARAM_STR);
+            $result = $stmt->execute();
         }
+    }else{
+        $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND '.$column.'="" ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :limit OFFSET :offset');
+        $stmt->bindValue(':limit', intval($limit), PDO::PARAM_INT);
+        $stmt->bindValue(':offset', intval($offset), PDO::PARAM_INT);
+        $result = $stmt->execute();
     }
     if ($result) {
         print_result_stations($stmt, $format);
@@ -328,7 +350,19 @@ function print_stations_list_data_exact($db, $format, $column, $search_term, $mu
 function print_stations_list_broken($db, $format, $limit)
 {
     $result = false;
-    $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND LastCheckOK=0 LIMIT :limit');
+    $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND LastCheckOK=0 ORDER BY RAND() LIMIT :limit');
+    $stmt->bindValue(':limit', intval($limit), PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result) {
+        print_result_stations($stmt, $format);
+    }
+}
+
+function print_stations_list_improvable($db, $format, $limit)
+{
+    $result = false;
+    $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL AND LastCheckOK=1 AND (Tags="" OR Country="") ORDER BY RAND() LIMIT :limit');
     $stmt->bindValue(':limit', intval($limit), PDO::PARAM_INT);
     $result = $stmt->execute();
 

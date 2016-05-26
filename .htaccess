@@ -41,6 +41,8 @@ RewriteRule ^webservice/(.*)/stations/lastchange/(.*)$ /?format=$1&limit=$2&acti
 RewriteRule ^webservice/(.*)/stations/lastchange$ /?format=$1&action=data_search_lastchange
 RewriteRule ^webservice/(.*)/stations/broken/(.*)$ /?format=$1&limit=$2&action=data_search_broken
 RewriteRule ^webservice/(.*)/stations/broken$ /?format=$1&action=data_search_broken
+RewriteRule ^webservice/(.*)/stations/improvable/(.*)$ /?format=$1&limit=$2&action=data_search_broken
+RewriteRule ^webservice/(.*)/stations/improvable$ /?format=$1&action=data_search_improvable
 
 RewriteRule ^webservice/(.*)/stations/byid/(.*)$ /?format=$1&term=$2&action=data_search_byid [B,L,QSD]
 RewriteRule ^webservice/(.*)/stations/byname/(.*)$ /?format=$1&term=$2&action=data_search_name [B,L,QSD]
@@ -56,7 +58,7 @@ RewriteRule ^webservice/(.*)/stations/bylanguageexact/(.*)$ /?format=$1&term=$2&
 RewriteRule ^webservice/(.*)/stations/bytag/(.*)$ /?format=$1&term=$2&action=data_search_bytag [B,L,QSD]
 RewriteRule ^webservice/(.*)/stations/bytagexact/(.*)$ /?format=$1&term=$2&action=data_search_bytag_exact [B,L,QSD]
 RewriteRule ^webservice/(.*)/stations/(.*)$ /?format=$1&term=$2&action=data_search [B,L,QSD]
-RewriteRule ^webservice/(.*)/stations$ /?format=$1&action=data_search [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations$ /?format=$1&action=data_stations_all [B,L,QSD]
 
 # compatibility with old rhytmbox-radio-browser
 RewriteRule ^xml.php$ /?format=xml&action=data_search
