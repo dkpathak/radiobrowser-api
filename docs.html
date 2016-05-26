@@ -109,8 +109,7 @@
     <a id="list_stations"></a>
     <a href="#list_stations"><h2>List of radio stations</h2></a>
     <div class="header_sub">Syntax:</div>
-    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations
-    <br /> http://www.radio-browser.info/webservice/xml/stations/byid/searchterm
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/byid/searchterm
     <br /> http://www.radio-browser.info/webservice/xml/stations/byname/searchterm
     <br /> http://www.radio-browser.info/webservice/xml/stations/bynameexact/searchterm
     <br /> http://www.radio-browser.info/webservice/xml/stations/bycodec/searchterm
@@ -124,7 +123,6 @@
     <br /> http://www.radio-browser.info/webservice/xml/stations/bytag/searchterm
     <br /> http://www.radio-browser.info/webservice/xml/stations/bytagexact/searchterm
     <br />
-    <br/> http://www.radio-browser.info/webservice/json/stations
     <br /> http://www.radio-browser.info/webservice/json/stations/byid/searchterm
     <br /> http://www.radio-browser.info/webservice/json/stations/byname/searchterm
     <br /> http://www.radio-browser.info/webservice/json/stations/bynameexact/searchterm
@@ -140,8 +138,8 @@
     <br /> http://www.radio-browser.info/webservice/json/stations/bytagexact/searchterm
   </div>
     <div class="header_sub">Description:</div>
-    Will get a list of all radio stations. It is possible to add a search term to only get stations that have the term in their names. The variants with "exact" will only search for perfect matches.
-    <br /> It is also possible to select stations based on their country, state, language, tags or id.
+    Will get a list of radio stations that match the search. The variants with "exact" will only search for perfect matches. The others will match if the station attribute contains the searchterm.
+    <br/>
     <br/> Supported output formats: json,xml
     <br/>
     <div class="header_sub">Parameter:</div>
@@ -193,6 +191,51 @@
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountry/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountry/austria</a></div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria</a></div>
 
+    <a id="list_stations_all"></a>
+    <a href="#list_stations_all"><h2>List of all radio stations</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations
+    <br/> http://www.radio-browser.info/webservice/json/stations
+    </div>
+    <div class="header_sub">Description:</div>
+    Will get a list of all radio stations.
+    <br/> Supported output formats: json,xml
+    <br/>
+    <div class="header_sub">Parameter:</div>
+    This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request.
+    <table>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>default value</th>
+          <th>possible values</th>
+          <th>description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>order</td>
+          <td>name</td>
+          <td>
+            name, url, homepage, favicon, tags,
+            country, state, language, votes, negativevotes,
+            codec, bitrate, lastcheckok, lastchecktime, clicktimestamp,
+            clickcount, clicktrend
+          </td>
+          <td>name of the attribute the result list will be sorted by</td>
+        </tr>
+        <tr>
+          <td>reverse</td>
+          <td>false</td>
+          <td>true, false</td>
+          <td>rerverses the result list if set to true</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/xml/stations" target="_blank">http://www.radio-browser.info/webservice/xml/stations</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/json/stations" target="_blank">http://www.radio-browser.info/webservice/json/stations</a></div>
+
     <a id="stations_broken"></a>
     <a href="#stations_broken"><h2>Broken stations</h2></a>
     <div class="header_sub">Syntax:</div>
@@ -207,6 +250,21 @@
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/broken" target="_blank">http://www.radio-browser.info/webservice/xml/stations/broken</a></div>
     <div><a href="http://www.radio-browser.info/webservice/json/stations/broken/5" target="_blank">http://www.radio-browser.info/webservice/json/stations/broken/5</a></div>
+
+    <a id="stations_improvable"></a>
+    <a href="#stations_improvable"><h2>Stations that need improvement</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/improvable
+    <br /> http://www.radio-browser.info/webservice/xml/stations/improvable/rowcount
+    <br /> http://www.radio-browser.info/webservice/json/stations/improvable
+    <br /> http://www.radio-browser.info/webservice/json/stations/improvable/rowcount
+    </div>
+    <div class="header_sub">Description:</div>
+    Returns a list of the stations that did not pass the connection test. Supported output formats: json,xml
+    <br/>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/xml/stations/improvable" target="_blank">http://www.radio-browser.info/webservice/xml/stations/improvable</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/json/stations/improvable/5" target="_blank">http://www.radio-browser.info/webservice/json/stations/improvable/5</a></div>
 
     <a id="stations_by_clicks"></a>
     <a href="#stations_by_clicks"><h2>Stations by clicks</h2></a>

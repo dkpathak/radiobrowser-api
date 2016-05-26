@@ -49,8 +49,6 @@ if (isset($_GET['action'])) {
         print_stations_list_data_all($db, $format, "clicktimestamp", "true", $offset, $limit);
     }elseif ($action == 'data_search_lastchange') {
         print_stations_list_data_all($db, $format, "lastchangetime", "true", $offset, $limit);
-    }elseif ($action == 'data_search') {
-        print_stations_list_data($db, $format, 'Name', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_name') {
         print_stations_list_data($db, $format, 'Name', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_name_exact') {
@@ -82,7 +80,7 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'data_search_improvable') {
         print_stations_list_improvable($db, $format, $limit);
     }elseif ($action == 'data_stations_all') {
-        print_stations_list_data_all($db, $format, $order, $reverse, $offset, $limit);
+        print_stations_list_data_all($db, $format, $order, $reverse, 0, 100000);
     }elseif ($action == 'add') {
         addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
     }elseif ($action == 'edit') {
