@@ -612,21 +612,39 @@ function deleteStation($db, $format, $stationid)
 
 function undeleteStation($db, $format, $stationid)
 {
-    if (trim($stationid) != '' && $stationid !== null) {
-        try{
-            $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation FROM StationHistory WHERE StationID=:id');
-            $result = $stmt->execute(['id' => $stationid]);
-            print_r($stmt->errorInfo());
-            if ($stmt->rowCount() === 1 && $result){
-                sendResult($format, true, "undeleted station successfully");
-            }else{
-                sendResult($format, false, "could not find station with matching id");
-            }
-        }catch(Exception $e){
-           sendResult($format, false, "error on server");
-        }
-    }else{
+    if (trim($stationid) === '' || $stationid === null) {
         sendResult($format, false, "stationid was null");
+        return;
+    }
+    try{
+        // check if already existing
+        $stmt = $db->prepare('SELECT StationID FROM Station WHERE StationID=:id');
+        $stmt->execute(['id' => $stationid]);
+        if ($stmt->rowCount() > 0){
+            sendResult($format, false, "station with this id is already existing");
+            return;
+        }
+
+        // get last backup of station
+        $stmt = $db->prepare('SELECT StationChangeID FROM StationHistory WHERE StationID=:id ORDER BY Creation DESC LIMIT 1');
+        $stmt->execute(['id' => $stationid]);
+        if ($stmt->rowCount() !== 1){
+            sendResult($format, false, "could not find station backup for id");
+            return;
+        }
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stationChangeId = $result["StationChangeID"];
+
+        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
+        $stmt->execute(['id' => $stationid,'changeid' => $stationChangeId]);
+        if ($stmt->rowCount() === 1){
+            sendResult($format, true, "undeleted station successfully");
+        }else{
+            sendResult($format, false, "could not find station with matching id");
+        }
+    }catch(Exception $e){
+        sendResult($format, false, "error on server");
     }
 }
 
