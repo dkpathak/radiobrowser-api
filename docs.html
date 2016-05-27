@@ -334,7 +334,7 @@
     <br/> http://www.radio-browser.info/webservice/json/stations
     </div>
     <div class="header_sub">Description:</div>
-    Will get a list of all radio stations.
+    Will get a list of all radio stations. Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted.
     <br/> Supported output formats: json,xml
     <br/>
     <div class="header_sub">Parameter:</div>
@@ -484,7 +484,10 @@
     <br /> http://www.radio-browser.info/webservice/pls/url/stationid
     </div>
     <div class="header_sub">Description:</div>
-    Returns the playable url for the station. Does return 404 code if the playlist on the remote server could not be retrieved. In this case the station is not working any more and needs to get updated. Supported output formats: json,xml,pls (playlist)
+    Returns the playable url for the station. Does return 404 code if the playlist on the remote server could not be retrieved. In this case the station is not working any more and needs to get updated.<br/>
+    Any Playlist (PLS, ASX, M3U) decoding will be done for you.<br/>
+    This API call will count as a click on the station.<br/>
+    Supported output formats: json,xml,pls (playlist)
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/url/123" target="_blank">http://www.radio-browser.info/webservice/xml/url/123</a></div>
