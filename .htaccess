@@ -29,6 +29,8 @@ RewriteRule ^webservice/$ /docs.html
 
 RewriteRule ^webservice/add$ /?action=add
 RewriteRule ^webservice/edit$ /?action=edit
+RewriteRule ^webservice/(.*)/delete/(.*)$ /?format=$1&action=delete&stationid=$2
+RewriteRule ^webservice/(.*)/undelete/(.*)$ /?format=$1&action=undelete&stationid=$2
 
 # http://site/webservice/<type>/stations
 RewriteRule ^webservice/(.*)/stations/topvote/(.*)$ /?format=$1&limit=$2&action=data_search_topvote

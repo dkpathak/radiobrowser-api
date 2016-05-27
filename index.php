@@ -97,7 +97,9 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'edit') {
         editStation($db, $_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
     }elseif ($action == 'delete') {
-        deleteStation($db, $stationid);
+        deleteStation($db, $format, $stationid);
+    }elseif ($action == 'undelete') {
+        undeleteStation($db, $format, $stationid);
     }elseif ($action == 'vote') {
         voteForStation($db, $format, $stationid);
     }elseif ($action == 'negativevote') {

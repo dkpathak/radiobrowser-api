@@ -486,7 +486,7 @@ function print_output_item_content($format, $key, $value)
 function backupStation($db, $stationid)
 {
     // backup old content
-    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,Language,Tags,Votes,NegativeVotes,Creation FROM Station WHERE StationID=:id');
+    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation FROM Station WHERE StationID=:id');
     $result = $stmt->execute(['id' => $stationid]);
 }
 
@@ -594,12 +594,51 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
     }
 }
 
-function deleteStation($db, $stationid)
+function deleteStation($db, $format, $stationid)
 {
-    if (trim($stationid) != '') {
+    if (trim($stationid) != '' && $stationid !== null) {
         backupStation($db, $stationid);
         $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id');
-        $stmt->execute(['id' => $stationid]);
+        $result = $stmt->execute(['id' => $stationid]);
+        if ($stmt->rowCount() === 1 && $result){
+            sendResult($format, true,"deleted station successfully");
+        }else{
+            sendResult($format, false,"could not find station with matching id");
+        }
+    }else{
+        sendResult($format, false, "stationid was null");
+    }
+}
+
+function undeleteStation($db, $format, $stationid)
+{
+    if (trim($stationid) != '' && $stationid !== null) {
+        try{
+            $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation FROM StationHistory WHERE StationID=:id');
+            $result = $stmt->execute(['id' => $stationid]);
+            print_r($stmt->errorInfo());
+            if ($stmt->rowCount() === 1 && $result){
+                sendResult($format, true, "undeleted station successfully");
+            }else{
+                sendResult($format, false, "could not find station with matching id");
+            }
+        }catch(Exception $e){
+           sendResult($format, false, "error on server");
+        }
+    }else{
+        sendResult($format, false, "stationid was null");
+    }
+}
+
+function sendResult($format, $ok, $message){
+    if ($format === "xml" || $format === "json"){
+        print_output_header($format);
+        print_output_item_start($format, 'status');
+        print_output_item_content($format, 'ok', $ok ? 'true' : 'false');
+        print_output_item_dict_sep($format);
+        print_output_item_content($format, 'message', $message);
+        print_output_item_end($format);
+        print_output_footer($format);
     }
 }
 

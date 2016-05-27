@@ -508,6 +508,60 @@
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/json/vote/123" target="_blank">http://www.radio-browser.info/webservice/json/vote/123</a></div>
 
+    <a id="station_delete"></a>
+    <a href="#station_delete"><h2>Delete a station</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">
+    http://www.radio-browser.info/webservice/xml/delete/stationid
+    <br/> http://www.radio-browser.info/webservice/json/delete/stationid
+    </div>
+    <div class="header_sub">Description:</div>
+    The station will be deleted from the public list and moved to a deleted list. It will stay there for 30 days and then removed from the system. As long as it is in the deleted list it can be undeleted at any time.
+    <br/> Supported output formats: json,xml
+    <br/>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+{
+  "ok": true
+  "message": "station was deleted"
+}
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;status ok=&quot;true&quot; message=&quot;station was deleted&quot;/&gt;
+&lt;/result&gt;
+    </pre>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/json/delete/123" target="_blank">http://www.radio-browser.info/webservice/json/delete/123</a></div>
+
+    <a id="station_undelete"></a>
+    <a href="#station_undelete"><h2>UnDelete a station</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">
+    http://www.radio-browser.info/webservice/xml/undelete/stationid
+    <br/> http://www.radio-browser.info/webservice/json/undelete/stationid
+    </div>
+    <div class="header_sub">Description:</div>
+    Undeletes a station which was deleted in the last 30 days.
+    <br/> Supported output formats: json,xml
+    <br/>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+{
+  "ok": true
+  "message": "station was undeleted"
+}
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;status ok=&quot;true&quot; message=&quot;station was undeleted&quot;/&gt;
+&lt;/result&gt;
+    </pre>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/json/undelete/123" target="_blank">http://www.radio-browser.info/webservice/json/undelete/123</a></div>
+
     <a id="server_stats"></a>
     <a href="#server_stats"><h2>Server stats</h2></a>
     <div class="header_sub">Syntax:</div>
