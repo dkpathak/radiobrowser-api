@@ -476,6 +476,36 @@
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/lastchange" target="_blank">http://www.radio-browser.info/webservice/xml/stations/lastchange</a></div>
     <div><a href="http://www.radio-browser.info/webservice/json/stations/lastchange/5" target="_blank">http://www.radio-browser.info/webservice/json/stations/lastchange/5</a></div>
 
+    <a id="stations_deleted"></a>
+    <a href="#stations_deleted"><h2>Stations that got deleted</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/deleted
+    <br /> http://www.radio-browser.info/webservice/json/stations/deleted/stationid
+    <br /> http://www.radio-browser.info/webservice/xml/stations/deleted
+    <br /> http://www.radio-browser.info/webservice/xml/stations/deleted/stationid
+    </div>
+    <div class="header_sub">Description:</div>
+    Returns a list of stations that got deleted in the last 30 days. Also a single station can be retrieved by id. They are not visible through any other API calls. If you want to undelete a station call <a href="#station_undelete">Undelete Station</a>.
+    <br/>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/xml/stations/deleted" target="_blank">http://www.radio-browser.info/webservice/xml/stations/deleted</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/json/stations/deleted/123" target="_blank">http://www.radio-browser.info/webservice/json/stations/deleted/123</a></div>
+
+    <a id="stations_changed"></a>
+    <a href="#stations_changed"><h2>Old versions of stations</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/changed
+    <br /> http://www.radio-browser.info/webservice/json/stations/changed/stationid
+    <br /> http://www.radio-browser.info/webservice/xml/stations/changed
+    <br /> http://www.radio-browser.info/webservice/xml/stations/changed/stationid
+    </div>
+    <div class="header_sub">Description:</div>
+    Returns a list of old versions of stations from the last 30 days. Also the history of a single station can be retrieved by id. They are not visible through any other API calls. If you want to revert a station call <a href="#station_revert">Revert Station</a>.
+    <br/>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/xml/stations/changed" target="_blank">http://www.radio-browser.info/webservice/xml/stations/changed</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/json/stations/changed/123" target="_blank">http://www.radio-browser.info/webservice/json/stations/changed/123</a></div>
+
     <a id="station_url"></a>
     <a href="#station_url"><h2>Playable station url</h2></a>
     <div class="header_sub">Syntax:</div>
@@ -561,6 +591,34 @@
     </pre>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/json/undelete/123" target="_blank">http://www.radio-browser.info/webservice/json/undelete/123</a></div>
+
+    <a id="station_revert"></a>
+    <a href="#station_revert"><h2>Revert a station</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">
+    http://www.radio-browser.info/webservice/xml/revert/stationid/changeid
+    <br/> http://www.radio-browser.info/webservice/json/revert/stationid/changeid
+    </div>
+    <div class="header_sub">Description:</div>
+    Reverts a change to a station that was done in the last 30 days.
+    <br/> Supported output formats: json,xml
+    <br/>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+{
+  "ok": true
+  "message": "station was reverted"
+}
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;status ok=&quot;true&quot; message=&quot;station was reverted&quot;/&gt;
+&lt;/result&gt;
+    </pre>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/json/revert/123/456" target="_blank">http://www.radio-browser.info/webservice/json/revert/123/456</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/xml/revert/123/456" target="_blank">http://www.radio-browser.info/webservice/xml/revert/123/456</a></div>
 
     <a id="server_stats"></a>
     <a href="#server_stats"><h2>Server stats</h2></a>

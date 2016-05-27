@@ -33,6 +33,7 @@ if (isset($_GET['action'])) {
     $reverse = getParameter('reverse',"false");
     $order = getParameter('order',"");
     $stationid = isset($_GET['stationid']) ? $_GET['stationid'] : null;
+    $stationchangeid = isset($_GET['stationchangeid']) ? $_GET['stationchangeid'] : null;
     $action = $_GET['action'];
 
     $country = isset($_REQUEST['country']) ? $_REQUEST['country'] : '';
@@ -92,6 +93,14 @@ if (isset($_GET['action'])) {
         print_stations_list_improvable($db, $format, $limit);
     }elseif ($action == 'data_stations_all') {
         print_stations_list_data_all($db, $format, $order, $reverse, $offset, $limit);
+    }elseif ($action == 'data_search_deleted') {
+        print_stations_list_deleted($db, $format, $stationid);
+    }elseif ($action == 'data_search_deleted_all') {
+        print_stations_list_deleted_all($db, $format);
+    }elseif ($action == 'data_search_changed') {
+        print_stations_list_changed($db, $format, $stationid);
+    }elseif ($action == 'data_search_changed_all') {
+        print_stations_list_changed_all($db, $format);
     }elseif ($action == 'add') {
         addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
     }elseif ($action == 'edit') {
@@ -100,6 +109,8 @@ if (isset($_GET['action'])) {
         deleteStation($db, $format, $stationid);
     }elseif ($action == 'undelete') {
         undeleteStation($db, $format, $stationid);
+    }elseif ($action == 'revert') {
+        revertStation($db, $format, $stationid, $stationchangeid);
     }elseif ($action == 'vote') {
         voteForStation($db, $format, $stationid);
     }elseif ($action == 'negativevote') {

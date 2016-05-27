@@ -24,6 +24,22 @@ $columnMapping = [
     'lastchangetime' => 'Creation'
 ];
 
+$columnMappingHistory = [
+    'id' => 'StationID',
+    'changeid' => 'StationChangeID',
+    'name' => 'Name',
+    'url' => 'Url',
+    'homepage' => 'Homepage',
+    'favicon' => 'Favicon',
+    'tags' => 'Tags',
+    'country' => 'Country',
+    'state' => 'Subcountry',
+    'language' => 'Language',
+    'votes' => 'Votes',
+    'negativevotes' => 'NegativeVotes',
+    'lastchangetime' => 'Creation'
+];
+
 function openDB()
 {
     $db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', '');
@@ -149,6 +165,15 @@ function print_result_stations($stmt, $format)
 {
     global $columnMapping;
     print_list($stmt, $format, $columnMapping, 'station');
+}
+
+/*
+Print a result set with many stations in the given format
+*/
+function print_result_stations_history($stmt, $format)
+{
+    global $columnMappingHistory;
+    print_list($stmt, $format, $columnMappingHistory, 'station');
 }
 
 function print_tags($db, $format, $search_term, $order, $reverse)
@@ -396,6 +421,45 @@ function print_stations_list_improvable($db, $format, $limit)
     }
 }
 
+function print_stations_list_deleted($db, $format, $stationid){
+    $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NULL AND sth.StationID=:id ORDER BY sth.Creation DESC');
+    $stmt->bindValue(':id', $stationid, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result) {
+        print_result_stations_history($stmt, $format);
+    }
+}
+
+function print_stations_list_deleted_all($db, $format){
+    $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NULL ORDER BY sth.Creation DESC');
+    $result = $stmt->execute();
+
+    if ($result) {
+        print_result_stations_history($stmt, $format);
+    }
+}
+
+function print_stations_list_changed($db, $format, $stationid){
+    $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NOT NULL AND sth.StationID=:id ORDER BY sth.Creation DESC');
+    $stmt->bindValue(':id', $stationid, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result) {
+        print_result_stations_history($stmt, $format);
+    }
+}
+
+function print_stations_list_changed_all($db, $format){
+    $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NOT NULL ORDER BY sth.Creation DESC');
+    $result = $stmt->execute();
+
+    if ($result) {
+        print_result_stations_history($stmt, $format);
+    }
+}
+
+
 function print_output_item_dict_sep($format)
 {
     if ($format == 'xml') {
@@ -640,6 +704,44 @@ function undeleteStation($db, $format, $stationid)
         $stmt->execute(['id' => $stationid,'changeid' => $stationChangeId]);
         if ($stmt->rowCount() === 1){
             sendResult($format, true, "undeleted station successfully");
+        }else{
+            sendResult($format, false, "could not find station with matching id");
+        }
+    }catch(Exception $e){
+        sendResult($format, false, "error on server");
+    }
+}
+
+function revertStation($db, $format, $stationid, $stationchangeid)
+{
+    if (trim($stationid) === '' || $stationid === null) {
+        sendResult($format, false, "stationid was null");
+        return;
+    }
+    if (trim($stationchangeid) === '' || $stationchangeid === null) {
+        sendResult($format, false, "stationchangeid was null");
+        return;
+    }
+    try{
+        // get last backup of station
+        $stmt = $db->prepare('SELECT StationChangeID FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
+        $stmt->execute(['id' => $stationid,'changeid' => $stationchangeid]);
+        if ($stmt->rowCount() !== 1){
+            sendResult($format, false, "could not find the matching station backup");
+            return;
+        }
+
+        backupStation($db, $stationid);
+
+        // delete current station
+        $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id');
+        $stmt->execute(['id' => $stationid]);
+
+        // insert old station
+        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
+        $stmt->execute(['id' => $stationid,'changeid' => $stationchangeid]);
+        if ($stmt->rowCount() === 1){
+            sendResult($format, true, "reverted station successfully");
         }else{
             sendResult($format, false, "could not find station with matching id");
         }
