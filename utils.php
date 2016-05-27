@@ -234,7 +234,7 @@ function checkStationConnectionById($db, $stationid, $url, &$bitrate, &$codec, &
     } else {
         $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=FALSE WHERE StationID=:stationid');
         $stmt->execute(['stationid' => $stationid]);
-        return true;
+        return false;
     }
 }
 
