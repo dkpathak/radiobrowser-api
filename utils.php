@@ -45,6 +45,41 @@ function get_headers_curl($url){
     return $headers;
 }
 
+function writefn($ch, $chunk) {
+    global $data;
+    static $limit = 4096;
+
+    $len = strlen($data) + strlen($chunk);
+    if ($len >= $limit ) {
+      $data .= substr($chunk, 0, $limit-strlen($data));
+      echo strlen($data) , ' ', $data;
+      return -1;
+    }
+
+    $data .= $chunk;
+    return strlen($chunk);
+};
+
+function file_get_contents_curl($url) {
+    global $data;
+    $data = "";
+
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    curl_setopt($ch, CURLOPT_WRITEFUNCTION, "writefn");
+
+    if (!curl_exec($ch)){
+      $data = false;
+    }
+    curl_close($ch);
+
+    return $data;
+}
+
 function isContentTypePlaylist($contentType){
     return isContentTypePlaylistM3U($contentType) || isContentTypePlaylistPLS($contentType) || isContentTypePlaylistASX($contentType);
 }
@@ -164,8 +199,7 @@ function decodePlaylistUrlALL($content){
 function decodePlaylistUrl($url, $contentType)
 {
     // read max 4KB
-    $content = @file_get_contents($url, false, NULL, -1, 4096);
-
+    $content = file_get_contents_curl($url);//, false, NULL, -1, 4096);
     if ($content !== false){
         if (isContentTypePlaylistM3U($contentType)){
             $result = fixPlaylistItem($url,decodePlaylistUrlM3U($content));
@@ -277,7 +311,7 @@ function checkStation($url, &$bitrate, &$codec, &$log)
         $headers = @get_headers($url,1);
         $statusCode = decodeStatusCode($headers, $logStatusCode);
         $log = array_merge($log,$logStatusCode);
-        if ($statusCode === 404 || $statusCode === 500 || $statusCode === false) {
+        if ($statusCode === 400 || $statusCode === 404 || $statusCode === 500 || $statusCode === false) {
           array_push($log, " - try to connect with curl: ".$url);
           $headers = get_headers_curl($url);
           $statusCode = decodeStatusCode($headers, $logStatusCode);
