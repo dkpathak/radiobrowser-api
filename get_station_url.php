@@ -32,13 +32,13 @@ if ($audiofile !== false) {
         clickedStationID($db, $stationid);
     } elseif ($format == 'json') {
         header('Content-Type: application/json');
-        echo '{';
+        echo '[{';
         echo "\"ok\":\"true\",";
         echo "\"message\":\"retrieved station url successfully\",";
         echo "\"id\":\"$stationid\",";
         echo "\"name\":\"$stationname\",";
         echo '"url":"'.$audiofile.'"';
-        echo '}';
+        echo '}}';
         clickedStationID($db, $stationid);
     } elseif ($format == 'pls') {
         //header('content-type: audio/x-scpls');
