@@ -651,6 +651,111 @@
     <div><a href="http://www.radio-browser.info/webservice/json/revert/123/456" target="_blank">http://www.radio-browser.info/webservice/json/revert/123/456</a></div>
     <div><a href="http://www.radio-browser.info/webservice/xml/revert/123/456" target="_blank">http://www.radio-browser.info/webservice/xml/revert/123/456</a></div>
 
+    <a id="add_station"></a>
+    <a href="#add_station"><h2>Add radio station</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/byid/searchterm
+    <br /> http://www.radio-browser.info/webservice/json/stations/bytagexact/searchterm
+  </div>
+    <div class="header_sub">Description:</div>
+    Add a radio station to the database.
+    <br/>
+    <br/> Supported output formats: json,xml
+    <br/>
+    <div class="header_sub">Parameter:</div>
+    This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
+    <table width="100%">
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>default value</th>
+          <th>possible values</th>
+          <th>description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>name</td>
+          <td></td>
+          <td>Station Name</td>
+          <td>MANDATORY, the name of the radio station</td>
+        </tr>
+        <tr>
+          <td>url</td>
+          <td></td>
+          <td><nobr>http://this.is.an.url/stream.mp3</nobr></td>
+          <td>MANDATORY, the url of the station</td>
+        </tr>
+        <tr>
+          <td>homepage</td>
+          <td></td>
+          <td>http://this.is.an.url/</td>
+          <td>the homepage url of the station</td>
+        </tr>
+        <tr>
+          <td>favicon</td>
+          <td></td>
+          <td><nobr>http://this.is.an.url/favicon.ico</nobr></td>
+          <td>the url of an image file (jpg or png)</td>
+        </tr>
+        <tr>
+          <td>country</td>
+          <td></td>
+          <td>Austria</td>
+          <td>The name of the country where the radio station is located</td>
+        </tr>
+        <tr>
+          <td>state</td>
+          <td></td>
+          <td>Vienna</td>
+          <td>The name of the part of the country where the station is located</td>
+        </tr>
+        <tr>
+          <td>language</td>
+          <td></td>
+          <td>English</td>
+          <td>The main language which is used in spoken text parts of the radio station.</td>
+        </tr>
+        <tr>
+          <td>tags</td>
+          <td></td>
+          <td>pop,rock</td>
+          <td>A list of tags separated by commas, which describe the station.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+{
+  "ok": "true",
+  "message": "station was added",
+  "id": "123",
+  "stream_check_ok": "true",
+  "stream_check_bitrate": "128",
+  "stream_check_codec": "MP3",
+  "favicon_check_done": "true",
+  "favicon_check_ok": "true",
+  "favicon_check_url": "http://url.to.image/image.png"
+}
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;status ok=&quot;true&quot;
+    message=&quot;station was added&quot;
+    id=&quot;123&quot;
+    stream_check_ok=&quot;true&quot;
+    stream_check_bitrate=&quot;128&quot;
+    stream_check_codec=&quot;MP3&quot;
+    favicon_check_done=&quot;true&quot;
+    favicon_check_ok=&quot;true&quot;
+    favicon_check_url=&quot;http://url.to.image/image.png&quot;/&gt;
+&lt;/result&gt;
+    </pre>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/json/add" target="_blank">http://www.radio-browser.info/webservice/json/add</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/xml/add" target="_blank">http://www.radio-browser.info/webservice/xml/add</a></div>
+
     <a id="server_stats"></a>
     <a href="#server_stats"><h2>Server stats</h2></a>
     <div class="header_sub">Syntax:</div>

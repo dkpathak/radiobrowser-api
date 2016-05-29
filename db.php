@@ -554,7 +554,7 @@ function backupStation($db, $stationid)
     $result = $stmt->execute(['id' => $stationid]);
 }
 
-function autosetFavicon($db, $stationid, $homepage, &$log){
+function autosetFavicon($db, $stationid, $homepage, &$favicon, &$log){
     $log = array();
     array_push($log, "extract from url: ".$homepage);
     $favicon = extractFaviconFromUrl($homepage, $logExtract);
@@ -571,49 +571,93 @@ function autosetFavicon($db, $stationid, $homepage, &$log){
     return false;
 }
 
-function addStation($db, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
+function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
 {
-    $stmt = $db->prepare('DELETE FROM Station WHERE Url=:url');
-    $stmt->execute(['url' => $url]);
+    if ($format !== "xml" && $format !== "json"){
+        sendResult($format, false, "unknown format");
+        return false;
+    }
+    if ($name === null){
+        sendResult($format, false, "name is mandatory");
+        return false;
+    }
+    if ($url === null || $url === ""){
+        sendResult($format, false, "url is mandatory");
+        return false;
+    }
 
-    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Homepage,Favicon,Country,Language,Tags,Subcountry,Creation) VALUES(:name,:url,:homepage,:favicon,:country,:language,:tags,:state, NOW())');
-    $result = $stmt->execute([
+    $columnStr = "Name,Url,Creation";
+    $valueStr = ":name,:url,NOW()";
+    $data = [
       'name' => $name,
-      'url' => $url,
-      'homepage' => $homepage,
-      'favicon' => $favicon,
-      'country' => $country,
-      'language' => $language,
-      'tags' => $tags,
-      'state' => $state
-    ]);
+      'url' => $url
+    ];
+    if ($homepage !== null) {
+        $data["homepage"] = $homepage;
+        $columnStr .= ",Homepage";
+        $valueStr .= ",:homepage";
+    }
+    if ($favicon !== null) {
+        $data["favicon"] = $favicon;
+        $columnStr .= ",Favicon";
+        $valueStr .= ",:favicon";
+    }
 
-    if ($result){
+    if ($country !== null) {
+        $data["country"] = $country;
+        $columnStr .= ",Country";
+        $valueStr .= ",:country";
+    }
+    if ($language !== null) {
+        $data["language"] = $language;
+        $columnStr .= ",Language";
+        $valueStr .= ",:language";
+    }
+
+    if ($tags !== null) {
+        $data["tags"] = $tags;
+        $columnStr .= ",Tags";
+        $valueStr .= ",:tags";
+    }
+    if ($state !== null) {
+        $data["state"] = $state;
+        $columnStr .= ",Subcountry";
+        $valueStr .= ",:state";
+    }
+    $stmt = $db->prepare('INSERT INTO Station('.$columnStr.') VALUES('.$valueStr.')');
+    $stmt->execute($data);
+
+    if ($stmt->rowCount() !== 1) {
+        sendResult($format, false, "insert did not work");
+        return false;
+    }else{
         $stationid = $db->lastInsertId();
-        // echo "stationid:".$stationid;
 
         $log = array();
         $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
         $returnValue = array(
-          'stream_bitrate' => intval($bitrate),
-          'stream_codec' => $codec,
-          'stream_ok' => $working,
-          'stream_log' => $logConnection
+            'id' => "".$stationid,
+            'stream_check_ok' => $working ? "true" : "false"
         );
-
-        if ($homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
-            $returnValue["faviconCheckOK"] = autosetFavicon($db, $stationid, $homepage, $logFavicon);
-            $returnValue["faviconCheckDone"] = true;
-            $returnValue["faviconCheckLog"] = $logFavicon;
-        }else{
-            $returnValue["faviconCheckDone"] = false;
+        if ($working){
+            $returnValue['stream_check_bitrate'] = "".$bitrate;
+            $returnValue['stream_check_codec'] = $codec;
         }
 
-        echo json_encode($returnValue);
-    }
+        if ($homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
+            $faviconCheck = autosetFavicon($db, $stationid, $homepage, $favicon, $logFavicon);
+            $returnValue["favicon_check_ok"] =  $faviconCheck ? "true" : "false";
+            if ($faviconCheck){
+                $returnValue["favicon_check_url"] = $favicon;
+            }
+            $returnValue["favicon_check_done"] = "true";
+        }else{
+            $returnValue["favicon_check_done"] = "false";
+        }
 
-    // Delete empty stations
-    $db->query("DELETE FROM Station WHERE Url=''");
+        sendResultParameters($format, true, "added station successfully", $returnValue);
+        return true;
+    }
 }
 
 function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
@@ -647,7 +691,7 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
         );
 
         if ($homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
-            $returnValue["faviconCheckOK"] = autosetFavicon($db, $stationid, $homepage, $logFavicon);
+            $returnValue["faviconCheckOK"] = autosetFavicon($db, $stationid, $homepage, $favicon, $logFavicon);
             $returnValue["faviconCheckDone"] = true;
             $returnValue["faviconCheckLog"] = $logFavicon;
         }else{

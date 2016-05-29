@@ -36,10 +36,14 @@ if (isset($_GET['action'])) {
     $stationchangeid = isset($_GET['stationchangeid']) ? $_GET['stationchangeid'] : null;
     $action = $_GET['action'];
 
-    $country = isset($_REQUEST['country']) ? $_REQUEST['country'] : '';
-    $state = isset($_REQUEST['state']) ? $_REQUEST['state'] : '';
-    $language = isset($_REQUEST['language']) ? $_REQUEST['language'] : '';
-    $tags = isset($_REQUEST['tags']) ? $_REQUEST['tags'] : '';
+    $name = getParameter('name', null);
+    $url = getParameter('url', null);
+    $homepage = getParameter('homepage', null);
+    $favicon = getParameter('favicon', null);
+    $country = getParameter('country', null);
+    $state = getParameter('state', null);
+    $language = getParameter('language', null);
+    $tags = getParameter('tags', null);
 
     if ($action == 'tags') {
         print_tags($db, $format, $term, $order, $reverse);
@@ -102,9 +106,9 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'data_search_changed_all') {
         print_stations_list_changed_all($db, $format);
     }elseif ($action == 'add') {
-        addStation($db, $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
+        addStation($db, $format, $name, $url, $homepage, $favicon, $country, $language, $tags, $state);
     }elseif ($action == 'edit') {
-        editStation($db, $_REQUEST['stationid'], $_REQUEST['name'], $_REQUEST['url'], $_REQUEST['homepage'], $_REQUEST['favicon'], $country, $language, $tags, $state);
+        editStation($db, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state);
     }elseif ($action == 'delete') {
         deleteStation($db, $format, $stationid);
     }elseif ($action == 'undelete') {
