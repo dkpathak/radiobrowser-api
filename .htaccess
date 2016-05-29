@@ -3,6 +3,13 @@ Header add Access-Control-Allow-Headers "origin, x-requested-with, content-type"
 Header add Access-Control-Allow-Methods "GET,POST"
 
 RewriteEngine on
+
+# VERSION 2
+# =========
+RewriteRule ^webservice/v2/(.*)/url/(.*)$ /?action=urlv2&format=$1&stationid=$2
+
+# VERSION 1
+# =========
 # http://site/webservice/<type>/countries
 RewriteRule ^webservice/(.*)/countries/(.*)$ /?term=$2&format=$1&action=countries
 RewriteRule ^webservice/(.*)/countries$ /?format=$1&action=countries

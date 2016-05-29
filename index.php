@@ -113,6 +113,8 @@ if (isset($_GET['action'])) {
         revertStation($db, $format, $stationid, $stationchangeid);
     }elseif ($action == 'vote') {
         voteForStation($db, $format, $stationid);
+    }elseif ($action == 'urlv2') {
+        print_station_real_url($db, $format, $stationid);
     }elseif ($action == 'negativevote') {
         negativeVoteForStation($db, $format, $stationid);
     }

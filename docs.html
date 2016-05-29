@@ -509,20 +509,38 @@
     <a id="station_url"></a>
     <a href="#station_url"><h2>Playable station url</h2></a>
     <div class="header_sub">Syntax:</div>
-    <div class="syntax">http://www.radio-browser.info/webservice/xml/url/stationid
-    <br /> http://www.radio-browser.info/webservice/json/url/stationid
-    <br /> http://www.radio-browser.info/webservice/pls/url/stationid
+    <div class="syntax">http://www.radio-browser.info/webservice/v2/xml/url/stationid
+    <br /> http://www.radio-browser.info/webservice/v2/json/url/stationid
+    <br /> http://www.radio-browser.info/webservice/v2/pls/url/stationid
+    <br /> http://www.radio-browser.info/webservice/v2/m3u/url/stationid
     </div>
     <div class="header_sub">Description:</div>
     Returns the playable url for the station. Does return 404 code if the playlist on the remote server could not be retrieved. In this case the station is not working any more and needs to get updated.<br/>
     Any Playlist (PLS, ASX, M3U) decoding will be done for you.<br/>
     This API call will count as a click on the station.<br/>
-    Supported output formats: json,xml,pls (playlist)
+    Supported output formats: json,xml,pls(playlist),m3u(playlist)
     <br/>
+<div class="header_sub">Result JSON:</div>
+<pre>
+{
+  "ok": "true",
+  "message": "retrieved station url",
+  "id": "123",
+  "name": "Station name",
+  "url": "http://this.is.an.url"
+}
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;status ok=&quot;true&quot; message=&quot;retrieved station url&quot; id=&quot;123&quot; name=&quot;Station name&quot; message=&quot;http://this.is.an.url&quot;/&gt;
+&lt;/result&gt;
+    </pre>
     <div class="header_sub">Example:</div>
-    <div><a href="http://www.radio-browser.info/webservice/xml/url/123" target="_blank">http://www.radio-browser.info/webservice/xml/url/123</a></div>
-    <div><a href="http://www.radio-browser.info/webservice/json/url/123" target="_blank">http://www.radio-browser.info/webservice/json/url/123</a></div>
-    <div><a href="http://www.radio-browser.info/webservice/pls/url/123" target="_blank">http://www.radio-browser.info/webservice/pls/url/123</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/v2/xml/url/123" target="_blank">http://www.radio-browser.info/webservice/v2/xml/url/123</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/v2/json/url/123" target="_blank">http://www.radio-browser.info/webservice/v2/json/url/123</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/v2/pls/url/123" target="_blank">http://www.radio-browser.info/webservice/v2/pls/url/123</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/v2/m3u/url/123" target="_blank">http://www.radio-browser.info/webservice/v2/m3u/url/123</a></div>
 
     <a id="station_vote"></a>
     <a href="#station_vote"><h2>Vote for station</h2></a>
@@ -538,7 +556,7 @@
     <div class="header_sub">Result JSON:</div>
     <pre>
 {
-  "ok": true
+  "ok": "true",
   "message": "voted for station successfully"
 }
     </pre>
@@ -565,7 +583,7 @@
     <div class="header_sub">Result JSON:</div>
     <pre>
 {
-  "ok": true
+  "ok": "true",
   "message": "station was deleted"
 }
     </pre>
@@ -592,7 +610,7 @@
     <div class="header_sub">Result JSON:</div>
     <pre>
 {
-  "ok": true
+  "ok": "true",
   "message": "station was undeleted"
 }
     </pre>
@@ -619,7 +637,7 @@
     <div class="header_sub">Result JSON:</div>
     <pre>
 {
-  "ok": true
+  "ok": "true",
   "message": "station was reverted"
 }
     </pre>

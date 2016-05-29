@@ -751,14 +751,28 @@ function revertStation($db, $format, $stationid, $stationchangeid)
 }
 
 function sendResult($format, $ok, $message){
+    sendResultParameters($format, $ok, $message, null);
+}
+
+function sendResultParameters($format, $ok, $message, $otherParameters){
     if ($format === "xml" || $format === "json"){
         print_output_header($format);
         print_output_item_start($format, 'status');
         print_output_item_content($format, 'ok', $ok ? 'true' : 'false');
         print_output_item_dict_sep($format);
         print_output_item_content($format, 'message', $message);
+        if ($otherParameters !== null){
+            foreach ($otherParameters as $name => $value) {
+                print_output_item_dict_sep($format);
+                print_output_item_content($format, $name, $value);
+            }
+        }
         print_output_item_end($format);
         print_output_footer($format);
+    }else{
+        echo "supported formats are: xml, json";
+        echo $message;
+        http_response_code(406);
     }
 }
 
@@ -848,5 +862,79 @@ function print_station_by_id($db, $format, $id)
     $result = $stmt->execute(['id' => $id]);
     if ($result) {
         print_result_stations($stmt, $format);
+    }
+}
+
+function print_station_real_url($db, $format, $stationid){
+    if ($format !== "xml" && $format !== "m3u" && $format !== "json" && $format !== "pls") {
+        sendResult($format, false, "unknown format! supported formats: xml, json, pls, m3u");
+        return false;
+    }
+
+    if ($stationid === null && $stationid === "") {
+        sendResult($format, false, "empty parameter stationid");
+        return false;
+    }
+
+    $stmt = $db->prepare('SELECT Name, Url FROM Station WHERE StationID=:stationid');
+    $stmt->execute(['stationid'=>$stationid]);
+    if ($stmt->rowCount() !== 1) {
+        sendResult($format, false, "did not find station with matching id");
+        return false;
+    }
+
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $url = $row['Url'];
+    $stationname = $row['Name'];
+
+    $audiofile = checkStation($url,$bitrate,$codec,$log);
+
+    if ($audiofile !== false) {
+        if ($format == "xml" || $format == "json") {
+            $params = [
+                'id' => $stationid,
+                'name' => $stationname,
+                'url' => $audiofile
+            ];
+            sendResultParameters($format, true, "retrieved station url successfully", $params);
+            clickedStationID($db, $stationid);
+            return true;
+        } elseif ($format == 'pls') {
+            //header('content-type: audio/x-scpls');
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename=radio.pls');
+            header('Content-Transfer-Encoding: chunked'); //changed to chunked
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Pragma: public');
+
+            echo "[playlist]\n";
+
+            echo 'File1='.$audiofile."\n";
+            echo 'Title1='.$stationname;
+            clickedStationID($db, $stationid);
+            return true;
+        } elseif ($format == 'm3u') {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename=radio.m3u');
+            header('Content-Transfer-Encoding: chunked'); //changed to chunked
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Pragma: public');
+
+            echo "#EXTM3U\n";
+            echo "#EXTINF:1,".$stationname."\n";
+            echo "".$audiofile."\n";
+            clickedStationID($db, $stationid);
+            return true;
+        } else {
+            sendResult($format, false, "unknown format");
+            return false;
+        }
+    } else {
+        sendResult($format, false, "did not find station with matching id");
+        return false;
     }
 }
