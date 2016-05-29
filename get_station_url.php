@@ -45,12 +45,12 @@ if ($audiofile !== false) {
     $extension = strtolower(substr($audiofile, -4));
 
     // shoutcast handling
-    if (substr($audiofile, -1) == '/') {
-        $audiofile .= ';stream.mp3';
-    }
-    if (substr_count($audiofile, '/') == 2) {
-        $audiofile .= '/;stream.mp3';
-    }
+    // if (substr($audiofile, -1) == '/') {
+    //     $audiofile .= ';stream.mp3';
+    // }
+    // if (substr_count($audiofile, '/') == 2) {
+    //     $audiofile .= '/;stream.mp3';
+    // }
     if ($format == 'xml') {
         header('Content-Type: text/xml');
         echo '<?xml version="1.0"?>';
