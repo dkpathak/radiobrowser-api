@@ -535,6 +535,19 @@
     Increase the vote count for the station by one. Can only be done by the same ip adress for one station every 10 minutes. Returns the changed station as result if it worked.
     <br/> Supported output formats: json,xml
     <br/>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+{
+  "ok": true
+  "message": "voted for station successfully"
+}
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;status ok=&quot;true&quot; message=&quot;voted for station successfully&quot;/&gt;
+&lt;/result&gt;
+    </pre>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/json/vote/123" target="_blank">http://www.radio-browser.info/webservice/json/vote/123</a></div>
 

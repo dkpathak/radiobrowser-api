@@ -804,19 +804,24 @@ function clickedStationID($db, $id)
 
 function voteForStation($db, $format, $id)
 {
-    if (!IPVoteChecker($db, $id)) {
-        print_station_by_id($db, $format, $id);
+    if (trim($id) === '' || $id === null) {
+        sendResult($format, false, "stationid was null");
+        return false;
+    }
 
+    if (!IPVoteChecker($db, $id)) {
+        sendResult($format, false, "you are voting for the same station too often");
         return false;
     }
     $stmt = $db->prepare('UPDATE Station SET Votes=Votes+1 WHERE StationID=:id');
-    $result = $stmt->execute(['id' => $id]);
-    print_station_by_id($db, $format, $id);
-    if ($result) {
+    $stmt->execute(['id' => $id]);
+    if ($stmt->rowCount() === 1){
+        sendResult($format, true, "voted for station successfully");
         return true;
+    }else{
+        sendResult($format, false, "could not find station with matching id");
+        return false;
     }
-
-    return false;
 }
 
 function negativeVoteForStation($db, $format, $id)
