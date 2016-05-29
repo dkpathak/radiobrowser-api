@@ -35,7 +35,7 @@ RewriteRule ^webservice$ /docs.html
 RewriteRule ^webservice/$ /docs.html
 
 RewriteRule ^webservice/(.*)/add$ /?format=$1&action=add
-RewriteRule ^webservice/(.*)/edit$ /?format=$1&action=edit
+RewriteRule ^webservice/(.*)/edit/(.*)$ /?format=$1&action=edit&stationid=$2
 RewriteRule ^webservice/(.*)/delete/(.*)$ /?format=$1&action=delete&stationid=$2
 RewriteRule ^webservice/(.*)/undelete/(.*)$ /?format=$1&action=undelete&stationid=$2
 RewriteRule ^webservice/(.*)/revert/(.*)/(.*)$ /?format=$1&action=revert&stationid=$2&stationchangeid=$3

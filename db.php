@@ -633,7 +633,6 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
     }else{
         $stationid = $db->lastInsertId();
 
-        $log = array();
         $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
         $returnValue = array(
             'id' => "".$stationid,
@@ -644,7 +643,7 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
             $returnValue['stream_check_codec'] = $codec;
         }
 
-        if ($homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
+        if ($homepage !== null && ($favicon === "" || $favicon === null)){
             $faviconCheck = autosetFavicon($db, $stationid, $homepage, $favicon, $logFavicon);
             $returnValue["favicon_check_ok"] =  $faviconCheck ? "true" : "false";
             if ($faviconCheck){
@@ -660,12 +659,28 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
     }
 }
 
-function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
+function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
 {
+    if ($format !== "xml" && $format !== "json"){
+        sendResult($format, false, "unknown format");
+        return false;
+    }
+    if ($stationid === null){
+        sendResult($format, false, "stationid is mandatory");
+        return false;
+    }
+    if ($name === ""){
+        sendResult($format, false, "name cannot be empty");
+        return false;
+    }
+    if ($url === ""){
+        sendResult($format, false, "url cannot be empty");
+        return false;
+    }
     backupStation($db, $stationid);
     // update values
     $stmt = $db->prepare('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state,Creation=NOW() WHERE StationID=:id');
-    $result = $stmt->execute([
+    $stmt->execute([
       'name' => $name,
       'url' => $url,
       'homepage' => $homepage,
@@ -677,28 +692,33 @@ function editStation($db, $stationid, $name, $url, $homepage, $favicon, $country
       'id' => $stationid
     ]);
 
-    // Delete empty stations
-    $db->query("DELETE FROM Station WHERE Url=''");
-
-    if ($result){
-        $log = array();
+    if ($stmt->rowCount() !== 1){
+        sendResult($format, false, "could not find station with matching id");
+        return false;
+    }else{
         $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
         $returnValue = array(
-          'stream_bitrate' => intval($bitrate),
-          'stream_codec' => $codec,
-          'stream_ok' => $working,
-          'stream_log' => $logConnection
+            'id' => "".$stationid,
+            'stream_check_ok' => $working ? "true" : "false"
         );
-
-        if ($homepage !== null && ($favicon === "" || $favicon === null || !isset($favicon))){
-            $returnValue["faviconCheckOK"] = autosetFavicon($db, $stationid, $homepage, $favicon, $logFavicon);
-            $returnValue["faviconCheckDone"] = true;
-            $returnValue["faviconCheckLog"] = $logFavicon;
-        }else{
-            $returnValue["faviconCheckDone"] = false;
+        if ($working){
+            $returnValue['stream_check_bitrate'] = "".$bitrate;
+            $returnValue['stream_check_codec'] = $codec;
         }
 
-        echo json_encode($returnValue);
+        if ($homepage !== null && ($favicon === "" || $favicon === null)){
+            $faviconCheck = autosetFavicon($db, $stationid, $homepage, $favicon, $logFavicon);
+            $returnValue["favicon_check_ok"] =  $faviconCheck ? "true" : "false";
+            if ($faviconCheck){
+                $returnValue["favicon_check_url"] = $favicon;
+            }
+            $returnValue["favicon_check_done"] = "true";
+        }else{
+            $returnValue["favicon_check_done"] = "false";
+        }
+
+        sendResultParameters($format, true, "changed station successfully", $returnValue);
+        return true;
     }
 }
 

@@ -108,7 +108,7 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'add') {
         addStation($db, $format, $name, $url, $homepage, $favicon, $country, $language, $tags, $state);
     }elseif ($action == 'edit') {
-        editStation($db, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state);
+        editStation($db, $format, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state);
     }elseif ($action == 'delete') {
         deleteStation($db, $format, $stationid);
     }elseif ($action == 'undelete') {
