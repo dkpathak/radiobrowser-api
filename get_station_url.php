@@ -38,7 +38,7 @@ if ($audiofile !== false) {
         echo "\"id\":\"$stationid\",";
         echo "\"name\":\"$stationname\",";
         echo '"url":"'.$audiofile.'"';
-        echo '}}';
+        echo '}]';
         clickedStationID($db, $stationid);
     } elseif ($format == 'pls') {
         //header('content-type: audio/x-scpls');
