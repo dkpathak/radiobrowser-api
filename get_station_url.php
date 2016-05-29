@@ -9,48 +9,22 @@ require 'db.php';
 $db = openDB();
 
 $stationid = $_REQUEST['stationid'];
-$foundStation = false;
-
-{
-    $stmt = $db->prepare('SELECT Name, Url FROM Station WHERE StationID=:stationid');
-    $result = $stmt->execute(['stationid'=>$stationid]);
-    if (!$result) {
-        exit();
-    }
-
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $url = $row['Url'];
-        $stationname = $row['Name'];
-        $foundStation = true;
-        break;
-    }
-}
-
 $format = $_REQUEST['format'];
-if ($foundStation !== true) {
+
+$stmt = $db->prepare('SELECT Name, Url FROM Station WHERE StationID=:stationid');
+$stmt->execute(['stationid'=>$stationid]);
+if ($stmt->rowCount() !== 1) {
     http_response_code(404);
     exit();
 }
-$str_arr = explode("\?", $url);
-if (count($str_arr) > 1) {
-    $extension = strtolower(substr($str_arr[0], -4));
-} else {
-    $extension = strtolower(substr($url, -4));
-}
+
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$url = $row['Url'];
+$stationname = $row['Name'];
 
 $audiofile = checkStation($url,$bitrate,$codec,$log);
 
-//print("audiofile:".$audiofile);
 if ($audiofile !== false) {
-    $extension = strtolower(substr($audiofile, -4));
-
-    // shoutcast handling
-    // if (substr($audiofile, -1) == '/') {
-    //     $audiofile .= ';stream.mp3';
-    // }
-    // if (substr_count($audiofile, '/') == 2) {
-    //     $audiofile .= '/;stream.mp3';
-    // }
     if ($format == 'xml') {
         header('Content-Type: text/xml');
         echo '<?xml version="1.0"?>';
@@ -58,11 +32,13 @@ if ($audiofile !== false) {
         clickedStationID($db, $stationid);
     } elseif ($format == 'json') {
         header('Content-Type: application/json');
-        echo '[{';
+        echo '{';
+        echo "\"ok\":\"true\",";
+        echo "\"message\":\"retrieved station url successfully\",";
         echo "\"id\":\"$stationid\",";
         echo "\"name\":\"$stationname\",";
         echo '"url":"'.$audiofile.'"';
-        echo '}]';
+        echo '}';
         clickedStationID($db, $stationid);
     } elseif ($format == 'pls') {
         //header('content-type: audio/x-scpls');
