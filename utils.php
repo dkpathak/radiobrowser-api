@@ -10,10 +10,26 @@ function fn_CURLOPT_HEADERFUNCTION($ch, $str){
       $headers[$itemArr[0]] = trim($itemArr[1]);
     }
     return $len;
-  }
+}
+
+function fn_write_headers($ch, $chunk) {
+    global $data;
+    static $limit = 4096;
+
+    $len = strlen($data) + strlen($chunk);
+    if ($len >= $limit ) {
+      $data .= substr($chunk, 0, $limit-strlen($data));
+      // echo strlen($data) , ' ', $data;
+      return -1;
+    }
+
+    $data .= $chunk;
+    return strlen($chunk);
+};
 
 function get_headers_curl($url){
     global $headers;
+    global $data;
     // erzeuge einen neuen cURL-Handle
     $ch = curl_init();
 
@@ -28,6 +44,7 @@ function get_headers_curl($url){
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     curl_setopt($ch, CURLOPT_HEADERFUNCTION, "fn_CURLOPT_HEADERFUNCTION"); // handle received headers
     curl_setopt($ch, CURLOPT_USERAGENT, "VLC/2.2.2 LibVLC/2.2.2");
+    // curl_setopt($ch, CURLOPT_WRITEFUNCTION, "fn_write_headers");
     // curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'fn_CURLOPT_WRITEFUNCTION'); // callad every CURLOPT_BUFFERSIZE
     // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     // curl_setopt($ch, CURLOPT_BUFFERSIZE, 128); // more progress info
@@ -36,6 +53,7 @@ function get_headers_curl($url){
     // });
 
     // führe die Aktion aus und gib die Daten an den Browser weiter
+    $data = "";
     $headers = array();
     $result = curl_exec($ch);
 
@@ -71,6 +89,9 @@ function file_get_contents_curl($url) {
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
     curl_setopt($ch, CURLOPT_WRITEFUNCTION, "writefn");
+    curl_setopt($ch, CURLOPT_USERAGENT, "VLC/2.2.2 LibVLC/2.2.2");
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 
     if (!curl_exec($ch)){
       $data = false;
