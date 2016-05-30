@@ -586,45 +586,18 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
         return false;
     }
 
-    $columnStr = "Name,Url,Creation";
-    $valueStr = ":name,:url,NOW()";
     $data = [
       'name' => $name,
       'url' => $url
     ];
-    if ($homepage !== null) {
-        $data["homepage"] = $homepage;
-        $columnStr .= ",Homepage";
-        $valueStr .= ",:homepage";
-    }
-    if ($favicon !== null) {
-        $data["favicon"] = $favicon;
-        $columnStr .= ",Favicon";
-        $valueStr .= ",:favicon";
-    }
+    $data["homepage"] = $homepage === null ? "" : $homepage;
+    $data["favicon"] = $favicon === null ? "" : $favicon;
+    $data["country"] = $country === null ? "" : $country;
+    $data["language"] = $language === null ? "" : $language;
+    $data["tags"] = $tags === null ? "" : $tags;
+    $data["state"] = $state === null ? "" : $state;
 
-    if ($country !== null) {
-        $data["country"] = $country;
-        $columnStr .= ",Country";
-        $valueStr .= ",:country";
-    }
-    if ($language !== null) {
-        $data["language"] = $language;
-        $columnStr .= ",Language";
-        $valueStr .= ",:language";
-    }
-
-    if ($tags !== null) {
-        $data["tags"] = $tags;
-        $columnStr .= ",Tags";
-        $valueStr .= ",:tags";
-    }
-    if ($state !== null) {
-        $data["state"] = $state;
-        $columnStr .= ",Subcountry";
-        $valueStr .= ",:state";
-    }
-    $stmt = $db->prepare('INSERT INTO Station('.$columnStr.') VALUES('.$valueStr.')');
+    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Creation,Homepage,Favicon,Country,Language,Tags,Subcountry) VALUES(:name,:url,NOW(),:homepage,:favicon,:country,:language,:tags,:state)');
     $stmt->execute($data);
 
     if ($stmt->rowCount() !== 1) {
@@ -678,32 +651,66 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
         return false;
     }
     backupStation($db, $stationid);
+    $data = ['id' => $stationid];
+    $columnStr = "";
+
     // update values
-    $stmt = $db->prepare('UPDATE Station SET Name=:name,Url=:url,Homepage=:homepage,Favicon=:favicon,Country=:country,Language=:language,Tags=:tags,Subcountry=:state,Creation=NOW() WHERE StationID=:id');
-    $stmt->execute([
-      'name' => $name,
-      'url' => $url,
-      'homepage' => $homepage,
-      'favicon' => $favicon,
-      'country' => $country,
-      'language' => $language,
-      'tags' => $tags,
-      'state' => $state,
-      'id' => $stationid
-    ]);
+    if ($name !== null) {
+        $data["name"] = $name;
+        $columnStr .= ",Name=:name";
+    }
+    if ($url !== null) {
+        $data["url"] = $url;
+        $columnStr .= ",Url=:url";
+    }
+
+    if ($homepage !== null) {
+        $data["homepage"] = $homepage;
+        $columnStr .= ",Homepage=:homepage";
+    }
+    if ($favicon !== null) {
+        $data["favicon"] = $favicon;
+        $columnStr .= ",Favicon=:favicon";
+    }
+
+    if ($country !== null) {
+        $data["country"] = $country;
+        $columnStr .= ",Country=:country";
+    }
+    if ($language !== null) {
+        $data["language"] = $language;
+        $columnStr .= ",Language=:language";
+    }
+
+    if ($tags !== null) {
+        $data["tags"] = $tags;
+        $columnStr .= ",Tags=:tags";
+    }
+    if ($state !== null) {
+        $data["state"] = $state;
+        $columnStr .= ",Subcountry=:state";
+    }
+    $stmt = $db->prepare('UPDATE Station SET Creation=NOW()'.$columnStr.' WHERE StationID=:id');
+    $stmt->execute($data);
 
     if ($stmt->rowCount() !== 1){
         sendResult($format, false, "could not find station with matching id");
         return false;
     }else{
-        $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
         $returnValue = array(
-            'id' => "".$stationid,
-            'stream_check_ok' => $working ? "true" : "false"
+            'id' => "".$stationid
         );
-        if ($working){
-            $returnValue['stream_check_bitrate'] = "".$bitrate;
-            $returnValue['stream_check_codec'] = $codec;
+        if ($url !== null){
+            $returnValue["stream_check_done"] = "true";
+            $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
+            $returnValue["stream_check_ok"] = $working ? "true" : "false";
+
+            if ($working){
+                $returnValue['stream_check_bitrate'] = "".$bitrate;
+                $returnValue['stream_check_codec'] = $codec;
+            }
+        }else{
+            $returnValue["stream_check_done"] = "false";
         }
 
         if ($homepage !== null && ($favicon === "" || $favicon === null)){
