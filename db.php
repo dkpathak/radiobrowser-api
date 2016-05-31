@@ -52,6 +52,7 @@ function openDB()
           Primary Key (StationID),
           Name TEXT,
           Url TEXT,
+          UrlCache TEXT NOT NULL,
           Homepage TEXT,
           Favicon TEXT,
           Creation TIMESTAMP,
