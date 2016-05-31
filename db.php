@@ -221,7 +221,7 @@ function print_states($db, $format, $search_term, $country, $order, $reverse)
         $orderDb = "SubCountry";
         $orderDb2 = "StationCount";
     }
-    if ($country !== '') {
+    if ($country !== '' && $country !== null) {
         $stmt = $db->prepare('SELECT Country, Subcountry, COUNT(*) AS StationCount FROM Station WHERE Country=:country AND Subcountry LIKE :search AND Country<>"" AND Subcountry<>"" GROUP BY Country, Subcountry ORDER BY '.$orderDb.' '.$reverseDb.', '.$orderDb2.' ASC');
         $result = $stmt->execute(['search' => '%'.$search_term.'%', 'country' => $country]);
     } else {
