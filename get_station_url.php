@@ -11,7 +11,7 @@ $db = openDB();
 $stationid = $_REQUEST['stationid'];
 $format = $_REQUEST['format'];
 
-$stmt = $db->prepare('SELECT Name, Url FROM Station WHERE StationID=:stationid');
+$stmt = $db->prepare('SELECT Name, Url, UrlCache FROM Station WHERE LastCheckOK=TRUE AND StationID=:stationid');
 $stmt->execute(['stationid'=>$stationid]);
 if ($stmt->rowCount() !== 1) {
     http_response_code(404);
@@ -22,7 +22,8 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $url = $row['Url'];
 $stationname = $row['Name'];
 
-$audiofile = checkStation($url,$bitrate,$codec,$log);
+// $audiofile = checkStation($url,$bitrate,$codec,$log);
+$audiofile = $row['UrlCache'];
 
 if ($audiofile !== false) {
     if ($format == 'xml') {

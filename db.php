@@ -948,7 +948,7 @@ function print_station_real_url($db, $format, $stationid){
         return false;
     }
 
-    $stmt = $db->prepare('SELECT Name, Url FROM Station WHERE StationID=:stationid');
+    $stmt = $db->prepare('SELECT Name, Url, UrlCache FROM Station WHERE LastCheckOK=TRUE AND StationID=:stationid');
     $stmt->execute(['stationid'=>$stationid]);
     if ($stmt->rowCount() !== 1) {
         sendResult($format, false, "did not find station with matching id");
@@ -959,7 +959,8 @@ function print_station_real_url($db, $format, $stationid){
     $url = $row['Url'];
     $stationname = $row['Name'];
 
-    $audiofile = checkStation($url,$bitrate,$codec,$log);
+    // $audiofile = checkStation($url,$bitrate,$codec,$log);
+    $audiofile = $row['UrlCache'];
 
     if ($audiofile !== false) {
         if ($format == "xml" || $format == "json") {
