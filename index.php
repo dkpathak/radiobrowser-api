@@ -35,6 +35,7 @@ if (isset($_GET['action'])) {
     $stationid = isset($_GET['stationid']) ? $_GET['stationid'] : null;
     $stationchangeid = isset($_GET['stationchangeid']) ? $_GET['stationchangeid'] : null;
     $action = $_GET['action'];
+    $hideBroken = getParameter('hidebroken',"false");
 
     $name = getParameter('name', null);
     $url = getParameter('url', null);
@@ -48,13 +49,13 @@ if (isset($_GET['action'])) {
     if ($action == 'tags') {
         print_tags($db, $format, $term, $order, $reverse);
     }elseif ($action == 'countries') {
-        print_1_n($db, $format, 'Country', 'country', $term, $order, $reverse);
+        print_1_n($db, $format, 'Country', 'country', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'codecs') {
-        print_1_n($db, $format, 'Codec', 'codec', $term, $order, $reverse);
+        print_1_n($db, $format, 'Codec', 'codec', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'states') {
-        print_states($db, $format, $term, $country, $order, $reverse);
+        print_states($db, $format, $term, $country, $order, $reverse, $hideBroken);
     }elseif ($action == 'languages') {
-        print_1_n($db, $format, 'Language', 'language', $term, $order, $reverse);
+        print_1_n($db, $format, 'Language', 'language', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'stats') {
         print_stats($db, $format);
     }elseif ($action == 'data_search_topvote') {
