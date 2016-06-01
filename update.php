@@ -234,13 +234,14 @@ function updateStationClickAll($db)
 function updateCacheTags($db)
 {
     // generate new list of tags
-    $select_stmt = $db->query('SELECT Name, Url, Tags, StationID FROM Station');
+    $select_stmt = $db->query('SELECT Name, Url, Tags, StationID, LastCheckOK FROM Station');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
     }
 
     $tags_new = array();
+    $tags_new_working = array();
     while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
         $name = str_replace("\t", ' ', trim($row['Name']));
         if ($name !== $row['Name']) {
@@ -268,9 +269,12 @@ function updateCacheTags($db)
             // count tag occurences
             if ($tag_corrected !== '') {
                 if (!array_key_exists($tag_corrected, $tags_new)) {
-                    $tags_new[$tag_corrected] = (int) 1;
-                } else {
-                    $tags_new[$tag_corrected] = (int) ($tags_new[$tag_corrected] + 1);
+                    $tags_new[$tag_corrected] = (int) 0;
+                    $tags_new_working[$tag_corrected] = (int) 0;
+                }
+                $tags_new[$tag_corrected] = (int) ($tags_new[$tag_corrected] + 1);
+                if ($row["LastCheckOK"] === "1"){
+                    $tags_new_working[$tag_corrected] = (int) ($tags_new_working[$tag_corrected] + 1);
                 }
             }
         }
@@ -308,13 +312,13 @@ function updateCacheTags($db)
     foreach ($tags_new as $tag => $count) {
         if (!array_key_exists($tag, $tags_old)) {
             echo 'added new:'.$tag.'<br/>';
-            $stmt = $db->prepare('INSERT INTO TagCache (TagName,StationCount) VALUES (:tag,:count)');
-            $stmt->execute(['tag' => $tag, 'count' => $count]);
+            $stmt = $db->prepare('INSERT INTO TagCache (TagName,StationCount, StationCountWorking) VALUES (:tag,:count, :countworking)');
+            $stmt->execute(['tag' => $tag, 'count' => $count, 'countworking' => $tags_new_working[$tag]]);
         } else {
             if ($count !== $tags_old[$tag]) {
                 echo 'updated:'.$tag.' from '.$tags_old[$tag].' to '.$count.'<br/>';
-                $stmt = $db->prepare('UPDATE TagCache SET StationCount=:count WHERE TagName=:tag');
-                $stmt->execute(['tag' => $tag, 'count' => $count]);
+                $stmt = $db->prepare('UPDATE TagCache SET StationCount=:count, StationCountWorking=:countworking WHERE TagName=:tag');
+                $stmt->execute(['tag' => $tag, 'count' => $count, 'countworking' => $tags_new_working[$tag]]);
             }
         }
     }
