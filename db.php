@@ -109,7 +109,8 @@ function openDB()
         $db->query('CREATE TABLE TagCache(
           TagName VARCHAR(100) NOT NULL,
           Primary Key (TagName),
-          StationCount INT DEFAULT 0)
+          StationCount INT DEFAULT 0,
+          StationCountWorking INT DEFAULT 0)
           ');
     }
 
@@ -177,20 +178,21 @@ function print_result_stations_history($stmt, $format)
     print_list($stmt, $format, $columnMappingHistory, 'station');
 }
 
-function print_tags($db, $format, $search_term, $order, $reverse)
+function print_tags($db, $format, $search_term, $order, $reverse, $hideBroken)
 {
+    $stationCountColumn = strtolower($hideBroken) === "true" ? "StationCountWorking" : "StationCount";
     $reverseDb = filterOrderReverse($reverse);
     if ($order === "stationcount"){
-        $orderDb = "StationCount";
+        $orderDb = $stationCountColumn;
         $orderDb2 = "TagName";
     }else{
         $orderDb = "TagName";
-        $orderDb2 = "StationCount";
+        $orderDb2 = $stationCountColumn;
     }
-    $stmt = $db->prepare('SELECT TagName,StationCount FROM TagCache WHERE TagName LIKE :search ORDER BY '.$orderDb.' '.$reverseDb.', '.$orderDb2.' ASC');
+    $stmt = $db->prepare('SELECT TagName,'.$stationCountColumn.' FROM TagCache WHERE TagName LIKE :search AND '.$stationCountColumn.'>0 ORDER BY '.$orderDb.' '.$reverseDb.', '.$orderDb2.' ASC');
     $result = $stmt->execute(['search' => '%'.$search_term.'%']);
     if ($result) {
-        print_list($stmt, $format, ['name' => 'TagName', 'value' => 'TagName', 'stationcount' => 'StationCount'], 'tag');
+        print_list($stmt, $format, ['name' => 'TagName', 'value' => 'TagName', 'stationcount' => $stationCountColumn], 'tag');
     }
 }
 

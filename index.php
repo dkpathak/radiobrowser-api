@@ -47,7 +47,7 @@ if (isset($_GET['action'])) {
     $tags = getParameter('tags', null);
 
     if ($action == 'tags') {
-        print_tags($db, $format, $term, $order, $reverse);
+        print_tags($db, $format, $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'countries') {
         print_1_n($db, $format, 'Country', 'country', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'codecs') {
