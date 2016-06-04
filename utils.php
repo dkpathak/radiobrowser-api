@@ -1,264 +1,17 @@
 <?php
 
-function fn_CURLOPT_HEADERFUNCTION($ch, $str){
-    global $headers;
-    $len = strlen($str);
-    $itemArr = explode(":",$str,2);
-    if (count($headers) == 0){
-      $headers[0] = trim($str);
-    }else if (count($itemArr) == 2){
-      $headers[$itemArr[0]] = trim($itemArr[1]);
-    }
-    return $len;
-}
-
-function fn_write_headers($ch, $chunk) {
-    global $data;
-    static $limit = 4096;
-
-    $len = strlen($data) + strlen($chunk);
-    if ($len >= $limit ) {
-      $data .= substr($chunk, 0, $limit-strlen($data));
-      // echo strlen($data) , ' ', $data;
-      return -1;
-    }
-
-    $data .= $chunk;
-    return strlen($chunk);
-};
-
-function get_headers_curl($url){
-    global $headers;
-    global $data;
-    // erzeuge einen neuen cURL-Handle
-    $ch = curl_init();
-
-    // setze die URL und andere Optionen
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HEADER, 1);
-    curl_setopt($ch, CURLOPT_NOBODY, 1);
-    curl_setopt($ch, CURLOPT_HTTPGET, 1);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    // curl_setopt($ch, CURLOPT_NOPROGRESS, false);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_HEADERFUNCTION, "fn_CURLOPT_HEADERFUNCTION"); // handle received headers
-    curl_setopt($ch, CURLOPT_USERAGENT, "VLC/2.2.2 LibVLC/2.2.2");
-    // curl_setopt($ch, CURLOPT_WRITEFUNCTION, "fn_write_headers");
-    // curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'fn_CURLOPT_WRITEFUNCTION'); // callad every CURLOPT_BUFFERSIZE
-    // curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-    // curl_setopt($ch, CURLOPT_BUFFERSIZE, 128); // more progress info
-    // curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function($DownloadSize, $Downloaded, $UploadSize, $Uploaded){
-    //     return ($Downloaded > (1 * 1024)) ? 1 : 0;
-    // });
-
-    // führe die Aktion aus und gib die Daten an den Browser weiter
-    $data = "";
-    $headers = array();
-    $result = curl_exec($ch);
-
-    // schließe den cURL-Handle und gib die Systemresourcen frei
-    curl_close($ch);
-
-    return $headers;
-}
-
-function writefn($ch, $chunk) {
-    global $data;
-    static $limit = 4096;
-
-    $len = strlen($data) + strlen($chunk);
-    if ($len >= $limit ) {
-      $data .= substr($chunk, 0, $limit-strlen($data));
-      echo strlen($data) , ' ', $data;
-      return -1;
-    }
-
-    $data .= $chunk;
-    return strlen($chunk);
-};
-
-function file_get_contents_curl($url) {
-    global $data;
-    $data = "";
-
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-    curl_setopt($ch, CURLOPT_WRITEFUNCTION, "writefn");
-    curl_setopt($ch, CURLOPT_USERAGENT, "VLC/2.2.2 LibVLC/2.2.2");
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-
-    if (!curl_exec($ch)){
-      $data = false;
-    }
-    curl_close($ch);
-
-    return $data;
-}
-
-function isContentTypePlaylist($contentType){
-    return isContentTypePlaylistM3U($contentType) || isContentTypePlaylistPLS($contentType) || isContentTypePlaylistASX($contentType);
-}
-
-function isContentTypePlaylistM3U($contentType){
-    $contentType = strtolower($contentType);
-
-    $types = array(
-      "application/mpegurl",
-      "application/x-mpegurl",
-      "audio/mpegurl",
-      "audio/x-mpegurl",
-      "application/vnd.apple.mpegurl",
-      "application/vnd.apple.mpegurl.audio"
-    );
-
-    return in_array($contentType, $types);
-}
-
-function isContentTypePlaylistPLS($contentType){
-    $contentType = strtolower($contentType);
-
-    $types = array(
-      "audio/x-scpls",
-      "application/x-scpls",
-      "application/pls+xml"
-    );
-
-    return in_array($contentType, $types);
-}
-
-function isContentTypePlaylistASX($contentType){
-    $contentType = strtolower($contentType);
-
-    $types = array(
-      "video/x-ms-asf",
-      "video/x-ms-asx"
-    );
-
-    return in_array($contentType, $types);
-}
-
-function decodePlaylistUrlM3U($content){
-    // replace different kinds of newline with the default
-    $content = str_replace(array("\r\n","\n\r","\r"),"\n",$content);
-    $lines = explode("\n",$content);
-
-    foreach ($lines as $line) {
-        if (strtolower(trim($line)) === "[playlist]"){
-          return null;
-        }
-        if (substr(trim($line), 0, 1) != '#') {
-            if (trim($line) !== '') {
-                return trim($line);
-            }
-        }
-    }
-    return null;
-}
-
-function decodePlaylistUrlPLS($content){
-    // replace different kinds of newline with the default
-    $content = str_replace(array("\r\n","\n\r","\r"),"\n",$content);
-    $lines = explode("\n",$content);
-
-    foreach ($lines as $line) {
-        if (substr(trim($line), 0, 4) == 'File') {
-            $pos = strpos($line, '=');
-            if ($pos !== false) {
-                $value = substr($line, $pos + 1);
-                return trim($value);
-            }
-        }
-    }
-    return null;
-}
-
-function decodePlaylistUrlASX($content){
-    $xml = @simplexml_load_string(strtolower($content));
-    if ($xml !== false) {
-        foreach ($xml->entry as $entry) {
-            foreach ($entry->ref as $ref) {
-                if (isset($ref['href'])) {
-                    return $ref['href'];
-                }
-            }
-        }
-    }
-    return null;
-}
-
-function decodePlaylistUrlALL($content){
-    $resultXML = decodePlaylistUrlASX($content);
-    if ($resultXML != null){
-      return $resultXML;
-    }
-    // replace different kinds of newline with the default
-    $content = str_replace(array("\r\n","\n\r","\r"),"\n",$content);
-    $lines = explode("\n",$content);
-
-    foreach ($lines as $line) {
-        $line = trim($line);
-        if (substr($line, 0, 4) == 'File') {
-            $pos = strpos($line, '=');
-            if ($pos !== false) {
-                $value = substr($line, $pos + 1);
-                return trim($value);
-            }
-        }
-        if (hasCorrectScheme($line)){
-            return $line;
-        }
-    }
-    return null;
-}
+require 'PlaylistDecoder.php';
+require 'SimpleCurlConnection.php';
 
 function decodePlaylistUrl($url, $contentType)
 {
-    // read max 4KB
-    $content = file_get_contents_curl($url);//, false, NULL, -1, 4096);
+    $conn = new SimpleCurlConnection();
+    $content = $conn->file_get_contents_curl($url);//, false, NULL, -1, 4096);
     if ($content !== false){
-        if (isContentTypePlaylistM3U($contentType)){
-            $result = fixPlaylistItem($url,decodePlaylistUrlM3U($content));
-            if ($result !== null){
-                return $result;
-            }
-            return decodePlaylistUrlALL($content);
-        }
-        if (isContentTypePlaylistPLS($contentType)){
-            $result = fixPlaylistItem($url, decodePlaylistUrlPLS($content));
-            if ($result !== null){
-                return $result;
-            }
-            return decodePlaylistUrlALL($content);
-        }
-        if (isContentTypePlaylistASX($contentType)){
-            $result = fixPlaylistItem($url, decodePlaylistUrlASX($content));
-            if ($result !== null){
-                return $result;
-            }
-            return decodePlaylistUrlALL($content);
-        }
+        $decoder = new PlaylistDecoder();
+        return $decoder->decodePlayListContent($url, $contentType, $content);
     }
-
-    return false;
-}
-
-function fixPlaylistItem($url, $playlistItem){
-    if ($playlistItem !== false && $playlistItem !== null){
-        if (!hasCorrectScheme($playlistItem)){
-            $remoteDir = getRemoteDirUrl($url);
-            if ($remoteDir !== false){
-                return $remoteDir."/".$playlistItem;
-            }
-            return false;
-        }
-    }
-    return $playlistItem;
+    return array();
 }
 
 function getItemFromDict($dict, $keyWanted)
@@ -319,6 +72,7 @@ function decodeStatusCode($headers, &$log){
 function checkStation($url, &$bitrate, &$codec, &$log)
 {
     ini_set("user_agent","VLC/2.2.2 LibVLC/2.2.2");
+    $decoder = new PlaylistDecoder();
     $log = array();
     for ($tries=0;$tries<10;$tries++){
         if (!hasCorrectScheme($url)){
@@ -334,7 +88,8 @@ function checkStation($url, &$bitrate, &$codec, &$log)
         $log = array_merge($log,$logStatusCode);
         if ($statusCode === 400 || $statusCode === 404 || $statusCode === 500 || $statusCode === false) {
           array_push($log, " - try to connect with curl: ".$url);
-          $headers = get_headers_curl($url);
+          $conn = new SimpleCurlConnection();
+          $headers = $conn->get_headers_curl($url);
           $statusCode = decodeStatusCode($headers, $logStatusCode);
           $log = array_merge($log,$logStatusCode);
           if ($statusCode === 404 || $statusCode === false) {
@@ -375,12 +130,13 @@ function checkStation($url, &$bitrate, &$codec, &$log)
                 } elseif ($contentType === 'text/html') {
                     $codec = '';
                     return false;
-                } elseif (isContentTypePlaylist($contentType)) {
-                    $url = decodePlaylistUrl($url,$contentType);
-                    if ($url === false){
+                } elseif ($decoder->isContentTypePlaylist($contentType)) {
+                    $urls = decodePlaylistUrl($url,$contentType);
+                    if (count($urls) === 0){
                         array_push($log, " - could not decode playlist");
                         return false;
                     }
+                    $url = $urls[0];
                     array_push($log, " - Playlist URL: ".$url);
                     continue;
                 } else {
@@ -467,20 +223,6 @@ function getBaseUrl($url)
         $host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
         $port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
         return "$scheme$host$port";
-    }
-
-    return null;
-}
-
-function getRemoteDirUrl($url)
-{
-    $parsed_url = parse_url($url);
-    if ($parsed_url) {
-        $scheme = isset($parsed_url['scheme']) ? $parsed_url['scheme'].'://' : '';
-        $host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
-        $port = isset($parsed_url['port']) ? ':'.$parsed_url['port'] : '';
-        $path = isset($parsed_url['path']) ? dirname($parsed_url['path']) : '';
-        return "$scheme$host$port$path";
     }
 
     return null;
