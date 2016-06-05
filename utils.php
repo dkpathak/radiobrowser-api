@@ -229,6 +229,7 @@ function getBaseUrl($url)
 }
 
 function extractIconLink($html, $base, &$log){
+    $images = array();
     $log = array();
     $dom = new DOMDocument();
     @$dom->loadHTML($html);
@@ -248,23 +249,23 @@ function extractIconLink($html, $base, &$log){
         $name = $link->getAttribute('name');
         if ($name === "msapplication-TileImage"){
             array_push($log, "Found meta-tag msapplication-TileImage");
-            return FixUrl($link->getAttribute('content'),$base);
+            array_push($images, FixUrl($link->getAttribute('content'),$base));
         }
         if ($name === "msapplication-square70x70logo"){
             array_push($log, "Found meta-tag msapplication-square70x70logo");
-            return FixUrl($link->getAttribute('content'),$base);
+            array_push($images, FixUrl($link->getAttribute('content'),$base));
         }
         if ($name === "msapplication-square150x150logo"){
             array_push($log, "Found meta-tag msapplication-square150x150logo");
-            return FixUrl($link->getAttribute('content'),$base);
+            array_push($images, FixUrl($link->getAttribute('content'),$base));
         }
         if ($name === "msapplication-square310x310logo"){
             array_push($log, "Found meta-tag msapplication-square310x310logo");
-            return FixUrl($link->getAttribute('content'),$base);
+            array_push($images, FixUrl($link->getAttribute('content'),$base));
         }
         if ($name === "msapplication-wide310x150logo"){
             array_push($log, "Found meta-tag msapplication-wide310x150logo");
-            return FixUrl($link->getAttribute('content'),$base);
+            array_push($images, FixUrl($link->getAttribute('content'),$base));
         }
 
         // support for open graph
@@ -272,7 +273,7 @@ function extractIconLink($html, $base, &$log){
         $property = $link->getAttribute('property');
         if ($property === "og:image"){
             array_push($log, "Found meta-tag property='og:image'");
-            return FixUrl($link->getAttribute('content'),$base);
+            array_push($images, FixUrl($link->getAttribute('content'),$base));
         }
     }
 
@@ -282,7 +283,7 @@ function extractIconLink($html, $base, &$log){
 
         if ($rel === "apple-touch-icon"){
             array_push($log, "Found link-tag rel='apple-touch-icon'");
-            return FixUrl($link->getAttribute('href'),$base);
+            array_push($images, FixUrl($link->getAttribute('href'),$base));
         }
     }
 
@@ -292,15 +293,16 @@ function extractIconLink($html, $base, &$log){
 
         if ($rel === "shortcut icon"){
             array_push($log, "Found link-tag rel='shortcut icon'");
-            return FixUrl($link->getAttribute('href'),$base);
+            array_push($images, FixUrl($link->getAttribute('href'),$base));
         }
         if ($rel === "icon"){
             array_push($log, "Found link-tag rel='icon'");
-            return FixUrl($link->getAttribute('href'),$base);
+            array_push($images, FixUrl($link->getAttribute('href'),$base));
         }
     }
+    array_push($images, $base."/favicon.ico");
     array_push($log, "Did not find any usable html tags with structured icon information on page");
-    return null;
+    return $images;
 }
 
 function extractFaviconFromUrl($hp, &$log){
@@ -313,9 +315,9 @@ function extractFaviconFromUrl($hp, &$log){
             array_push($log, "Extracted base adress: ".$base);
             $hpContent = getLinkContent($hp);
             if ($hpContent !== null){
-                $extractOK = extractIconLink($hpContent, $base, $logExtract);
+                $images = extractIconLink($hpContent, $base, $logExtract);
                 $log = array_merge($log, $logExtract);
-                return $extractOK;
+                return $images;
             }
         }else{
           array_push($log, "Could not extract host from link");
@@ -323,7 +325,7 @@ function extractFaviconFromUrl($hp, &$log){
     }else{
         array_push($log, "Incorrect link scheme, use only http:// or https://");
     }
-    return null;
+    return array();
 }
 
 ?>

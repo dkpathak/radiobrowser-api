@@ -168,8 +168,10 @@ function fixFavicon($icon, $hp) {
                 if (checkUrlHtmlContent($hp)){
                     $hpContent = getLinkContent($hp);
                     if ($hpContent !== null){
-                        $icon = extractIconLink($hpContent,$base, $logExtractIcon);
-                        if ($icon === null){
+                        $images = extractIconLink($hpContent,$base, $logExtractIcon);
+                        if (count($images) > 0){
+                            $icon = $images[0];
+                        }else{
                             $icon = "";
                         }
                         // echo "extracted:".$icon."\n";

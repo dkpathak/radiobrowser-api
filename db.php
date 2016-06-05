@@ -562,9 +562,10 @@ function backupStation($db, $stationid)
 function autosetFavicon($db, $stationid, $homepage, &$favicon, &$log){
     $log = array();
     array_push($log, "extract from url: ".$homepage);
-    $favicon = extractFaviconFromUrl($homepage, $logExtract);
+    $images = extractFaviconFromUrl($homepage, $logExtract);
     $log = array_merge($log,$logExtract);
-    if ($favicon !== null){
+    if (count($images) > 0){
+        $favicon = $images[0];
         array_push($log, "extract ok: ".$favicon);
         $stmt = $db->prepare('UPDATE Station SET Favicon=:favicon WHERE StationID=:id');
         $result = $stmt->execute(['id'=>$stationid,'favicon'=>$favicon]);
@@ -1026,5 +1027,43 @@ function print_station_real_url($db, $format, $stationid){
     } else {
         sendResult($format, false, "did not find station with matching id");
         return false;
+    }
+}
+
+function listExtractedImages($format, $url){
+    if ($url === null || $url === false){
+        sendResult($format, false, "parameter url is mandatory");
+        return;
+    }
+    $images = extractFaviconFromUrl($url, $log);
+    if ($format === "xml"){
+        print_output_header($format);
+        print_output_arr_start($format);
+
+        print_output_item_start($format, "status");
+        print_output_item_content($format, "ok", "true");
+        print_output_item_end($format);
+
+        echo "<images>";
+        $i = 0;
+        foreach ($images as $image){
+            if ($i > 0) {
+                print_output_item_arr_sep($format);
+            }
+
+            print_output_item_start($format, "image");
+            print_output_item_content($format, "href", $image);
+            print_output_item_end($format);
+
+            ++$i;
+        }
+        echo "</images>";
+        print_output_arr_end($format);
+        print_output_footer($format);
+    }
+    if ($format === "json"){
+        print_output_header($format);
+        $result = array("ok" => "true", "images" => $images);
+        echo json_encode($result);
     }
 }

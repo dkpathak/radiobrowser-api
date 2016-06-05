@@ -124,6 +124,8 @@ if (isset($_GET['action'])) {
         print_station_real_url($db, $format, $stationid);
     }elseif ($action == 'negativevote') {
         negativeVoteForStation($db, $format, $stationid);
+    }elseif ($action == 'extract_images') {
+        listExtractedImages($format, $url);
     }
 } else {
     ?>

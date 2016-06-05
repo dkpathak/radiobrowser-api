@@ -86,3 +86,5 @@ RewriteRule ^webservice/(.*)/stats$ /?format=$1&action=stats
 RewriteRule ^webservice/(.*)/url/(.*)$ /get_station_url.php?format=$1&stationid=$2
 # http://site/webservice/<type>/url/<stationid>
 RewriteRule ^webservice/(.*)/vote/(.*)$ /?stationid=$2&action=vote&format=$1
+
+RewriteRule ^webservice/(.*)/extract_images$ /?action=extract_images&format=$1
