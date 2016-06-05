@@ -941,6 +941,19 @@ function print_station_by_id($db, $format, $id)
     }
 }
 
+function print_stations_list_data_url($db, $format, $url)
+{
+    if ($url === false || $url === null){
+        sendResult($format, false, "parameter url is mandatory");
+        return;
+    }
+    $stmt = $db->prepare('SELECT * from Station WHERE Station.Url=:url OR Station.UrlCache=:url');
+    $result = $stmt->execute(['url' => $url]);
+    if ($result) {
+        print_result_stations($stmt, $format);
+    }
+}
+
 function print_station_real_url($db, $format, $stationid){
     if ($format !== "xml" && $format !== "m3u" && $format !== "json" && $format !== "pls") {
         sendResult($format, false, "unknown format! supported formats: xml, json, pls, m3u");

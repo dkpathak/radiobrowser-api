@@ -357,6 +357,38 @@
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountry/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountry/austria</a></div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria</a></div>
 
+    <a id="list_stations_byurl"></a>
+    <a href="#list_stations_byurl"><h2>Search radio stations by url</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/byurl
+    <br /> http://www.radio-browser.info/webservice/json/stations/byurl
+    </div>
+    <div class="header_sub">Description:</div>
+    Will get a list of radio stations that have an exact url match.<br/>
+    <br/>
+    <br/> Supported output formats: json,xml
+    <br/>
+    <div class="header_sub">Parameter:</div>
+    This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
+    <table>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>example values</th>
+          <th>description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>url</td>
+          <td>http://this.is.a.link/test.mp3</td>
+          <td>MANDATORY, url of the station</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/json/stations/byurl" target="_blank">http://www.radio-browser.info/webservice/json/stations/byurl</a></div>
+
     <a id="list_stations_all"></a>
     <a href="#list_stations_all"><h2>List of all radio stations</h2></a>
     <div class="header_sub">Syntax:</div>

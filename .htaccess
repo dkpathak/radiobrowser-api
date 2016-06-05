@@ -58,6 +58,7 @@ RewriteRule ^webservice/(.*)/stations/deleted$ /?format=$1&action=data_search_de
 RewriteRule ^webservice/(.*)/stations/changed/(.*)$ /?format=$1&stationid=$2&action=data_search_changed
 RewriteRule ^webservice/(.*)/stations/changed$ /?format=$1&action=data_search_changed_all
 
+RewriteRule ^webservice/(.*)/stations/byurl$ /?format=$1&action=data_search_byurl [B,L,QSD]
 RewriteRule ^webservice/(.*)/stations/byid/(.*)$ /?format=$1&term=$2&action=data_search_byid [B,L,QSD]
 RewriteRule ^webservice/(.*)/stations/byname/(.*)$ /?format=$1&term=$2&action=data_search_name [B,L,QSD]
 RewriteRule ^webservice/(.*)/stations/bynameexact/(.*)$ /?format=$1&term=$2&action=data_search_name_exact [B,L,QSD]
