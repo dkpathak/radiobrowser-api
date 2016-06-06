@@ -22,7 +22,7 @@ function updateCaches($db)
 
     updateWebpages($db);
 
-    byStationCleanup($db, 40);
+    byStationCleanup($db, 50);
 
     // SLOW methods, for whole database
     // updateStationClickAll($db);
