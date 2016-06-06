@@ -302,7 +302,16 @@ function extractIconLink($html, $base, &$log){
     }
     array_push($images, $base."/favicon.ico");
     array_push($log, "Did not find any usable html tags with structured icon information on page");
-    return $images;
+
+    // clean doubles
+    $images_cleaned = array();
+    foreach ($images as $image){
+        if (!in_array($image,$images_cleaned)){
+            array_push($images_cleaned, $image);
+        }
+    }
+
+    return $images_cleaned;
 }
 
 function extractFaviconFromUrl($hp, &$log){
