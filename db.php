@@ -18,6 +18,7 @@ $columnMapping = [
     'bitrate' => 'Bitrate',
     'lastcheckok' => 'LastCheckOK',
     'lastchecktime' => 'LastCheckTime',
+    'lastcheckoktime' => 'LastCheckOKTime',
     'clicktimestamp' => 'ClickTimestamp',
     'clickcount' => 'clickcount',
     'clicktrend' => 'ClickTrend',
@@ -69,6 +70,7 @@ function openDB()
           ClickTrend INT DEFAULT 0,
           ClickTimestamp TIMESTAMP NOT NULL,
           LastCheckOK boolean default true NOT NULL,
+          LastCheckOKTime TIMESTAMP NOT NULL,
           LastCheckTime TIMESTAMP NOT NULL)
           ');
     }

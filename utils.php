@@ -36,7 +36,7 @@ function getItemFromDict($dict, $keyWanted)
 function checkStationConnectionById($db, $stationid, $url, &$bitrate, &$codec, &$log){
     $audiofile = checkStation($url, $bitrate, $codec, $log);
     if ($audiofile !== false) {
-        $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec,UrlCache=:cacheurl WHERE StationID=:stationid');
+        $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec,UrlCache=:cacheurl, LastCheckOKTime=NOW() WHERE StationID=:stationid');
         $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $stationid, 'cacheurl' => $audiofile]);
         return true;
     } else {
