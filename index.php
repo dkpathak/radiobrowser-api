@@ -22,29 +22,45 @@ function getParameter($paramName, $defaultValue){
     return $defaultValue;
 }
 
+function convertToBool($value){
+    if ($value === true || $value === 'true' || $value === '1' || $value === 1){
+        return true;
+    }
+    return false;
+}
+
 if (isset($_GET['action'])) {
     // open database
     $db = openDB();
     // check parameters, set default values
     $format = isset($_GET['format']) ? $_GET['format'] : 'xml';
     $term = getParameter('term','');
-    $offset = getParameter('offset', 0);
-    $limit = getParameter('limit', 100000);
+    $offset = intval(getParameter('offset', '0'));
+    $limit = intval(getParameter('limit', '100000'));
     $reverse = getParameter('reverse',"false");
     $order = getParameter('order',"");
     $stationid = isset($_GET['stationid']) ? $_GET['stationid'] : null;
     $stationchangeid = isset($_GET['stationchangeid']) ? $_GET['stationchangeid'] : null;
     $action = $_GET['action'];
-    $hideBroken = getParameter('hidebroken',"false");
+    $hideBroken = convertToBool(getParameter('hidebroken', 'false'));
+
+    $bitrateMin = intval(getParameter('bitrateMin','0'));
+    $bitrateMax = intval(getParameter('bitrateMax','1000000'));
 
     $name = getParameter('name', null);
+    $nameExact = convertToBool(getParameter('nameExact', 'false'));
     $url = getParameter('url', null);
     $homepage = getParameter('homepage', null);
     $favicon = getParameter('favicon', null);
     $country = getParameter('country', null);
+    $countryExact = convertToBool(getParameter('countryExact', 'false'));
     $state = getParameter('state', null);
+    $stateExact = convertToBool(getParameter('stateExact', 'false'));
     $language = getParameter('language', null);
+    $languageExact = convertToBool(getParameter('languageExact', 'false'));
     $tags = getParameter('tags', null);
+    $tag = getParameter('tag', null);
+    $tagExact = convertToBool(getParameter('tagExact', 'false'));
 
     if ($action == 'tags') {
         print_tags($db, $format, $term, $order, $reverse, $hideBroken);
@@ -58,6 +74,8 @@ if (isset($_GET['action'])) {
         print_1_n($db, $format, 'Language', 'language', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'stats') {
         print_stats($db, $format);
+    }elseif ($action == 'data_search_advanced') {
+        print_stations_list_data_advanced($db, $format, $name, $nameExact, $country, $countryExact, $state, $stateExact, $language, $languageExact, $tag, $tagExact, $bitrateMin, $bitrateMax, $order, $reverse, $hideBroken, $offset, $limit);
     }elseif ($action == 'data_search_topvote') {
         print_stations_list_data_all($db, $format, "votes", "true", $offset, $limit);
     }elseif ($action == 'data_search_topclick') {

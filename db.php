@@ -198,7 +198,7 @@ function print_tags($db, $format, $search_term, $order, $reverse, $hideBroken)
 
 function print_1_n($db, $format, $column, $outputItemName, $search_term, $order, $reverse, $hideBroken)
 {
-    $hideBrokenDb = strtolower($hideBroken) === "true" ? " AND LastCheckOK=TRUE" : "";
+    $hideBrokenDb = $hideBroken === true ? " AND LastCheckOK=TRUE" : "";
     $reverseDb = filterOrderReverse($reverse);
     if ($order === "stationcount"){
         $orderDb = "StationCount";
@@ -216,7 +216,7 @@ function print_1_n($db, $format, $column, $outputItemName, $search_term, $order,
 
 function print_states($db, $format, $search_term, $country, $order, $reverse, $hideBroken)
 {
-    $hideBrokenDb = strtolower($hideBroken) === "true" ? " AND LastCheckOK=TRUE" : "";
+    $hideBrokenDb = $hideBroken === true ? " AND LastCheckOK=TRUE" : "";
     $reverseDb = filterOrderReverse($reverse);
     if ($order === "stationcount"){
         $orderDb = "StationCount";
@@ -336,6 +336,84 @@ function filterOrderReverse($reverse){
         return "DESC";
     }
     return "ASC";
+}
+
+function print_stations_list_data_advanced($db, $format, $name, $nameExact, $country, $countryExact, $state, $stateExact, $language, $languageExact, $tag, $tagExact, $bitrateMin, $bitrateMax, $order, $reverse, $hideBroken, $offset, $limit)
+{
+    $orderDb = filterOrderColumnName($order);
+    $reverseDb = filterOrderReverse($reverse);
+    $hideBrokenDb = $hideBroken === true ? " AND LastCheckOK=TRUE" : "";
+    $where = '';
+    $bindingValues = array();
+    if ($name !== null) {
+        if ($nameExact === true){
+            $where .= ' AND Name=:name';
+            $bindingValues[':name'] = $name;
+        }else{
+          $where .= ' AND Name LIKE :name';
+          $bindingValues[':name'] = '%'.$name.'%';
+        }
+    }
+
+    if ($country !== null) {
+        if ($countryExact === true){
+            $where .= ' AND Country=:country';
+            $bindingValues[':country'] = $country;
+        }else{
+            $where .= ' AND Country LIKE :country';
+            $bindingValues[':country'] = '%'.$country.'%';
+        }
+    }
+
+    if ($state !== null) {
+        if ($stateExact === true){
+            $where .= ' AND SubCountry=:state';
+            $bindingValues[':state'] = $state;
+        }else{
+            $where .= ' AND SubCountry LIKE :state';
+            $bindingValues[':state'] = '%'.$state.'%';
+        }
+    }
+
+    if ($language !== null) {
+        if ($languageExact === true){
+            $where .= ' AND Language=:language';
+            $bindingValues[':language'] = $language;
+        }else{
+            $where .= ' AND Language LIKE :language';
+            $bindingValues[':language'] = '%'.$language.'%';
+        }
+    }
+
+    if ($tag !== null) {
+        if ($tagExact === true) {
+            $where .= ' AND (Tags=:tagSingle OR Tags LIKE :tagRight OR Tags LIKE :tagLeft OR Tags LIKE :tagMiddle)';
+            $bindingValues[':tagSingle'] = $tag;
+            $bindingValues[':tagLeft'] = '%,'.$tag;
+            $bindingValues[':tagRight'] = $tag.',%';
+            $bindingValues[':tagMiddle'] = '%,'.$tag.',%';
+        }else{
+            $where .= ' AND Tags LIKE :tag';
+            $bindingValues[':tag'] = '%'.$tag.'%';
+        }
+    }
+
+
+    $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL '.$hideBrokenDb.' '.$where.' AND Bitrate>=:bitratemin AND Bitrate<=:bitratemax ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :limit OFFSET :offset');
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->bindValue(':bitratemin', $bitrateMin, PDO::PARAM_INT);
+    $stmt->bindValue(':bitratemax', $bitrateMax, PDO::PARAM_INT);
+    foreach ($bindingValues as $bindName => $bindValue){
+        $stmt->bindValue($bindName, $bindValue, PDO::PARAM_STR);
+    }
+
+    $result = $stmt->execute();
+    if ($result) {
+        print_result_stations($stmt, $format);
+    }else{
+        sendResult($format, false, "Error in query");
+    }
 }
 
 function print_stations_list_data_all($db, $format, $order, $reverse, $offset, $limit)

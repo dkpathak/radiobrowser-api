@@ -362,6 +362,109 @@
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountry/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountry/austria</a></div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria</a></div>
 
+    <a id="list_stations_search"></a>
+    <a href="#list_stations_search"><h2>Advanced station search</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/search
+    <br />
+    <br /> http://www.radio-browser.info/webservice/json/stations/search
+  </div>
+    <div class="header_sub">Description:</div>
+    Will get a list of radio stations that match the search. It will match if the station attribute contains the searchterm.<br/>
+    Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted.
+    <br/>
+    <br/> Supported output formats: json,xml
+    <br/>
+    <div class="header_sub">Parameter:</div>
+    This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
+    <table>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>default value</th>
+          <th>possible values</th>
+          <th>description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>name</td>
+          <td></td>
+          <td>STRING</td>
+          <td>OPTIONAL, name of the station</td>
+        </tr>
+        <tr>
+          <td>country</td>
+          <td></td>
+          <td>STRING</td>
+          <td>OPTIONAL, country of the station</td>
+        </tr>
+        <tr>
+          <td>state</td>
+          <td></td>
+          <td>STRING</td>
+          <td>OPTIONAL, state of the station</td>
+        </tr>
+        <tr>
+          <td>language</td>
+          <td></td>
+          <td>STRING</td>
+          <td>OPTIONAL, language of the station</td>
+        </tr>
+        <tr>
+          <td>tag</td>
+          <td></td>
+          <td>STRING</td>
+          <td>OPTIONAL, a tag of the station</td>
+        </tr>
+        <tr>
+          <td>bitrateMin</td>
+          <td>0</td>
+          <td>POSITIVE INTEGER</td>
+          <td>OPTIONAL, rerverses the result list if set to true</td>
+        </tr>
+        <tr>
+          <td>bitrateMax</td>
+          <td>1000000</td>
+          <td>POSITIVE INTEGER</td>
+          <td>OPTIONAL, rerverses the result list if set to true</td>
+        </tr>
+        <tr>
+          <td>order</td>
+          <td>name</td>
+          <td>
+            name, url, homepage, favicon, tags,
+            country, state, language, votes, negativevotes,
+            codec, bitrate, lastcheckok, lastchecktime, clicktimestamp,
+            clickcount, clicktrend
+          </td>
+          <td>OPTIONAL, name of the attribute the result list will be sorted by</td>
+        </tr>
+        <tr>
+          <td>reverse</td>
+          <td>false</td>
+          <td>true, false</td>
+          <td>OPTIONAL, rerverses the result list if set to true</td>
+        </tr>
+        <tr>
+          <td>offset</td>
+          <td>0</td>
+          <td>POSITIVE INTEGER</td>
+          <td>OPTIONAL, starting value of the result list from the database, for example if you want to do paging on the serverside</td>
+        </tr>
+        <tr>
+          <td>limit</td>
+          <td>100000</td>
+          <td>0,1,2,....</td>
+          <td>OPTIONAL, number of returned datarows (stations) starting with offset</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/json/stations/byname/jazz" target="_blank">http://www.radio-browser.info/webservice/json/stations/byname/jazz</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountry/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountry/austria</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria</a></div>
+
     <a id="list_stations_byurl"></a>
     <a href="#list_stations_byurl"><h2>Search radio stations by url</h2></a>
     <div class="header_sub">Syntax:</div>
