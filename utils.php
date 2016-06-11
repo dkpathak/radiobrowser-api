@@ -34,7 +34,7 @@ function getItemFromDict($dict, $keyWanted)
 }
 
 function checkStationConnectionById($db, $stationid, $url, &$bitrate, &$codec, &$log){
-    $audiofile = checkStation($url, $bitrate, $codec, $log);
+    $audiofile = checkStation($url, $bitrate, $codec, $name, $genre, $homepage, $log);
     if ($audiofile !== false) {
         $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec,UrlCache=:cacheurl, LastCheckOKTime=NOW() WHERE StationID=:stationid');
         $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $stationid, 'cacheurl' => $audiofile]);
@@ -69,7 +69,7 @@ function decodeStatusCode($headers, &$log){
     return $statusCode;
 }
 
-function checkStation($url, &$bitrate, &$codec, &$log)
+function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$log)
 {
     ini_set("user_agent","VLC/2.2.2 LibVLC/2.2.2");
     $decoder = new PlaylistDecoder();
@@ -154,6 +154,24 @@ function checkStation($url, &$bitrate, &$codec, &$log)
                 array_push($log, ' - Bitrate: '.$bitrate);
             } else {
                 $bitrate = 0;
+            }
+            $name = getItemFromDict($headers, 'icy-name');
+            if ($name !== false) {
+                array_push($log, ' - Stream Name: '.$name);
+            } else {
+                $name = null;
+            }
+            $genre = getItemFromDict($headers, 'icy-genre');
+            if ($genre !== false) {
+                array_push($log, ' - Genre: '.$genre);
+            } else {
+                $genre = null;
+            }
+            $homepage = getItemFromDict($headers, 'icy-url');
+            if ($homepage !== false) {
+                array_push($log, ' - Homepage: '.$homepage);
+            } else {
+                $homepage = null;
             }
             return $url;
         }else if ($statusCode === 301 || $statusCode === 302 || $statusCode === 307){
