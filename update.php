@@ -22,7 +22,8 @@ function updateCaches($db)
 
     updateWebpages($db);
 
-    byStationCleanup($db, 50);
+    byStationCleanup($db, 50, 1);
+    byStationCleanup($db, 10, 0);
 
     // SLOW methods, for whole database
     // updateStationClickAll($db);
@@ -30,11 +31,11 @@ function updateCaches($db)
     // updateFaviconAll($db);
 }
 
-function byStationCleanup($db, $limit)
+function byStationCleanup($db, $limit, $LastCheckOK)
 {
     ini_set('default_socket_timeout', 10);
 
-    $select_stmt = $db->query('SELECT StationID, Name, Url FROM Station ORDER BY LastCheckTime ASC, Votes DESC LIMIT '.$limit);
+    $select_stmt = $db->query('SELECT StationID, Name, Url FROM Station WHERE LastCheckOK='.$LastCheckOK.' ORDER BY LastCheckTime ASC, Votes DESC LIMIT '.$limit);
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
