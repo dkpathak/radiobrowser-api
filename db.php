@@ -70,7 +70,7 @@ function openDB()
           ClickTrend INT DEFAULT 0,
           ClickTimestamp TIMESTAMP NOT NULL,
           LastCheckOK boolean default true NOT NULL,
-          LastCheckOKTime TIMESTAMP NOT NULL,
+          LastCheckOKTime DATETIME,
           LastCheckTime TIMESTAMP NOT NULL)
           ');
     }
