@@ -74,6 +74,28 @@
         </tr>
       </tbody>
     </table>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+[
+  {
+      &quot;value&quot;: &quot;Albania&quot;,
+      &quot;stationcount&quot;: &quot;1&quot;
+  },
+  {
+      &quot;value&quot;: &quot;Argentina&quot;,
+      &quot;stationcount&quot;: &quot;5&quot;
+  },
+  ..
+]
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;country value=&quot;Albania&quot; stationcount=&quot;1&quot;/&gt;
+  &lt;country value=&quot;Argentina&quot; stationcount=&quot;5&quot;/&gt;
+  ..
+&lt;/result&gt;
+    </pre>
     <div class="header_sub">Example:</div>
     <div> <a href="http://www.radio-browser.info/webservice/json/countries" target="_blank">http://www.radio-browser.info/webservice/json/countries</a></div>
     <div> <a href="http://www.radio-browser.info/webservice/xml/countries/aus" target="_blank">http://www.radio-browser.info/webservice/xml/countries/aus</a></div>
@@ -122,6 +144,28 @@
         </tr>
       </tbody>
     </table>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+[
+    {
+        &quot;value&quot;: &quot;AAC&quot;,
+        &quot;stationcount&quot;: &quot;34&quot;
+    },
+    {
+        &quot;value&quot;: &quot;AAC+&quot;,
+        &quot;stationcount&quot;: &quot;367&quot;
+    },
+    ..
+]
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;codec value=&quot;AAC&quot; stationcount=&quot;34&quot;/&gt;
+  &lt;codec value=&quot;AAC+&quot; stationcount=&quot;367&quot;/&gt;
+  ..
+&lt;/result&gt;
+    </pre>
     <div class="header_sub">Example:</div>
     <div> <a href="http://www.radio-browser.info/webservice/json/codecs" target="_blank">http://www.radio-browser.info/webservice/json/codecs</a></div>
     <div> <a href="http://www.radio-browser.info/webservice/xml/codecs/aac" target="_blank">http://www.radio-browser.info/webservice/xml/codecs/aac</a></div>
@@ -171,8 +215,38 @@
           <td>true, false</td>
           <td>do not count broken stations</td>
         </tr>
+        <tr>
+          <td>country</td>
+          <td></td>
+          <td>STRING</td>
+          <td>OPTIONAL, filter states by country name</td>
+        </tr>
       </tbody>
     </table>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+[
+    {
+        &quot;value&quot;: &quot;Alabama&quot;,
+        &quot;country&quot;: &quot;United States of America&quot;,
+        &quot;stationcount&quot;: &quot;6&quot;
+    },
+    {
+        &quot;value&quot;: &quot;Alberta&quot;,
+        &quot;country&quot;: &quot;Canada&quot;,
+        &quot;stationcount&quot;: &quot;2&quot;
+    },
+    ..
+]
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;state value=&quot;Alabama&quot; country=&quot;United States of America&quot; stationcount=&quot;6&quot;/&gt;
+  &lt;state value=&quot;Alberta&quot; country=&quot;Canada&quot; stationcount=&quot;2&quot;/&gt;
+  ..
+&lt;/result&gt;
+    </pre>
     <div class="header_sub">Example:</div>
     <div> <a href="http://www.radio-browser.info/webservice/json/states" target="_blank">http://www.radio-browser.info/webservice/json/states</a></div>
     <div> <a href="http://www.radio-browser.info/webservice/xml/states/ber" target="_blank">http://www.radio-browser.info/webservice/xml/states/ber</a></div>
@@ -224,6 +298,28 @@
         </tr>
       </tbody>
     </table>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+[
+    {
+        &quot;value&quot;: &quot;Albanian&quot;,
+        &quot;stationcount&quot;: &quot;1&quot;
+    },
+    {
+        &quot;value&quot;: &quot;Arabic&quot;,
+        &quot;stationcount&quot;: &quot;8&quot;
+    },
+    ..
+]
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;language value=&quot;Albanian&quot; stationcount=&quot;1&quot;/&gt;
+  &lt;language value=&quot;Arabic&quot; stationcount=&quot;8&quot;/&gt;
+  ..
+&lt;/result&gt;
+    </pre>
     <div class="header_sub">Example:</div>
     <div> <a href="http://www.radio-browser.info/webservice/json/languages" target="_blank">http://www.radio-browser.info/webservice/json/languages</a></div>
     <div> <a href="http://www.radio-browser.info/webservice/xml/languages/ger" target="_blank">http://www.radio-browser.info/webservice/xml/languages/ger</a></div>
@@ -273,6 +369,28 @@
         </tr>
       </tbody>
     </table>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+[
+    {
+        &quot;value&quot;: &quot;00s&quot;,
+        &quot;stationcount&quot;: &quot;3&quot;
+    },
+    {
+        &quot;value&quot;: &quot;10s&quot;,
+        &quot;stationcount&quot;: &quot;1&quot;
+    },
+    ..
+]
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;tag value=&quot;00s&quot; stationcount=&quot;3&quot;/&gt;
+  &lt;tag value=&quot;10s&quot; stationcount=&quot;1&quot;/&gt;
+  ..
+&lt;/result&gt;
+    </pre>
     <div class="header_sub">Example:</div>
     <div> <a href="http://www.radio-browser.info/webservice/json/tags" target="_blank">http://www.radio-browser.info/webservice/json/tags</a></div>
     <div> <a href="http://www.radio-browser.info/webservice/xml/tags/jazz" target="_blank">http://www.radio-browser.info/webservice/xml/tags/jazz</a></div>
@@ -1050,6 +1168,30 @@
     <div class="header_sub">Description:</div>
     Webservice stats. Supported output formats: json,xml
     <br/>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+{
+    &quot;stations&quot;: &quot;4047&quot;,
+    &quot;stations_broken&quot;: &quot;45&quot;,
+    &quot;tags&quot;: &quot;677&quot;,
+    &quot;clicks_last_hour&quot;: &quot;65&quot;,
+    &quot;clicks_last_day&quot;: &quot;1822&quot;,
+    &quot;languages&quot;: &quot;59&quot;,
+    &quot;countries&quot;: &quot;81&quot;
+}
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;stats stations=&quot;4047&quot;
+    stations_broken=&quot;45&quot;
+    tags=&quot;677&quot;
+    clicks_last_hour=&quot;66&quot;
+    clicks_last_day=&quot;1824&quot;
+    languages=&quot;59&quot;
+    countries=&quot;81&quot;/&gt;
+&lt;/result&gt;
+    </pre>
     <div class="header_sub">Example:</div>
     <a href="http://www.radio-browser.info/webservice/xml/stats" target="_blank">http://www.radio-browser.info/webservice/xml/stats</a>
     <br/>
