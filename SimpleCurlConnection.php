@@ -40,7 +40,9 @@ class SimpleCurlConnection{
         curl_setopt($ch, CURLOPT_HTTPGET, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+        // curl_setopt($ch, CURLOPT_VERBOSE, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HEADERFUNCTION,  array($this, "fn_CURLOPT_HEADERFUNCTION")); // handle received headers
         curl_setopt($ch, CURLOPT_USERAGENT, self::USER_AGENT);
         // curl_setopt($ch, CURLOPT_WRITEFUNCTION, "writefn");
