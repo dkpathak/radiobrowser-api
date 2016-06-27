@@ -71,13 +71,25 @@ function decodeStatusCode($headers, &$log){
 
 function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$log)
 {
+    $urls_todo = array($url);
+
     ini_set("user_agent","VLC/2.2.2 LibVLC/2.2.2");
     $decoder = new PlaylistDecoder();
     $log = array();
-    for ($tries=0;$tries<10;$tries++){
+    $killswitch = 10;
+
+    while (count($urls_todo) > 0){
+        if ($killswitch <= 0){
+            break;
+        }
+        $killswitch = $killswitch - 1;
+
+        $url = array_pop($urls_todo);
+        array_push($log,"Take url out of pool: ".$url);
+
         if (!hasCorrectScheme($url)){
             array_push($log, " - Incorrect url scheme!");
-            return false;
+            continue;
         }
 
         $location = false;
@@ -93,7 +105,7 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$l
           $statusCode = decodeStatusCode($headers, $logStatusCode);
           $log = array_merge($log,$logStatusCode);
           if ($statusCode === 404 || $statusCode === false) {
-              return false;
+              continue;
           }
         }
         // print_r($headers);
@@ -129,15 +141,16 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$l
                     $codec = 'UNKNOWN';
                 } elseif ($contentType === 'text/html') {
                     $codec = '';
-                    return false;
+                    continue;
                 } elseif ($decoder->isContentTypePlaylist($contentType)) {
                     $urls = decodePlaylistUrl($url,$contentType);
                     if (count($urls) === 0){
                         array_push($log, " - could not decode playlist");
-                        return false;
+                        continue;
                     }
-                    $url = $urls[0];
-                    array_push($log, " - Playlist URL: ".$url);
+                    $urls_todo = array_merge($urls_todo, $urls);
+
+                    array_push($log, " - added Playlist URLs for checking: ".implode(", ",$urls));
                     continue;
                 } else {
                     $codec = 'UNKNOWN';
@@ -178,14 +191,15 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$l
             $location = getItemFromDict($headers, 'Location');
             if ($location !== false) {
                 array_push($log, ' - Redirect:'.$location);
-                $url = $location;
+                array_push($urls_todo, $location);
+                continue;
             }else{
                 array_push($log, " - Location header field needed!");
-                return false;
+                continue;
             }
         }else{
             array_push($log, " - http status code != 200");
-            return false;
+            continue;
         }
     }
 
