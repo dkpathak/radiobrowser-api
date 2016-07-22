@@ -1,2 +1,4 @@
 User-agent: *
 Disallow: /webservice
+Disallow: /gui/bower_components
+Disallow: /backups
