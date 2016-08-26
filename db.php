@@ -109,10 +109,10 @@ function openDB()
     }
     if (!tableExists($db, 'TagCache')) {
         $db->query('CREATE TABLE TagCache(
-          TagName VARCHAR(100) NOT NULL,
+          TagName VARCHAR(100) COLLATE utf8_bin NOT NULL,
           Primary Key (TagName),
           StationCount INT DEFAULT 0,
-          StationCountWorking INT DEFAULT 0)
+          StationCountWorking INT DEFAULT 0) CHARSET=utf8 COLLATE=utf8_bin
           ');
     }
 
