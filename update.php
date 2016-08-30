@@ -70,9 +70,9 @@ function dbCleanup($db){
         $stationid = $row["StationID"];
 
         echo "DELETE STation:".$stationid."\n";
-        // backupStation($db, $stationid);
-        // $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id');
-        // $result = $stmt->execute(['id' => $stationid]);
+        backupStation($db, $stationid);
+        $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id');
+        $result = $stmt->execute(['id' => $stationid]);
     }
 }
 
