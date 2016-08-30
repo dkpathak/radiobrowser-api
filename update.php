@@ -58,6 +58,22 @@ function dbCleanup($db){
     $db->query('DELETE FROM StationClick WHERE TIME_TO_SEC(TIMEDIFF(Now(),ClickTimeStamp))>60*60*24*30;');
     // delete clicks older than 30 days
     $db->query('DELETE FROM StationHistory WHERE TIME_TO_SEC(TIMEDIFF(Now(),Creation))>60*60*24*30;');
+    // delete stations that never worked after 30 days
+    $db->query('DELETE FROM Station WHERE LastCheckOKTime IS NULL AND LastCheckOK=0 AND TIME_TO_SEC(TIMEDIFF(NOW(),Creation))>60*60*24*30');
+    // move stations that have not been working for more than 90 days into deleted list
+    $select_stmt = $db->query('SELECT StationID, Name, Creation, LastCheckOK,LastCheckOKTime FROM Station WHERE LastCheckOKTime IS NOT NULL AND LastCheckOK=0 AND TIME_TO_SEC(TIMEDIFF(NOW(),LastCheckOKTime))>60*60*24*90');
+    if (!$select_stmt) {
+        echo str(mysql_error());
+        exit;
+    }
+    while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+        $stationid = $row["StationID"];
+
+        echo "DELETE STation:".$stationid;
+        // backupStation($db, $stationid);
+        // $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id');
+        // $result = $stmt->execute(['id' => $stationid]);
+    }
 }
 
 function isIconLoadable($url){
