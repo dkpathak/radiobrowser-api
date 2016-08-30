@@ -69,7 +69,7 @@ function dbCleanup($db){
     while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
         $stationid = $row["StationID"];
 
-        echo "DELETE STation:".$stationid;
+        echo "DELETE STation:".$stationid."\n";
         // backupStation($db, $stationid);
         // $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id');
         // $result = $stmt->execute(['id' => $stationid]);
