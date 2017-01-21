@@ -924,8 +924,8 @@ function sendResultParameters($format, $ok, $message, $otherParameters){
         echo json_encode(array($result));
     }else if ($format === "xml"){
         print_output_header($format);
-        print_output_item_start($format, 'saatatus');
-        print_output_item_content($format, 'oaak', $ok ? 'true' : 'false');
+        print_output_item_start($format, 'status');
+        print_output_item_content($format, 'ok', $ok ? 'true' : 'false');
         print_output_item_dict_sep($format);
         print_output_item_content($format, 'message', $message);
         if ($otherParameters !== null){
