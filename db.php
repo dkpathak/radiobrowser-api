@@ -913,6 +913,7 @@ function sendResult($format, $ok, $message){
 
 function sendResultParameters($format, $ok, $message, $otherParameters){
     if ($format === "json"){
+        header('content-type: application/json');
         $result = array();
         $result["ok"] = $ok ? 'true' : 'false';
         $result["message"] = $message;
@@ -923,19 +924,17 @@ function sendResultParameters($format, $ok, $message, $otherParameters){
         }
         echo json_encode(array($result));
     }else if ($format === "xml"){
-        print_output_header($format);
-        print_output_item_start($format, 'status');
-        print_output_item_content($format, 'ok', $ok ? 'true' : 'false');
-        print_output_item_dict_sep($format);
-        print_output_item_content($format, 'message', $message);
+        header('Content-Type: text/xml');
+        $rootItem = new SimpleXMLElement("<result></result>");
+        $status = $rootItem->addChild('status');
+        $status->addAttribute('ok', $ok ? 'true' : 'false');
+        $status->addAttribute('message', $message);
         if ($otherParameters !== null){
             foreach ($otherParameters as $name => $value) {
-                print_output_item_dict_sep($format);
-                print_output_item_content($format, $name, $value);
+                $status->addAttribute($name, $value);
             }
         }
-        print_output_item_end($format);
-        print_output_footer($format);
+        echo $rootItem->asXML();
     }else{
         echo "supported formats are: xml, json";
         echo $message;
