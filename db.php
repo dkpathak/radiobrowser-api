@@ -922,7 +922,7 @@ function sendResultParameters($format, $ok, $message, $otherParameters){
                 $result[$name] = $value;
             }
         }
-        echo json_encode(array($result));
+        echo json_encode($result);
     }else if ($format === "xml"){
         header('Content-Type: text/xml');
         $rootItem = new SimpleXMLElement("<result></result>");
