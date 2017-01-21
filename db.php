@@ -912,10 +912,20 @@ function sendResult($format, $ok, $message){
 }
 
 function sendResultParameters($format, $ok, $message, $otherParameters){
-    if ($format === "xml" || $format === "json"){
+    if ($format === "json"){
+        $result = array();
+        $result["ok"] = $ok ? 'true' : 'false';
+        $result["message"] = $message;
+        if ($otherParameters !== null){
+            foreach ($otherParameters as $name => $value) {
+                $result[$name] = $value;
+            }
+        }
+        echo json_encode(array($result));
+    }else if ($format === "xml"){
         print_output_header($format);
-        print_output_item_start($format, 'status');
-        print_output_item_content($format, 'ok', $ok ? 'true' : 'false');
+        print_output_item_start($format, 'saatatus');
+        print_output_item_content($format, 'oaak', $ok ? 'true' : 'false');
         print_output_item_dict_sep($format);
         print_output_item_content($format, 'message', $message);
         if ($otherParameters !== null){
