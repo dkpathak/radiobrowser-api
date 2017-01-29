@@ -11,7 +11,7 @@ class HttpHeader{
 
     $result = array();
     $result["protocol"] = $protocol_arr[0];
-    $result["statusCode"] = $protocol_arr[1];
+    $result["statusCode"] = intval($protocol_arr[1]);
     $result["status"] = $protocol_arr[2];
     $result["headers"] = array();
     for ($i=1;$i<count($arr);$i++){

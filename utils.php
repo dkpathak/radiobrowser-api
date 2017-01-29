@@ -2,6 +2,7 @@
 
 require 'PlaylistDecoder.php';
 require 'SimpleCurlConnection.php';
+require 'http_header.php';
 
 function decodePlaylistUrl($url, $contentType)
 {
@@ -95,9 +96,19 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$l
         $location = false;
 
         array_push($log, " - Get headers from: ".$url);
-        $headers = @get_headers($url,1);
-        $statusCode = decodeStatusCode($headers, $logStatusCode);
-        $log = array_merge($log,$logStatusCode);
+
+        $h = new HttpHeader();
+        $data = $h->getHeader($url);
+        if ($data === null){
+          array_push($log, " - Get headers with PHP getHeaders");
+          $headers = @get_headers($url,1);
+          $statusCode = decodeStatusCode($headers, $logStatusCode);
+          $log = array_merge($log,$logStatusCode);
+        }else{
+          $headers = $data["headers"];
+          $statusCode = $data["statusCode"];
+        }
+
         if ($statusCode === 400 || $statusCode === 404 || $statusCode === 500 || $statusCode === false) {
           array_push($log, " - try to connect with curl: ".$url);
           $conn = new SimpleCurlConnection();
