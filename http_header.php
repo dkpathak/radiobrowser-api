@@ -55,7 +55,10 @@ class HttpHeader{
           echo "OK.\n";
         }
 
-        $path = $url_parts["path"];
+        $path = "/";
+        if (array_key_exists('path',$url_parts)){
+            $path = $url_parts["path"];
+        }
         if (array_key_exists('query',$url_parts)){
             $path .= '?'.$url_parts["query"];
         }
