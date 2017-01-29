@@ -15,6 +15,14 @@ try {
 function updateCaches($db)
 {
   ini_set("user_agent","VLC/2.2.2 LibVLC/2.2.2");
+    // $log = array();
+    // $audiofile = checkStation("testing url", $bitrate, $codec, $name, $genre, $homepage, $log);
+    // if ($audiofile !== false) {
+    //   echo "decoded:".$audiofile." b=".$bitrate;
+    // }else{
+    //   echo "unable to decode";
+    // }
+    // print_r($log);
     dbCleanup($db);
 
     correctCountries($db);
