@@ -46,6 +46,10 @@ class HttpHeader{
           echo "OK.\n";
         }
 
+        $timeout = 3;
+        socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $timeout, 'usec' => 0));
+        socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, array('sec' => $timeout, 'usec' => 0));
+
         echo "Versuche, zu '$address' auf Port '$service_port' zu verbinden ...";
         $result = socket_connect($socket, $address, $service_port);
         if ($result === false) {
