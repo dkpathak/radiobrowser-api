@@ -54,6 +54,8 @@ class HttpHeader{
         $result = socket_connect($socket, $address, $service_port);
         if ($result === false) {
           echo "socket_connect() fehlgeschlagen.\nGrund: ($result) " . socket_strerror(socket_last_error($socket)) . "\n";
+          echo "Socket schließen ...";
+          socket_close($socket);
           return null;
         } else {
           echo "OK.\n";
