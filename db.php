@@ -16,6 +16,7 @@ $columnMapping = [
     'negativevotes' => 'NegativeVotes',
     'codec' => 'Codec',
     'bitrate' => 'Bitrate',
+    'hls' => 'Hls',
     'lastcheckok' => 'LastCheckOK',
     'lastchecktime' => 'LastCheckTime',
     'lastcheckoktime' => 'LastCheckOkTime',
