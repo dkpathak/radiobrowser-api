@@ -22,7 +22,6 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $url = $row['Url'];
 $stationname = $row['Name'];
 
-// $audiofile = checkStation($url,$bitrate,$codec,$log);
 $audiofile = $row['UrlCache'];
 
 if ($audiofile !== false) {

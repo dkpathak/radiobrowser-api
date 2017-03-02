@@ -4,12 +4,14 @@ require 'PlaylistDecoder.php';
 require 'SimpleCurlConnection.php';
 require 'http_header.php';
 
-function decodePlaylistUrl($url, $contentType)
+function decodePlaylistUrl($url, $contentType, &$hls)
 {
+    $hls = false;
     $conn = new SimpleCurlConnection();
     $content = $conn->file_get_contents_curl($url);//, false, NULL, -1, 4096);
     if ($content !== false){
         $decoder = new PlaylistDecoder();
+        $hls = $decoder->isContentHLS($content);
         return $decoder->decodePlayListContent($url, $contentType, $content);
     }
     return array();
@@ -35,10 +37,10 @@ function getItemFromDict($dict, $keyWanted)
 }
 
 function checkStationConnectionById($db, $stationid, $url, &$bitrate, &$codec, &$log){
-    $audiofile = checkStation($url, $bitrate, $codec, $name, $genre, $homepage, $log);
+    $audiofile = checkStation($url, $bitrate, $codec, $name, $genre, $homepage, $hls, $log);
     if ($audiofile !== false) {
-        $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec,UrlCache=:cacheurl, LastCheckOKTime=NOW() WHERE StationID=:stationid');
-        $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $stationid, 'cacheurl' => $audiofile]);
+        $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec,UrlCache=:cacheurl, LastCheckOKTime=NOW(), Hls=:hls WHERE StationID=:stationid');
+        $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $stationid, 'cacheurl' => $audiofile, 'hls' => $hls]);
         return true;
     } else {
         $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=FALSE, UrlCache="" WHERE StationID=:stationid');
@@ -70,7 +72,7 @@ function decodeStatusCode($headers, &$log){
     return $statusCode;
 }
 
-function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$log)
+function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$hls, &$log)
 {
     $urls_todo = array($url);
 
@@ -132,6 +134,7 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$l
                 array_push($log, ' - Content: '.$contentType);
                 $codec = false;
 
+                $hls = false;
                 if ($contentType === 'audio/mpeg' || $contentType === 'audio/mp3') {
                     $codec = 'MP3';
                 } elseif ($contentType === 'audio/aac') {
@@ -154,15 +157,20 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$l
                     $codec = '';
                     continue;
                 } elseif ($decoder->isContentTypePlaylist($contentType)) {
-                    $urls = decodePlaylistUrl($url,$contentType);
-                    if (count($urls) === 0){
-                        array_push($log, " - could not decode playlist");
+                    $urls = decodePlaylistUrl($url,$contentType,$hls);
+                    if ($hls === true){
+                        $codec = 'UNKNOWN';
+                        array_push($log, " - HLS stream");
+                    } else {
+                        if (count($urls) === 0){
+                            array_push($log, " - could not decode playlist");
+                            continue;
+                        }
+                        $urls_todo = array_merge($urls_todo, $urls);
+                        array_push($log, " - added Playlist URLs for checking: ".implode(", ",$urls));
+
                         continue;
                     }
-                    $urls_todo = array_merge($urls_todo, $urls);
-
-                    array_push($log, " - added Playlist URLs for checking: ".implode(", ",$urls));
-                    continue;
                 } else {
                     $codec = 'UNKNOWN';
                     array_push($log, " - Unknown codec for content type");

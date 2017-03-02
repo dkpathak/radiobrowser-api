@@ -66,6 +66,7 @@ function openDB()
           Source VARCHAR(20),
           Codec VARCHAR(20),
           Bitrate INT DEFAULT 0 NOT NULL,
+          Hls boolean default false NOT NULL,
           clickcount INT DEFAULT 0,
           ClickTrend INT DEFAULT 0,
           ClickTimestamp DATETIME,
@@ -1066,7 +1067,6 @@ function print_station_real_url($db, $format, $stationid){
     $url = $row['Url'];
     $stationname = $row['Name'];
 
-    // $audiofile = checkStation($url,$bitrate,$codec,$log);
     $audiofile = $row['UrlCache'];
 
     if ($audiofile !== false) {

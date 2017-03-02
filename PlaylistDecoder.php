@@ -43,6 +43,23 @@ class PlaylistDecoder{
         return in_array($contentType, $types);
     }
 
+    public function isContentHLS($content){
+        // replace different kinds of newline with the default
+        $content = str_replace(array("\r\n","\n\r","\r"),"\n",$content);
+        $lines = explode("\n",$content);
+        $urls = array();
+
+        foreach ($lines as $line) {
+            if (strrpos($line, "EXT-X-STREAM-INF") !== false) {
+                return true;
+            }
+            if (strrpos($line, "EXT-X-TARGETDURATION") !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private function decodePlaylistUrlM3U($content){
         // replace different kinds of newline with the default
         $content = str_replace(array("\r\n","\n\r","\r"),"\n",$content);
