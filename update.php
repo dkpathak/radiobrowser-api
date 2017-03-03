@@ -291,10 +291,11 @@ function updateCacheTags($db)
             // correct the tag
             $tag_corrected = correctTag(trim($tag));
             $tag_corrected = str_replace('/', ',', $tag_corrected);
-            array_push($tag_array_corrected, $tag_corrected);
 
             // count tag occurences
             if ($tag_corrected !== '') {
+                array_push($tag_array_corrected, $tag_corrected);
+
                 if (!array_key_exists($tag_corrected, $tags_new)) {
                     $tags_new[$tag_corrected] = (int) 0;
                     $tags_new_working[$tag_corrected] = (int) 0;
