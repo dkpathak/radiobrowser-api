@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  radio:
+    build: ./
+    networks:
+      - mynet
+    ports:
+      - "80:80"
+  dbserver:
+    image: mariadb
+    environment:
+       - MYSQL_ROOT_PASSWORD=192837465
+       - MYSQL_USER=radiouser
+       - MYSQL_PASSWORD=password
+       - MYSQL_DATABASE=radio
+    networks:
+      - mynet
+    volumes:
+      - ./latest.sql.gz:/docker-entrypoint-initdb.d/radio.sql.gz
+networks:
+  mynet:
