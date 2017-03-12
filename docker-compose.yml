@@ -3,10 +3,13 @@ version: '3'
 services:
   radio:
     build: ./
+    image: segleralex/php-radio
     networks:
       - mynet
     ports:
       - "80:80"
+    deploy:
+      mode: global
   dbserver:
     image: mariadb
     environment:
