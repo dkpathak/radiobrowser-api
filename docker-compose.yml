@@ -21,5 +21,19 @@ services:
       - mynet
     volumes:
       - ./latest.sql.gz:/docker-entrypoint-initdb.d/radio.sql.gz
+      - /home/segler/mydb:/var/lib/mysql
+    deploy:
+      placement:
+        constraints:
+          - node.labels.dbserver == true
+  streamcheck:
+    image: segleralex/stream-check
+    networks:
+      - mynet
+    deploy:
+      mode: global
 networks:
   mynet:
+    driver: "overlay"
+    driver_opts:
+      encrypted: ""
