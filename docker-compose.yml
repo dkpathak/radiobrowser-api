@@ -28,10 +28,22 @@ services:
           - node.labels.dbserver == true
   streamcheck:
     image: segleralex/stream-check
+    environment:
+      - SERVICE=streamcheck
     networks:
       - mynet
     deploy:
       mode: global
+  regularcheck:
+    image: segleralex/stream-regular-check
+    environment:
+      - SERVICE=streamcheck
+      - MYSQL_USER=radiouser
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=radio
+      - DB_SERVER=dbserver
+    networks:
+      - mynet
 networks:
   mynet:
     driver: "overlay"
