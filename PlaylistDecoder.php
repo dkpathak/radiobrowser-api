@@ -47,7 +47,6 @@ class PlaylistDecoder{
         // replace different kinds of newline with the default
         $content = str_replace(array("\r\n","\n\r","\r"),"\n",$content);
         $lines = explode("\n",$content);
-        $urls = array();
 
         foreach ($lines as $line) {
             if (strrpos($line, "EXT-X-STREAM-INF") !== false) {
