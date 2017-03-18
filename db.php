@@ -151,17 +151,47 @@ function print_object($row, $format, $columns, $itemname)
 function print_list($stmt, $format, $columns, $itemname)
 {
     print_output_header($format);
-    print_output_arr_start($format);
-    $i = 0;
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        if ($i > 0) {
-            print_output_item_arr_sep($format);
+
+    if ($format == 'm3u'){
+        echo "#EXTM3U\r\n";
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            echo "#EXTINF:-1,".$row["Name"]."\r\n";
+            echo $row["Url"]."\r\n";
+            echo "\r\n";
         }
-        print_object($row, $format, $columns, $itemname);
-        ++$i;
+    }else if ($format == 'pls'){
+        echo "[playlist]\r\n";
+        $i = 1;
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            echo "File".$i."=".$row["Url"]."\r\n";
+            echo "Title".$i."=".$row["Name"]."\r\n";
+            echo "\r\n";
+            ++$i;
+        }
+        echo "Version=2";
+    }else if ($format == 'xspf'){
+        echo '<'.'?xml version="1.0" encoding="UTF-8"?'.'>';
+        echo '<playlist version="1" xmlns="http://xspf.org/ns/0/"><trackList>';
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            echo "  <track>\n";
+            echo "    <title>".$row["Name"]."</title>\n";
+            echo "    <location>".$row["Url"]."</location>\n";
+            echo "  </track>\n";
+        }
+        echo "</trackList></playlist>";
+    }else{
+        print_output_arr_start($format);
+        $i = 0;
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if ($i > 0) {
+                print_output_item_arr_sep($format);
+            }
+            print_object($row, $format, $columns, $itemname);
+            ++$i;
+        }
+        print_output_arr_end($format);
+        print_output_footer($format);
     }
-    print_output_arr_end($format);
-    print_output_footer($format);
 }
 
 /*
@@ -592,6 +622,18 @@ function print_output_header($format)
     }
     if ($format == 'json') {
         header('content-type: application/json');
+    }
+    if ($format == 'm3u') {
+        header('content-type: audio/mpegurl');
+        header('Content-Disposition: inline; filename="playlist.m3u"');
+    }
+    if ($format == 'pls') {
+        header('content-type: audio/x-scpls');
+        header('Content-Disposition: inline; filename="playlist.pls"');
+    }
+    if ($format == 'xspf') {
+        header('content-type: application/xspf+xml');
+        header('Content-Disposition: inline; filename="playlist.xspf"');
     }
 }
 

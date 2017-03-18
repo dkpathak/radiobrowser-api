@@ -401,39 +401,25 @@
     <a id="list_stations"></a>
     <a href="#list_stations"><h2>List of radio stations</h2></a>
     <div class="header_sub">Syntax:</div>
-    <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/byid/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/byname/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bynameexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bycodec/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bycodecexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bycountry/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bycountryexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bystate/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bystateexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bylanguage/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bylanguageexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bytag/searchterm
-    <br /> http://www.radio-browser.info/webservice/xml/stations/bytagexact/searchterm
-    <br />
-    <br /> http://www.radio-browser.info/webservice/json/stations/byid/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/byname/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bynameexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bycodec/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bycodecexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bycountry/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bycountryexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bystate/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bystateexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bylanguage/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bylanguageexact/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bytag/searchterm
-    <br /> http://www.radio-browser.info/webservice/json/stations/bytagexact/searchterm
+    <div class="syntax">http://www.radio-browser.info/webservice/<i>format</i>/stations/byid/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/byname/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bynameexact/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bycodec/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bycodecexact/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bycountry/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bycountryexact/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bystate/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bystateexact/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bylanguage/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bylanguageexact/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bytag/<i>searchterm</i>
+    <br /> http://www.radio-browser.info/webservice/<i>format</i>/stations/bytagexact/<i>searchterm</i>
   </div>
     <div class="header_sub">Description:</div>
     Will get a list of radio stations that match the search. The variants with "exact" will only search for perfect matches. The others will match if the station attribute contains the searchterm.<br/>
     Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted.
     <br/>
-    <br/> Supported output formats: json,xml
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <br/>
     <div class="header_sub">Parameter:</div>
     This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
@@ -482,6 +468,8 @@
     <div><a href="http://www.radio-browser.info/webservice/json/stations/byname/jazz" target="_blank">http://www.radio-browser.info/webservice/json/stations/byname/jazz</a></div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountry/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountry/austria</a></div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria" target="_blank">http://www.radio-browser.info/webservice/xml/stations/bycountryexact/austria</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/m3u/stations/bytagexact/320kbps" target="_blank">http://www.radio-browser.info/webservice/m3u/stations/bytagexact/320kbps</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/pls/stations/bytagexact/320kbps" target="_blank">http://www.radio-browser.info/webservice/pls/stations/bytagexact/320kbps</a></div>
 
     <a id="list_stations_search"></a>
     <a href="#list_stations_search"><h2>Advanced station search</h2></a>
@@ -493,7 +481,7 @@
     Will get a list of radio stations that match the search. It will match if the station attribute contains the searchterm.<br/>
     Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted.
     <br/>
-    <br/> Supported output formats: json,xml
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <br/>
     <div class="header_sub">Parameter:</div>
     This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
@@ -622,7 +610,7 @@
     <div class="header_sub">Description:</div>
     Will get a list of radio stations that have an exact url match.<br/>
     <br/>
-    <br/> Supported output formats: json,xml
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <br/>
     <div class="header_sub">Parameter:</div>
     This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
@@ -653,7 +641,8 @@
     </div>
     <div class="header_sub">Description:</div>
     Will get a list of all radio stations. Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted.
-    <br/> Supported output formats: json,xml
+    <br/>
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <br/>
     <div class="header_sub">Parameter:</div>
     This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
@@ -711,8 +700,9 @@
     <br /> http://www.radio-browser.info/webservice/json/stations/broken/rowcount
     </div>
     <div class="header_sub">Description:</div>
-    Returns a list of the stations that did not pass the connection test. Supported output formats: json,xml
+    Returns a list of the stations that did not pass the connection test.
     <br/>
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/broken" target="_blank">http://www.radio-browser.info/webservice/xml/stations/broken</a></div>
     <div><a href="http://www.radio-browser.info/webservice/json/stations/broken/5" target="_blank">http://www.radio-browser.info/webservice/json/stations/broken/5</a></div>
@@ -726,7 +716,9 @@
     <br /> http://www.radio-browser.info/webservice/json/stations/improvable/rowcount
     </div>
     <div class="header_sub">Description:</div>
-    Returns a list of the stations that need improvement, which means they do not have e.g.: tags, country, state,.. information. Supported output formats: json,xml
+    Returns a list of the stations that need improvement, which means they do not have e.g.: tags, country, state,.. information.
+    <br/>
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/improvable" target="_blank">http://www.radio-browser.info/webservice/xml/stations/improvable</a></div>
@@ -741,7 +733,9 @@
     <br /> http://www.radio-browser.info/webservice/json/stations/topclick/rowcount
     </div>
     <div class="header_sub">Description:</div>
-    Returns a list of the stations that are clicked the most. You can add a parameter with the number of wanted stations. Supported output formats: json,xml
+    Returns a list of the stations that are clicked the most. You can add a parameter with the number of wanted stations.
+    <br/>
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/topclick" target="_blank">http://www.radio-browser.info/webservice/xml/stations/topclick</a></div>
@@ -757,11 +751,14 @@
     <br /> http://www.radio-browser.info/webservice/json/stations/topvote/rowcount
     </div>
     <div class="header_sub">Description:</div>
-    Returns a list of the highest voted stations. You can add a parameter with the number of wanted stations. Supported output formats: json,xml
+    Returns a list of the highest voted stations. You can add a parameter with the number of wanted stations.
+    <br/>
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/topvote" target="_blank">http://www.radio-browser.info/webservice/xml/stations/topvote</a></div>
     <div><a href="http://www.radio-browser.info/webservice/json/stations/topvote/5" target="_blank">http://www.radio-browser.info/webservice/json/stations/topvote/5</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/m3u/stations/topvote/5" target="_blank">http://www.radio-browser.info/webservice/m3u/stations/topvote/5</a></div>
 
     <a id="stations_last_clicked"></a>
     <a href="#stations_last_clicked"><h2>Stations that got clicked recently</h2></a>
@@ -773,7 +770,9 @@
     <br /> http://www.radio-browser.info/webservice/json/stations/lastclick/rowcount
     </div>
     <div class="header_sub">Description:</div>
-    Returns a list of stations that got clicked recently. Supported output formats: json,xml
+    Returns a list of stations that got clicked recently.
+    <br/>
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/lastclick" target="_blank">http://www.radio-browser.info/webservice/xml/stations/lastclick</a></div>
@@ -788,7 +787,9 @@
     <br /> http://www.radio-browser.info/webservice/json/stations/lastchange/rowcount
     </div>
     <div class="header_sub">Description:</div>
-    Returns a list of stations that got added or changed recently. Supported output formats: json,xml
+    Returns a list of stations that got added or changed recently.
+    <br/>
+    <br/> Supported output formats: json,xml,m3u,pls,xspf
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/lastchange" target="_blank">http://www.radio-browser.info/webservice/xml/stations/lastchange</a></div>
@@ -805,6 +806,8 @@
     <div class="header_sub">Description:</div>
     Returns a list of stations that got deleted in the last 30 days. Also a single station can be retrieved by id. They are not visible through any other API calls. If you want to undelete a station call <a href="#station_undelete">Undelete Station</a>.
     <br/>
+    <br/> Supported output formats: json,xml
+    <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/deleted" target="_blank">http://www.radio-browser.info/webservice/xml/stations/deleted</a></div>
     <div><a href="http://www.radio-browser.info/webservice/json/stations/deleted/123" target="_blank">http://www.radio-browser.info/webservice/json/stations/deleted/123</a></div>
@@ -819,6 +822,8 @@
     </div>
     <div class="header_sub">Description:</div>
     Returns a list of old versions of stations from the last 30 days. Also the history of a single station can be retrieved by id. They are not visible through any other API calls. If you want to revert a station call <a href="#station_revert">Revert Station</a>.
+    <br/>
+    <br/> Supported output formats: json,xml
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/changed" target="_blank">http://www.radio-browser.info/webservice/xml/stations/changed</a></div>
