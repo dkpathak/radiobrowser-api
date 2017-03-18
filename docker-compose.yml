@@ -30,6 +30,7 @@ services:
     image: segleralex/stream-check
     environment:
       - SERVICE=streamcheck
+      - LOG_LEVEL=3
     networks:
       - mynet
     deploy:
@@ -42,6 +43,8 @@ services:
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=radio
       - DB_SERVER=dbserver
+      - LOG_LEVEL=3
+      - CONCURRENCY=3
     networks:
       - mynet
 networks:
