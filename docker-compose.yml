@@ -35,6 +35,7 @@ services:
       - mynet
     deploy:
       mode: global
+    tty: true
   regularcheck:
     image: segleralex/stream-regular-check
     environment:
@@ -44,9 +45,11 @@ services:
       - MYSQL_DATABASE=radio
       - DB_SERVER=dbserver
       - LOG_LEVEL=3
-      - CONCURRENCY=3
+      - QUEUE=100
+      - CONCURRENCY=10
     networks:
       - mynet
+    tty: true
 networks:
   mynet:
     driver: "overlay"
