@@ -148,11 +148,103 @@ function print_object($row, $format, $columns, $itemname)
     print_output_item_end($format);
 }
 
+/**
+ * Escape string while keeping UTF-8 characters.
+ */
+function escape_string ($value)
+{
+    return json_encode ($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+}
+
+/**
+ * Convert JSON list of radios to Turtle syntax.
+ */
+function json2rdf ($a_station)
+{
+    $turtle =   "";
+
+    $turtle .=  "<http://radio-browser.info/radio/" . $a_station['id'] . ">\n";
+    $turtle .=  "  rdf:type schema:RadioStation ;\n";
+
+    // Loop all property of $a_station
+    foreach ($a_station as $property => $value)
+    {
+        switch ($property)
+        {
+            case 'id':
+                $turtle .=  '  dcterms:identifier ' . escape_string ($value) . " ;\n";
+                break;
+
+            case 'name':
+                $turtle .=  '  schema:name ' . escape_string ($value) . " ;\n";
+                break;
+
+            case 'url':
+                $turtle .=  '  schema:url <' . $value . "> ;\n";
+                break;
+
+            case 'homepage':
+                $turtle .=  '  schema:sameAs <' . $value . "> ;\n";
+                break;
+
+            case 'favicon':
+                $turtle .=  '  schema:logo <' . $value . "> ;\n";
+                break;
+
+            case 'tags':
+                $tags = str_getcsv ($value);
+
+                foreach ($tags as $a_tag)
+                    if (strlen ($a_tag > 0))
+                        $turtle .=  '  wdrs:tag ' . escape_string ($a_tag) . " ;\n";
+
+                break;
+
+            case 'country':
+                $turtle .=  "  schema:Country [\n" .
+                            "    schema:name " . escape_string ($value) . " ;\n" .
+                            "  ] ;\n";
+                break;
+
+            case 'state':
+                $turtle .=  "  schema:State [\n" .
+                            "    schema:name " . escape_string ($value) . " ;\n" .
+                            "  ] ;\n";
+                break;
+
+            case 'language':
+                $turtle .=  "  schema:Language [\n" .
+                            "    schema:name " . escape_string ($value) . " ;\n" .
+                            "  ] ;\n";
+                break;
+
+            default:
+                $turtle .=  "  schema:PropertyValue [\n" .
+                            "    schema:name " . escape_string ($property) . " ;\n" .
+                            "    schema:value " . escape_string ($value) . "\n" .
+                            "  ] ;\n";
+                break;
+        }
+    }
+    $turtle .= "  .\n\n";
+
+    return $turtle;
+}
+
 function print_list($stmt, $format, $columns, $itemname)
 {
     print_output_header($format);
 
-    if ($format == 'm3u'){
+    if ($format == 'ttl'){
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $rowJson = array();
+            foreach ($columns as $outputName => $dbColumn) {
+                $rowJson[$outputName] = $row[$dbColumn];
+            }
+
+            echo json2rdf($rowJson);
+        }
+    }else if ($format == 'm3u'){
         echo "#EXTM3U\r\n";
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             echo "#EXTINF:-1,".$row["Name"]."\r\n";
@@ -616,6 +708,13 @@ function print_output_arr_end($format)
 
 function print_output_header($format)
 {
+    if ($format == 'ttl') {
+        header('content-type: text/turtle');
+        echo "@prefix dcterms: <http://purl.org/dc/terms/> .\n" .
+             "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" .
+             "@prefix schema: <http://schema.org/> .\n" .
+             "@prefix wdrs: <https://www.w3.org/2007/05/powder-s#> .\n\n";
+    }
     if ($format == 'xml') {
         header('content-type: text/xml');
         echo '<result>';
