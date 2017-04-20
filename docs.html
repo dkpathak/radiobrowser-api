@@ -419,7 +419,7 @@
     Will get a list of radio stations that match the search. The variants with "exact" will only search for perfect matches. The others will match if the station attribute contains the searchterm.<br/>
     Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted.
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <br/>
     <div class="header_sub">Parameter:</div>
     This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
@@ -481,7 +481,7 @@
     Will get a list of radio stations that match the search. It will match if the station attribute contains the searchterm.<br/>
     Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted.
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <br/>
     <div class="header_sub">Parameter:</div>
     This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
@@ -610,7 +610,7 @@
     <div class="header_sub">Description:</div>
     Will get a list of radio stations that have an exact url match.<br/>
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <br/>
     <div class="header_sub">Parameter:</div>
     This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
@@ -642,7 +642,7 @@
     <div class="header_sub">Description:</div>
     Will get a list of all radio stations. Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted.
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <br/>
     <div class="header_sub">Parameter:</div>
     This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
@@ -702,7 +702,7 @@
     <div class="header_sub">Description:</div>
     Returns a list of the stations that did not pass the connection test.
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/broken" target="_blank">http://www.radio-browser.info/webservice/xml/stations/broken</a></div>
     <div><a href="http://www.radio-browser.info/webservice/json/stations/broken/5" target="_blank">http://www.radio-browser.info/webservice/json/stations/broken/5</a></div>
@@ -718,7 +718,7 @@
     <div class="header_sub">Description:</div>
     Returns a list of the stations that need improvement, which means they do not have e.g.: tags, country, state,.. information.
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/improvable" target="_blank">http://www.radio-browser.info/webservice/xml/stations/improvable</a></div>
@@ -735,7 +735,7 @@
     <div class="header_sub">Description:</div>
     Returns a list of the stations that are clicked the most. You can add a parameter with the number of wanted stations.
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/topclick" target="_blank">http://www.radio-browser.info/webservice/xml/stations/topclick</a></div>
@@ -753,7 +753,7 @@
     <div class="header_sub">Description:</div>
     Returns a list of the highest voted stations. You can add a parameter with the number of wanted stations.
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/topvote" target="_blank">http://www.radio-browser.info/webservice/xml/stations/topvote</a></div>
@@ -772,7 +772,7 @@
     <div class="header_sub">Description:</div>
     Returns a list of stations that got clicked recently.
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/lastclick" target="_blank">http://www.radio-browser.info/webservice/xml/stations/lastclick</a></div>
@@ -789,7 +789,7 @@
     <div class="header_sub">Description:</div>
     Returns a list of stations that got added or changed recently.
     <br/>
-    <br/> Supported output formats: json,xml,m3u,pls,xspf
+    <br/> Supported output formats: json,xml,m3u,pls,xspf,ttl
     <br/>
     <div class="header_sub">Example:</div>
     <div><a href="http://www.radio-browser.info/webservice/xml/stations/lastchange" target="_blank">http://www.radio-browser.info/webservice/xml/stations/lastchange</a></div>
