@@ -171,7 +171,7 @@ function json2rdf ($a_station)
     {
         switch ($property)
         {
-            if ($value == null){
+            if ($value === null){
                 $value = "";
             }
             case 'id':
