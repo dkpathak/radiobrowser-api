@@ -169,11 +169,11 @@ function json2rdf ($a_station)
     // Loop all property of $a_station
     foreach ($a_station as $property => $value)
     {
+        if ($value === null){
+            $value = "";
+        }
         switch ($property)
         {
-            if ($value === null){
-                $value = "";
-            }
             case 'id':
                 $turtle .=  '  dcterms:identifier ' . escape_string ($value) . " ;\n";
                 break;
