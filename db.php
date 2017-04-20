@@ -171,6 +171,9 @@ function json2rdf ($a_station)
     {
         switch ($property)
         {
+            if ($value == null){
+                $value = "";
+            }
             case 'id':
                 $turtle .=  '  dcterms:identifier ' . escape_string ($value) . " ;\n";
                 break;
