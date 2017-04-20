@@ -1,5 +1,11 @@
 <?php
 
+function dump() {
+  // Enable debug output by uncommenting one of the two lines below:
+  // call_user_func_array('var_dump', func_get_args());
+  // echo(join('', func_get_args()));
+};
+
 class HttpHeader{
   public function decode($str){
     $arr = explode("\r\n", $str);
@@ -40,25 +46,25 @@ class HttpHeader{
         /* Einen TCP/IP-Socket erzeugen. */
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         if ($socket === false) {
-          echo "socket_create() fehlgeschlagen: Grund: " . socket_strerror(socket_last_error()) . "\n";
+          dump("socket_create() fehlgeschlagen: Grund: " . socket_strerror(socket_last_error()) . "\n");
           return null;
         } else {
-          echo "OK.\n";
+          dump("OK.\n");
         }
 
         $timeout = 3;
         socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $timeout, 'usec' => 0));
         socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, array('sec' => $timeout, 'usec' => 0));
 
-        echo "Versuche, zu '$address' auf Port '$service_port' zu verbinden ...";
+        dump("Versuche, zu '$address' auf Port '$service_port' zu verbinden ...");
         $result = socket_connect($socket, $address, $service_port);
         if ($result === false) {
-          echo "socket_connect() fehlgeschlagen.\nGrund: ($result) " . socket_strerror(socket_last_error($socket)) . "\n";
-          echo "Socket schließen ...";
+          dump("socket_connect() fehlgeschlagen.\nGrund: ($result) " . socket_strerror(socket_last_error($socket)) . "\n");
+          dump("Socket schließen ...");
           socket_close($socket);
           return null;
         } else {
-          echo "OK.\n";
+          dump("OK.\n");
         }
 
         $path = "/";
@@ -73,11 +79,11 @@ class HttpHeader{
         $in .= "Connection: Close\r\n\r\n";
         $out = '';
 
-        echo "HTTP HEAD request senden ...";
+        dump("HTTP HEAD request senden ...");
         socket_write($socket, $in, strlen($in));
-        echo "OK.\n";
+        dump("OK.\n");
 
-        echo "Serverantwort lesen:\n\n";
+        dump("Serverantwort lesen:\n\n");
         $data = "";
         while ($out = socket_read($socket, 20)) {
           $data .= $out;
@@ -87,9 +93,9 @@ class HttpHeader{
           }
         }
 
-        echo "Socket schließen ...";
+        dump("Socket schließen ...");
         socket_close($socket);
-        echo "OK.\n\n";
+        dump("OK.\n\n");
 
         return null;
       }else{
