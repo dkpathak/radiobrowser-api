@@ -97,7 +97,7 @@ function openDB()
     if (!tableExists($db, 'IPVoteCheck')) {
         $db->query('CREATE TABLE IPVoteCheck(CheckID INT NOT NULL AUTO_INCREMENT,
           Primary Key (CheckID),
-          IP VARCHAR(15) NOT NULL,
+          IP VARCHAR(50) NOT NULL,
           StationID INT NOT NULL,
           VoteTimestamp TIMESTAMP)
           ');
@@ -105,6 +105,7 @@ function openDB()
     if (!tableExists($db, 'StationClick')) {
         $db->query('CREATE TABLE StationClick(ClickID INT NOT NULL AUTO_INCREMENT,
           Primary Key (ClickID),
+          IP VARCHAR(50) NOT NULL,
           StationID INT,
           ClickTimestamp TIMESTAMP)
           ');
@@ -1115,8 +1116,18 @@ function IPVoteChecker($db, $id)
 
 function clickedStationID($db, $id)
 {
-    $stmt = $db->prepare('INSERT INTO StationClick(StationID) VALUES(:id)');
-    $result = $stmt->execute(['id' => $id]);
+    $ip = $_SERVER['REMOTE_ADDR'];
+
+    // search for clicks of same ip
+    $stmt = $db->prepare('SELECT * FROM StationClick WHERE IP=:ip AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimestamp))<24*60*60');
+    $result = $stmt->execute(['ip' => $ip]);
+    $count = $stmt->rowCount();
+    if ($count > 0){
+        return false;
+    }
+
+    $stmt = $db->prepare('INSERT INTO StationClick(StationID,IP) VALUES(:id,:ip)');
+    $result = $stmt->execute(['id' => $id, 'ip' => $ip]);
 
     $stmt = $db->prepare('UPDATE Station SET ClickTimestamp=NOW() WHERE StationID=:id');
     $result2 = $stmt->execute(['id' => $id]);
