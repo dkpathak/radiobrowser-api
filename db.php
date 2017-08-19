@@ -1119,8 +1119,8 @@ function clickedStationID($db, $id)
     $ip = $_SERVER['REMOTE_ADDR'];
 
     // search for clicks of same ip
-    $stmt = $db->prepare('SELECT * FROM StationClick WHERE IP=:ip AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimestamp))<24*60*60');
-    $result = $stmt->execute(['ip' => $ip]);
+    $stmt = $db->prepare('SELECT * FROM StationClick WHERE StationID=:id AND IP=:ip AND TIME_TO_SEC(TIMEDIFF(Now(),ClickTimestamp))<24*60*60');
+    $result = $stmt->execute(['id' => $id, 'ip' => $ip]);
     $count = $stmt->rowCount();
     if ($count > 0){
         return false;
