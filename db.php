@@ -786,7 +786,7 @@ function print_output_item_content($format, $key, $value)
 function backupStation($db, $stationid)
 {
     // backup old content
-    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),IP FROM Station WHERE StationID=:id');
+    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP FROM Station WHERE StationID=:id');
     $result = $stmt->execute(['id' => $stationid]);
 }
 
