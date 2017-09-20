@@ -23,7 +23,8 @@ $columnMapping = [
     'clicktimestamp' => 'ClickTimestamp',
     'clickcount' => 'clickcount',
     'clicktrend' => 'ClickTrend',
-    'lastchangetime' => 'Creation'
+    'lastchangetime' => 'Creation',
+    'ip' => 'IP'
 ];
 
 $columnMappingHistory = [
@@ -39,7 +40,8 @@ $columnMappingHistory = [
     'language' => 'Language',
     'votes' => 'Votes',
     'negativevotes' => 'NegativeVotes',
-    'lastchangetime' => 'Creation'
+    'lastchangetime' => 'Creation',
+    'ip' => 'IP'
 ];
 
 function openDB()
@@ -73,7 +75,8 @@ function openDB()
           ClickTimestamp DATETIME,
           LastCheckOK boolean default true NOT NULL,
           LastCheckOKTime DATETIME,
-          LastCheckTime DATETIME)
+          LastCheckTime DATETIME,
+          IP VARCHAR(50) NOT NULL)
           ');
     }
     if (!tableExists($db, 'StationHistory')) {
@@ -91,7 +94,8 @@ function openDB()
           Language VARCHAR(50),
           Tags TEXT,
           Votes INT DEFAULT 0,
-          NegativeVotes INT DEFAULT 0)
+          NegativeVotes INT DEFAULT 0,
+          IP VARCHAR(50) NOT NULL)
           ');
     }
     if (!tableExists($db, 'IPVoteCheck')) {
@@ -782,7 +786,7 @@ function print_output_item_content($format, $key, $value)
 function backupStation($db, $stationid)
 {
     // backup old content
-    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW() FROM Station WHERE StationID=:id');
+    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),IP FROM Station WHERE StationID=:id');
     $result = $stmt->execute(['id' => $stationid]);
 }
 
@@ -819,9 +823,11 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
         return false;
     }
 
+    $ip = $_SERVER['REMOTE_ADDR'];
     $data = [
       'name' => $name,
-      'url' => $url
+      'url' => $url,
+      'ip' => $ip
     ];
     $data["homepage"] = $homepage === null ? "" : $homepage;
     $data["favicon"] = $favicon === null ? "" : $favicon;
@@ -830,7 +836,7 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
     $data["tags"] = $tags === null ? "" : $tags;
     $data["state"] = $state === null ? "" : $state;
 
-    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Creation,Homepage,Favicon,Country,Language,Tags,Subcountry) VALUES(:name,:url,NOW(),:homepage,:favicon,:country,:language,:tags,:state)');
+    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Creation,Homepage,Favicon,Country,Language,Tags,Subcountry,IP) VALUES(:name,:url,NOW(),:homepage,:favicon,:country,:language,:tags,:state,:ip)');
     $stmt->execute($data);
 
     if ($stmt->rowCount() !== 1) {
@@ -923,6 +929,11 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
         $data["state"] = $state;
         $columnStr .= ",Subcountry=:state";
     }
+
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $data["ip"] = $ip;
+    $columnStr .= ",IP=:ip";
+
     $stmt = $db->prepare('UPDATE Station SET Creation=NOW()'.$columnStr.' WHERE StationID=:id');
     $stmt->execute($data);
 
@@ -1042,8 +1053,9 @@ function revertStation($db, $format, $stationid, $stationchangeid)
         $stmt->execute(['id' => $stationid]);
 
         // insert old station
-        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW() FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
-        $stmt->execute(['id' => $stationid,'changeid' => $stationchangeid]);
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),:ip FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
+        $stmt->execute(['id' => $stationid,'changeid' => $stationchangeid, 'ip' => $ip]);
         if ($stmt->rowCount() === 1){
             sendResult($format, true, "reverted station successfully");
         }else{
