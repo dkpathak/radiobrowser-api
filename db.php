@@ -144,7 +144,11 @@ function print_object($row, $format, $columns, $itemname)
             print_output_item_dict_sep($format);
         }
         if (isset($row[$dbColumn])) {
-            print_output_item_content($format, $outputName, $row[$dbColumn]);
+            if ($dbColumn == "Favicon" || $dbColumn == "Homepage" || $dbColumn == "Url"){
+                print_output_item_content($format, $outputName, sanitizeUrl($row[$dbColumn]));
+            }else{
+                print_output_item_content($format, $outputName, $row[$dbColumn]);
+            }
         }else{
             print_output_item_content($format, $outputName, '');
         }
@@ -247,7 +251,11 @@ function print_list($stmt, $format, $columns, $itemname)
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $rowJson = array();
             foreach ($columns as $outputName => $dbColumn) {
-                $rowJson[$outputName] = $row[$dbColumn];
+                if ($dbColumn == "Favicon" || $dbColumn == "Homepage" || $dbColumn == "Url"){
+                  $rowJson[$outputName] = sanitizeUrl($row[$dbColumn]);
+                }else{
+                  $rowJson[$outputName] = $row[$dbColumn];
+                }
             }
 
             echo json2rdf($rowJson);

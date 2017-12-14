@@ -4,6 +4,10 @@ require 'PlaylistDecoder.php';
 require 'SimpleCurlConnection.php';
 require 'http_header.php';
 
+function sanitizeUrl($url){
+  return str_replace ( " ", "%20", $url);
+}
+
 function decodePlaylistUrl($url, $contentType, &$hls)
 {
     $hls = false;
