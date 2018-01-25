@@ -24,7 +24,8 @@ $columnMapping = [
     'clickcount' => 'clickcount',
     'clicktrend' => 'ClickTrend',
     'lastchangetime' => 'Creation',
-    'ip' => 'IP'
+    'ip' => 'IP',
+    'stationuuid' => 'Uuid'
 ];
 
 $columnMappingHistory = [
@@ -76,7 +77,8 @@ function openDB()
           LastCheckOK boolean default true NOT NULL,
           LastCheckOKTime DATETIME,
           LastCheckTime DATETIME,
-          IP VARCHAR(50) NOT NULL)
+          IP VARCHAR(50) NOT NULL,
+          Uuid CHAR(36) UNIQUE)
           ');
     }
     if (!tableExists($db, 'StationHistory')) {
@@ -844,7 +846,7 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
     $data["tags"] = $tags === null ? "" : $tags;
     $data["state"] = $state === null ? "" : $state;
 
-    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Creation,Homepage,Favicon,Country,Language,Tags,Subcountry,IP) VALUES(:name,:url,NOW(),:homepage,:favicon,:country,:language,:tags,:state,:ip)');
+    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Creation,Homepage,Favicon,Country,Language,Tags,Subcountry,IP, Uuid) VALUES(:name,:url,NOW(),:homepage,:favicon,:country,:language,:tags,:state,:ip, uuid())');
     $stmt->execute($data);
 
     if ($stmt->rowCount() !== 1) {
