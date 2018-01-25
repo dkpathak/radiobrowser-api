@@ -30,6 +30,8 @@ $columnMapping = [
 
 $columnMappingHistory = [
     'id' => 'StationID',
+    'changeuuid' => 'ChangeUuid',
+    'stationuuid' => 'StationUuid',
     'changeid' => 'StationChangeID',
     'name' => 'Name',
     'url' => 'Url',
@@ -84,6 +86,8 @@ function openDB()
     if (!tableExists($db, 'StationHistory')) {
         $db->query('CREATE TABLE StationHistory(
           StationChangeID INT NOT NULL AUTO_INCREMENT,
+          ChangeUuid CHAR(36) UNIQUE,
+          StationUuid CHAR(36),
           Primary Key (StationChangeID),
           StationID INT NOT NULL,
           Name TEXT,
@@ -796,7 +800,7 @@ function print_output_item_content($format, $key, $value)
 function backupStation($db, $stationid)
 {
     // backup old content
-    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP FROM Station WHERE StationID=:id');
+    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,Uuid,uuid() FROM Station WHERE StationID=:id');
     $result = $stmt->execute(['id' => $stationid]);
 }
 
@@ -1025,7 +1029,7 @@ function undeleteStation($db, $format, $stationid)
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $stationChangeId = $result["StationChangeID"];
 
-        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW() FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
+        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation, Uuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),StationUuid FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
         $stmt->execute(['id' => $stationid,'changeid' => $stationChangeId]);
         if ($stmt->rowCount() === 1){
             sendResult($format, true, "undeleted station successfully");
@@ -1064,7 +1068,7 @@ function revertStation($db, $format, $stationid, $stationchangeid)
 
         // insert old station
         $ip = $_SERVER['REMOTE_ADDR'];
-        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),:ip FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
+        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,Uuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),:ip,StationUuid FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
         $stmt->execute(['id' => $stationid,'changeid' => $stationchangeid, 'ip' => $ip]);
         if ($stmt->rowCount() === 1){
             sendResult($format, true, "reverted station successfully");
