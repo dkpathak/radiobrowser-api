@@ -46,6 +46,7 @@ if (isset($_GET['action'])) {
 
     $bitrateMin = intval(getParameter('bitrateMin','0'));
     $bitrateMax = intval(getParameter('bitrateMax','1000000'));
+    $seconds    = intval(getParameter('seconds','0'));
 
     $name = getParameter('name', null);
     $nameExact = convertToBool(getParameter('nameExact', 'false'));
@@ -123,9 +124,9 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'data_search_deleted_all') {
         print_stations_list_deleted_all($db, $format);
     }elseif ($action == 'data_search_changed') {
-        print_stations_list_changed($db, $format, $stationid);
+        print_stations_list_changed($db, $format, $stationid, $seconds);
     }elseif ($action == 'data_search_changed_all') {
-        print_stations_list_changed_all($db, $format);
+        print_stations_list_changed_all($db, $format, $seconds);
     }elseif ($action == 'add') {
         addStation($db, $format, $name, $url, $homepage, $favicon, $country, $language, $tags, $state);
     }elseif ($action == 'edit') {

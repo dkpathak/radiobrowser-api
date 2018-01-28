@@ -55,8 +55,8 @@ RewriteRule ^webservice/(.*)/stations/improvable/(.*)$ /?format=$1&limit=$2&acti
 RewriteRule ^webservice/(.*)/stations/improvable$ /?format=$1&action=data_search_improvable
 RewriteRule ^webservice/(.*)/stations/deleted/(.*)$ /?format=$1&stationid=$2&action=data_search_deleted
 RewriteRule ^webservice/(.*)/stations/deleted$ /?format=$1&action=data_search_deleted_all
-RewriteRule ^webservice/(.*)/stations/changed/(.*)$ /?format=$1&stationid=$2&action=data_search_changed
-RewriteRule ^webservice/(.*)/stations/changed$ /?format=$1&action=data_search_changed_all
+RewriteRule ^webservice/(.*)/stations/changed/(.*)$ /?format=$1&stationid=$2&action=data_search_changed [B,L,QSA]
+RewriteRule ^webservice/(.*)/stations/changed$ /?format=$1&action=data_search_changed_all [B,L,QSA]
 
 RewriteRule ^webservice/(.*)/stations/search$ /?format=$1&action=data_search_advanced [B,L,QSA]
 RewriteRule ^webservice/(.*)/stations/byurl$ /?format=$1&action=data_search_byurl [B,L,QSD]

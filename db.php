@@ -671,9 +671,16 @@ function print_stations_list_deleted_all($db, $format){
     }
 }
 
-function print_stations_list_changed($db, $format, $stationid){
-    $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NOT NULL AND sth.StationID=:id ORDER BY sth.Creation DESC');
+function print_stations_list_changed($db, $format, $stationid, $seconds){
+    $secondsDB = '';
+    if ($seconds > 0){
+      $secondsDB = 'AND TIME_TO_SEC(TIMEDIFF(Now(),sth.Creation))<:seconds';
+    }
+    $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NOT NULL AND sth.StationID=:id '.$secondsDB.' ORDER BY sth.Creation DESC');
     $stmt->bindValue(':id', $stationid, PDO::PARAM_INT);
+    if ($seconds > 0){
+      $stmt->bindValue(':seconds', $seconds, PDO::PARAM_INT);
+    }
     $result = $stmt->execute();
 
     if ($result) {
@@ -681,8 +688,15 @@ function print_stations_list_changed($db, $format, $stationid){
     }
 }
 
-function print_stations_list_changed_all($db, $format){
-    $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NOT NULL ORDER BY sth.Creation DESC');
+function print_stations_list_changed_all($db, $format, $seconds){
+    $secondsDB = '';
+    if ($seconds > 0){
+      $secondsDB = 'AND TIME_TO_SEC(TIMEDIFF(Now(),sth.Creation))<:seconds';
+    }
+    $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NOT NULL '.$secondsDB.' ORDER BY sth.Creation DESC');
+    if ($seconds > 0){
+      $stmt->bindValue(':seconds', $seconds, PDO::PARAM_INT);
+    }
     $result = $stmt->execute();
 
     if ($result) {
