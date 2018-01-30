@@ -679,12 +679,12 @@ function print_stations_list_changed($db, $format, $stationid, $seconds){
       $secondsDB = 'AND TIME_TO_SEC(TIMEDIFF(Now(),sth.Creation))<:seconds';
     }
     $stationid_int = intval($stationid);
-    if ($stationid_int == 0){
+    if (strval(intval($stationid)) != strval($stationid)){
         $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NOT NULL AND sth.StationUuid=:id '.$secondsDB.' ORDER BY sth.Creation DESC');
         $stmt->bindValue(':id', $stationid, PDO::PARAM_STR);
     }else{
         $stmt = $db->prepare('SELECT sth.* FROM Station st RIGHT JOIN StationHistory sth ON st.StationID=sth.StationID WHERE st.StationID IS NOT NULL AND sth.StationID=:id '.$secondsDB.' ORDER BY sth.Creation DESC');
-        $stmt->bindValue(':id', $stationid, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $stationid_int, PDO::PARAM_INT);
     }
     if ($seconds > 0){
       $stmt->bindValue(':seconds', $seconds, PDO::PARAM_INT);
