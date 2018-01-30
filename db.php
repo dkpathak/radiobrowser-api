@@ -1060,9 +1060,10 @@ function undeleteStation($db, $format, $stationid)
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $stationChangeId = $result["StationChangeID"];
 
-        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation, StationUuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),StationUuid FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
+        $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation, StationUuid, ChangeUuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),StationUuid, uuid() FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
         $stmt->execute(['id' => $stationid,'changeid' => $stationChangeId]);
         if ($stmt->rowCount() === 1){
+            backupStation($db, $stationid);
             sendResult($format, true, "undeleted station successfully");
         }else{
             sendResult($format, false, "could not find station with matching id");
