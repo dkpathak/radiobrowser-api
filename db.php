@@ -881,6 +881,7 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
         return false;
     }else{
         $stationid = $db->lastInsertId();
+        backupStation($db, $stationid);
 
         $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
         $returnValue = array(
