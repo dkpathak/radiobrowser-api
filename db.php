@@ -1014,7 +1014,7 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
 function deleteStation($db, $format, $stationid)
 {
     if (trim($stationid) != '' && $stationid !== null) {
-        $stmt = $db->prepare('UPDATE Station SET Name="",Url="",Country="",SubCountry="",Tags="",ChangeUuid=uuid() WHERE StationID=:id OR StationUuid=:id');
+        $stmt = $db->prepare('UPDATE Station SET Name="",Url="",Country="",SubCountry="",Tags="",ChangeUuid=uuid(),Creation=NOW() WHERE StationID=:id OR StationUuid=:id');
         $result = $stmt->execute(['id' => $stationid]);
         if ($stmt->rowCount() === 1 && $result){
             backupStation($db, $stationid);
