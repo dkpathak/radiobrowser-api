@@ -1014,6 +1014,8 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
 
 function deleteStation($db, $format, $stationid)
 {
+    sendResult($format, false, "delete is disabled for now, because it is broken");
+    return;
     if (trim($stationid) != '' && $stationid !== null) {
         $stmt = $db->prepare('UPDATE Station SET Name="",Url="",Country="",SubCountry="",Tags="",ChangeUuid=uuid(),Creation=NOW() WHERE StationID=:id OR StationUuid=:id');
         $result = $stmt->execute(['id' => $stationid]);
@@ -1037,6 +1039,8 @@ function deleteStation($db, $format, $stationid)
 
 function undeleteStation($db, $format, $stationid)
 {
+    sendResult($format, false, "undelete is disabled for now, because it is broken");
+    return;
     if (trim($stationid) === '' || $stationid === null) {
         sendResult($format, false, "stationid was null");
         return;
@@ -1076,6 +1080,8 @@ function undeleteStation($db, $format, $stationid)
 
 function revertStation($db, $format, $stationid, $stationchangeid)
 {
+    sendResult($format, false, "revert is disabled for now, because it is broken");
+    return;
     if (trim($stationid) === '' || $stationid === null) {
         sendResult($format, false, "stationid was null");
         return;
