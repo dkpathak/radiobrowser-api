@@ -995,6 +995,77 @@
     <div><a href="http://www.radio-browser.info/webservice/json/revert/123/456" target="_blank">http://www.radio-browser.info/webservice/json/revert/123/456</a></div>
     <div><a href="http://www.radio-browser.info/webservice/xml/revert/123/456" target="_blank">http://www.radio-browser.info/webservice/xml/revert/123/456</a></div>
 
+    <a id="station_checks"></a>
+    <a href="#station_checks"><h2>Get a list of station check results</h2></a>
+    <div class="header_sub">Syntax:</div>
+    <div class="syntax">
+    http://www.radio-browser.info/webservice/xml/checks
+    <br/> http://www.radio-browser.info/webservice/json/checks/stationuuid
+    </div>
+    <div class="header_sub">Description:</div>
+    Get a list of station check results.
+    <br/> Supported output formats: json,xml
+    <br/>
+    <div class="header_sub">Parameter:</div>
+    This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
+    <table>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>default value</th>
+          <th>possible values</th>
+          <th>description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>stationuuid</td>
+          <td></td>
+          <td>UUID</td>
+          <td>If set, list only checks for the matching station.</td>
+        </tr>
+        <tr>
+          <td>seconds</td>
+          <td>0</td>
+          <td>positive integer values</td>
+          <td>if >0 then it will only return history entries from the last 'seconds' seconds</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="header_sub">Result JSON:</div>
+    <pre>
+[
+{
+  "stationuuid":"96156a3e-0601-11e8-ae97-52543be04c81",
+  "checkuuid":"26c1d404-14f4-11e8-ab0e-298319f1705b",
+  "source":"www.radio-browser.info",
+  "codec":"MP3",
+  "bitrate":"128",
+  "hls":"0",
+  "ok":"1",
+  "timestamp":"2018-02-18 22:39:08"
+},
+..
+]
+    </pre>
+    <div class="header_sub">Result XML:</div>
+    <pre>
+&lt;result&gt;
+  &lt;check
+      stationuuid=&quot;96156a3e-0601-11e8-ae97-52543be04c81&quot;
+      checkuuid=&quot;26c1d404-14f4-11e8-ab0e-298319f1705b&quot;
+      source=&quot;www.radio-browser.info&quot;
+      codec=&quot;MP3&quot;
+      bitrate=&quot;128&quot;
+      hls=&quot;0&quot;
+      ok=&quot;1&quot;
+      timestamp=&quot;2018-02-18 22:39:08&quot;/&gt;
+&lt;/result&gt;
+    </pre>
+    <div class="header_sub">Example:</div>
+    <div><a href="http://www.radio-browser.info/webservice/json/checks" target="_blank">http://www.radio-browser.info/webservice/json/checks</a></div>
+    <div><a href="http://www.radio-browser.info/webservice/xml/checks" target="_blank">http://www.radio-browser.info/webservice/xml/checks</a></div>
+
     <a id="add_station"></a>
     <a href="#add_station"><h2>Add radio station</h2></a>
     <div class="header_sub">Syntax:</div>

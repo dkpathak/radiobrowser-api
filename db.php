@@ -206,6 +206,13 @@ function insertCheck($db, $StationUuid, $Codec, $Bitrate, $Hls, $CheckOk)
 
 function listChecks($db, $format, $seconds, $stationuuid)
 {
+    if ($format != 'xml' && $format != 'json') {
+        echo "supported formats are: xml, json";
+        echo $message;
+        http_response_code(406);
+        return false;
+    }
+
     global $columnMappingChecks;
     $secondsDB = '';
     if ($seconds > 0){
@@ -241,7 +248,7 @@ function listChecks($db, $format, $seconds, $stationuuid)
         print_output_arr_end($format);
         print_output_footer($format);
     }
-    return false;
+    return true;
 }
 
 function print_object($row, $format, $columns, $itemname)
