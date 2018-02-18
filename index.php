@@ -43,6 +43,7 @@ if (isset($_GET['action'])) {
     $stationchangeid = isset($_GET['stationchangeid']) ? $_GET['stationchangeid'] : null;
     $action = $_GET['action'];
     $hideBroken = convertToBool(getParameter('hidebroken', 'false'));
+    $stationuuid = getParameter('stationuuid','');
 
     $bitrateMin = intval(getParameter('bitrateMin','0'));
     $bitrateMax = intval(getParameter('bitrateMax','1000000'));
@@ -145,6 +146,10 @@ if (isset($_GET['action'])) {
         negativeVoteForStation($db, $format, $stationid);
     }elseif ($action == 'extract_images') {
         listExtractedImages($format, $url);
+    }elseif ($action == 'data_checks_all') {
+        listChecks($db, $format, $seconds, NULL);
+    }elseif ($action == 'data_checks') {
+        listChecks($db, $format, $seconds, $stationuuid);
     }
 } else {
     ?>

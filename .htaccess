@@ -76,6 +76,10 @@ RewriteRule ^webservice/(.*)/stations/bytagexact/(.*)$ /?format=$1&term=$2&actio
 RewriteRule ^webservice/(.*)/stations/(.*)$ /?format=$1&term=$2&action=data_search_name [B,L,QSD]
 RewriteRule ^webservice/(.*)/stations$ /?format=$1&action=data_stations_all [B,L,QSD]
 
+# station checks
+RewriteRule ^webservice/(.*)/checks/(.*)$ /?format=$1&stationuuid=$2&action=data_checks [B,L,QSA]
+RewriteRule ^webservice/(.*)/checks$ /?format=$1&action=data_checks_all [B,L,QSA]
+
 # compatibility with old rhytmbox-radio-browser
 RewriteRule ^xml.php$ /?format=xml&action=data_stations_all
 RewriteRule ^topclick.php$ /?format=xml&action=data_search_topclick

@@ -45,10 +45,14 @@ function checkStationConnectionById($db, $stationid, $url, &$bitrate, &$codec, &
     if ($audiofile !== false) {
         $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec,UrlCache=:cacheurl, LastCheckOKTime=NOW(), Hls=:hls WHERE StationID=:stationid');
         $stmt->execute(['bitrate' => $bitrate, 'codec' => $codec, 'stationid' => $stationid, 'cacheurl' => $audiofile, 'hls' => $hls]);
+
+        insertCheckByDbId($db, $stationid, $codec, $bitrate, $hls, true);
         return true;
     } else {
         $stmt = $db->prepare('UPDATE Station SET LastCheckTime=NOW(), LastCheckOK=FALSE, UrlCache="" WHERE StationID=:stationid');
         $stmt->execute(['stationid' => $stationid]);
+
+        insertCheckByDbId($db, $stationid, $codec, $bitrate, $hls, false);
         return false;
     }
 }

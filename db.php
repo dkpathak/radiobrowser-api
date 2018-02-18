@@ -2,6 +2,19 @@
 
 require 'utils.php';
 
+$hostname = "www.radio-browser.info";
+
+$columnMappingChecks = [
+    'stationuuid' => 'StationUuid',
+    'checkuuid' => 'CheckUuid',
+    'source' => 'Source',
+    'codec' => 'Codec',
+    'bitrate' => 'Bitrate',
+    'hls' => 'Hls',
+    'ok' => 'CheckOK',
+    'timestamp' => 'CheckTime'
+];
+
 $columnMapping = [
     'id' => 'StationID',
     'changeuuid' => 'ChangeUuid',
@@ -85,6 +98,20 @@ function openDB()
           LastCheckTime DATETIME)
           ');
     }
+    if (!tableExists($db, 'StationCheck')) {
+        $db->query('CREATE TABLE StationCheck(
+          CheckID INT NOT NULL AUTO_INCREMENT,
+          Primary Key (CheckID),
+          StationUuid CHAR(36) UNIQUE NOT NULL,
+          CheckUuid CHAR(36) UNIQUE NOT NULL,
+          Source VARCHAR(100) NOT NULL,
+          Codec VARCHAR(20),
+          Bitrate INT DEFAULT 0 NOT NULL,
+          Hls boolean default false NOT NULL,
+          CheckOK boolean default true NOT NULL,
+          CheckTime TIMESTAMP NOT NULL)
+          ');
+    }
     if (!tableExists($db, 'StationHistory')) {
         $db->query('CREATE TABLE StationHistory(
           StationID INT NOT NULL,
@@ -140,6 +167,80 @@ function tableExists($db, $tableName)
         return $result->rowCount() > 0;
     }
 
+    return false;
+}
+
+function insertCheckByDbId($db, $StationId, $Codec, $Bitrate, $Hls, $CheckOk)
+{
+    $data = [
+      'stationid' => $StationId
+    ];
+    $stmt = $db->prepare('SELECT StationUuid FROM Station WHERE StationID=:stationid');
+    $result = $stmt->execute($data);
+    if ($result) {
+        $StationUuid = $stmt->fetchColumn(0);
+        return insertCheck($db, $StationUuid, $Codec, $Bitrate, $Hls, $CheckOk);
+    }
+    return false;
+}
+
+function insertCheck($db, $StationUuid, $Codec, $Bitrate, $Hls, $CheckOk)
+{
+  global $hostname;
+  $data = [
+    'stationuuid' => $StationUuid,
+    'source' => $hostname,
+    'codec' => $Codec,
+    'bitrate' => $Bitrate,
+    'hls' => $Hls,
+    'checkok' => $CheckOk
+  ];
+  $stmt = $db->prepare('INSERT INTO StationCheck(StationUuid, CheckUuid, Source, Codec, Bitrate, Hls, CheckOK, CheckTime) VALUES(:stationuuid, uuid(), :source, :codec, :bitrate, :hls, :checkok, now())');
+  $stmt->execute($data);
+  if ($stmt->rowCount() !== 1) {
+      return false;
+  } else {
+      return true;
+  }
+}
+
+function listChecks($db, $format, $seconds, $stationuuid)
+{
+    global $columnMappingChecks;
+    $secondsDB = '';
+    if ($seconds > 0){
+        $secondsDB = ' AND TIME_TO_SEC(TIMEDIFF(Now(),sc.CheckTime))<:seconds';
+    }
+    $stationidDB = '';
+    if (!is_null($stationuuid)){
+        $stationidDB = ' AND StationUuid=:stationuuid';
+    }
+
+    $query = 'SELECT StationUuid, CheckUuid, Source, Codec, Bitrate, Hls, CheckOK, CheckTime FROM StationCheck sc WHERE 1=1 '.$secondsDB.$stationidDB." ORDER BY CheckTime ASC";
+    $stmt = $db->prepare($query);
+
+    if ($seconds > 0){
+        $stmt->bindValue(':seconds', $seconds, PDO::PARAM_INT);
+    }
+    if (!is_null($stationuuid)){
+        $stmt->bindValue(':stationuuid', $stationuuid, PDO::PARAM_STR);
+    }
+
+    $result = $stmt->execute();
+    if ($result) {
+        print_output_header($format);
+        print_output_arr_start($format);
+        $i = 0;
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if ($i > 0) {
+                print_output_item_arr_sep($format);
+            }
+            print_object($row, $format, $columnMappingChecks, "check");
+            ++$i;
+        }
+        print_output_arr_end($format);
+        print_output_footer($format);
+    }
     return false;
 }
 
