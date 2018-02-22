@@ -102,7 +102,7 @@ function openDB()
         $db->query('CREATE TABLE StationCheck(
           CheckID INT NOT NULL AUTO_INCREMENT,
           Primary Key (CheckID),
-          StationUuid CHAR(36) UNIQUE NOT NULL,
+          StationUuid CHAR(36) NOT NULL,
           CheckUuid CHAR(36) UNIQUE NOT NULL,
           Source VARCHAR(100) NOT NULL,
           Codec VARCHAR(20),
