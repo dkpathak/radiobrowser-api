@@ -928,11 +928,19 @@ function print_output_item_content($format, $key, $value)
     }
 }
 
-function backupStation($db, $stationid)
+function backupStationById($db, $stationid)
 {
     // backup old content
-    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid FROM Station WHERE StationID=:id OR StationUuid=:id');
+    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid FROM Station WHERE StationID=:id');
     $result = $stmt->execute(['id' => $stationid]);
+}
+
+function backupStationByUuid($db, $stationuuid)
+{
+    // backup old content
+    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid)
+                          SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid FROM Station WHERE StationUuid=:id');
+    $result = $stmt->execute(['id' => $stationuuid]);
 }
 
 function autosetFavicon($db, $stationid, $homepage, &$favicon, &$log){
@@ -989,7 +997,7 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
         return false;
     }else{
         $stationid = $db->lastInsertId();
-        backupStation($db, $stationid);
+        backupStationById($db, $stationid);
 
         $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
         $returnValue = array(
@@ -1086,7 +1094,7 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
         sendResult($format, false, "could not find station with matching id");
         return false;
     }else{
-        backupStation($db, $stationid);
+        backupStationById($db, $stationid);
 
         $returnValue = array(
             'id' => "".$stationid
@@ -1120,28 +1128,49 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
     }
 }
 
-function deleteStation($db, $format, $stationid)
+function deleteStation($db, $format, $stationuuid)
 {
-    sendResult($format, false, "delete is disabled for now, because it is broken");
-    return;
-    if (trim($stationid) != '' && $stationid !== null) {
-        $stmt = $db->prepare('UPDATE Station SET Name="",Url="",Country="",SubCountry="",Tags="",ChangeUuid=uuid(),Creation=NOW() WHERE StationID=:id OR StationUuid=:id');
-        $result = $stmt->execute(['id' => $stationid]);
+    if (trim($stationuuid) != '' && $stationuuid !== null) {
+        $stmt = $db->prepare('UPDATE Station SET Name="",Url="",Country="",SubCountry="",Tags="",Homepage="",Favicon="",Language="",ChangeUuid=uuid(),Creation=NOW() WHERE StationUuid=:id');
+        $result = $stmt->execute(['id' => $stationuuid]);
         if ($stmt->rowCount() === 1 && $result){
-            backupStation($db, $stationid);
+            backupStationByUuid($db, $stationuuid);
 
-            $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id OR StationUuid=:id');
-            $result = $stmt->execute(['id' => $stationid]);
+            $stmt = $db->prepare('DELETE FROM Station WHERE StationUuid=:id');
+            $result = $stmt->execute(['id' => $stationuuid]);
             if ($stmt->rowCount() === 1 && $result){
                 sendResult($format, true,"deleted station successfully");
             }else{
                 sendResult($format, false,"could not find station with matching id");
             }
         }else{
-
+            sendResult($format, false, "could not update station by uuid");
         }
     }else{
         sendResult($format, false, "stationid was null");
+    }
+}
+
+function deleteStationInternal($db, $stationuuid)
+{
+    if (trim($stationuuid) != '' && $stationuuid !== null) {
+        $stmt = $db->prepare('UPDATE Station SET Name="",Url="",Country="",SubCountry="",Tags="",Homepage="",Favicon="",Language="",ChangeUuid=uuid(),Creation=NOW() WHERE StationUuid=:id');
+        $result = $stmt->execute(['id' => $stationuuid]);
+        if ($stmt->rowCount() === 1 && $result){
+            backupStationByUuid($db, $stationuuid);
+
+            $stmt = $db->prepare('DELETE FROM Station WHERE StationUuid=:id');
+            $result = $stmt->execute(['id' => $stationuuid]);
+            if ($stmt->rowCount() === 1 && $result){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }else{
+        return false;
     }
 }
 
@@ -1176,7 +1205,7 @@ function undeleteStation($db, $format, $stationid)
         $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation, StationUuid, ChangeUuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),StationUuid, uuid() FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
         $stmt->execute(['id' => $stationid,'changeid' => $stationChangeId]);
         if ($stmt->rowCount() === 1){
-            backupStation($db, $stationid);
+            backupStationById($db, $stationid);
             sendResult($format, true, "undeleted station successfully");
         }else{
             sendResult($format, false, "could not find station with matching id");
@@ -1216,7 +1245,7 @@ function revertStation($db, $format, $stationid, $stationchangeid)
         $stmt = $db->prepare('INSERT INTO Station(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,NOW(),:ip,StationUuid,uuid() FROM StationHistory WHERE StationID=:id AND StationChangeID=:changeid');
         $stmt->execute(['id' => $stationid,'changeid' => $stationchangeid, 'ip' => $ip]);
         if ($stmt->rowCount() === 1){
-            backupStation($db, $stationid);
+            backupStationById($db, $stationid);
             sendResult($format, true, "reverted station successfully");
         }else{
             sendResult($format, false, "could not find station with matching id");

@@ -69,19 +69,18 @@ function dbCleanup($db){
     // delete stations that never worked after 5 days
     $db->query('DELETE FROM Station WHERE LastCheckOKTime IS NULL AND LastCheckOK=0 AND TIME_TO_SEC(TIMEDIFF(NOW(),Creation))>60*60*24*5');
     // move stations that have not been working for more than 60 days into deleted list
-    // $select_stmt = $db->query('SELECT StationID, Name, Creation, LastCheckOK,LastCheckOKTime,datediff(CURDATE(),LastCheckOKTime) AS mydiff FROM Station WHERE LastCheckOKTime IS NOT NULL AND LastCheckOK=0 AND datediff(CURDATE(),LastCheckOKTime)>60 ORDER BY LastCheckOKTime');
-    // if (!$select_stmt) {
-    //     echo str(mysql_error());
-    //     exit;
-    // }
-    // while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
-    //     $stationid = $row["StationID"];
-    //
-    //     echo "DELETE STation:".$stationid."\n";
-    //     backupStation($db, $stationid);
-    //     $stmt = $db->prepare('DELETE FROM Station WHERE StationID=:id');
-    //     $result = $stmt->execute(['id' => $stationid]);
-    // }
+    $select_stmt = $db->query('SELECT StationUuid, Name, Creation, LastCheckOK,LastCheckOKTime,datediff(CURDATE(),LastCheckOKTime) AS mydiff FROM Station WHERE LastCheckOKTime IS NOT NULL AND LastCheckOK=0 AND datediff(CURDATE(),LastCheckOKTime)>60 ORDER BY LastCheckOKTime');
+    if (!$select_stmt) {
+        echo str(mysql_error());
+        exit;
+    }
+    while ($row = $select_stmt->fetch(PDO::FETCH_ASSOC)) {
+        $stationuuid = $row["StationUuid"];
+        echo "DELETE STation:".$stationuuid." last contact=".$row["LastCheckOKTime"]." name=".$row["Name"]."\n";
+        if (deleteStationInternal($db, $stationuuid) === false){
+            echo " * UNABLE to delete:".$stationuuid." last contact=".$row["LastCheckOKTime"]."\n";
+        }
+    }
 }
 
 function isIconLoadable($url){
