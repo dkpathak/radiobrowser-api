@@ -88,6 +88,7 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$h
     $decoder = new PlaylistDecoder();
     $log = array();
     $killswitch = 10;
+    $bitrate = 0;
 
     while (count($urls_todo) > 0){
         if ($killswitch <= 0){
