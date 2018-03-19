@@ -976,6 +976,8 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
         return false;
     }
 
+    $name = substr($name,0,400);
+
     $ip = $_SERVER['REMOTE_ADDR'];
     $data = [
       'name' => $name,
@@ -1043,6 +1045,9 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
         sendResult($format, false, "url cannot be empty");
         return false;
     }
+
+    $name = substr($name,0,400);
+    
     $data = ['id' => $stationid];
     $columnStr = "";
 

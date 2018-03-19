@@ -89,6 +89,7 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$h
     $log = array();
     $killswitch = 10;
     $bitrate = 0;
+    $hls = false;
 
     while (count($urls_todo) > 0){
         if ($killswitch <= 0){
@@ -164,6 +165,7 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$h
                     $codec = 'UNKNOWN';
                 } elseif ($contentType === 'text/html') {
                     $codec = '';
+                    array_push($log, " - found text/html content type");
                     continue;
                 } elseif ($decoder->isContentTypePlaylist($contentType)) {
                     $urls = decodePlaylistUrl($url,$contentType,$hls);
