@@ -976,7 +976,10 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
         return false;
     }
 
-    $name = substr($name,0,400);
+    if (strlen($name) > 400){
+        sendResult($format, false, "name is longer than 400 chars");
+        return false;
+    }
 
     $ip = $_SERVER['REMOTE_ADDR'];
     $data = [
@@ -1046,8 +1049,11 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
         return false;
     }
 
-    $name = substr($name,0,400);
-    
+    if (strlen($name) > 400){
+        sendResult($format, false, "name is longer than 400 chars");
+        return false;
+    }
+
     $data = ['id' => $stationid];
     $columnStr = "";
 
