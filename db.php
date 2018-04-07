@@ -108,6 +108,7 @@ function openDB()
           Codec VARCHAR(20),
           Bitrate INT DEFAULT 0 NOT NULL,
           Hls boolean default false NOT NULL,
+          UrlCache TEXT,
           CheckOK boolean default true NOT NULL,
           CheckTime TIMESTAMP NOT NULL)
           ');
@@ -170,7 +171,7 @@ function tableExists($db, $tableName)
     return false;
 }
 
-function insertCheckByDbId($db, $StationId, $Codec, $Bitrate, $Hls, $CheckOk)
+function insertCheckByDbId($db, $StationId, $Codec, $Bitrate, $Hls, $CheckOk, $url)
 {
     $data = [
       'stationid' => $StationId
@@ -179,12 +180,12 @@ function insertCheckByDbId($db, $StationId, $Codec, $Bitrate, $Hls, $CheckOk)
     $result = $stmt->execute($data);
     if ($result) {
         $StationUuid = $stmt->fetchColumn(0);
-        return insertCheck($db, $StationUuid, $Codec, $Bitrate, $Hls, $CheckOk);
+        return insertCheck($db, $StationUuid, $Codec, $Bitrate, $Hls, $CheckOk, $url);
     }
     return false;
 }
 
-function insertCheck($db, $StationUuid, $Codec, $Bitrate, $Hls, $CheckOk)
+function insertCheck($db, $StationUuid, $Codec, $Bitrate, $Hls, $CheckOk, $url)
 {
   global $hostname;
   $data = [
@@ -193,9 +194,10 @@ function insertCheck($db, $StationUuid, $Codec, $Bitrate, $Hls, $CheckOk)
     'codec' => $Codec,
     'bitrate' => $Bitrate,
     'hls' => $Hls,
-    'checkok' => $CheckOk
+    'checkok' => $CheckOk,
+    'urlcache' => $url
   ];
-  $stmt = $db->prepare('INSERT INTO StationCheck(StationUuid, CheckUuid, Source, Codec, Bitrate, Hls, CheckOK, CheckTime) VALUES(:stationuuid, uuid(), :source, :codec, :bitrate, :hls, :checkok, now())');
+  $stmt = $db->prepare('INSERT INTO StationCheck(StationUuid, CheckUuid, Source, Codec, Bitrate, Hls, CheckOK, CheckTime, UrlCache) VALUES(:stationuuid, uuid(), :source, :codec, :bitrate, :hls, :checkok, now(), :urlcache)');
   $stmt->execute($data);
   if ($stmt->rowCount() !== 1) {
       return false;
