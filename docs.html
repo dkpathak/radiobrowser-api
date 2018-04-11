@@ -1169,7 +1169,8 @@
     <br /> http://www.radio-browser.info/webservice/json/edit/stationid
   </div>
     <div class="header_sub">Description:</div>
-    Edit a radio station. You can only change some of the values, even only one value, by sending just the parameter you want to change. The rest of the information of the edited station will stay the same.
+    Edit a radio station. You can only change some of the values, even only one value, by sending just the parameter you want to change. The rest of the information of the edited station will stay the same.<br/>
+    The Station is not saved, if the given url is not working.
     <br/>
     <br/> Supported output formats: json,xml
     <br/>
@@ -1192,7 +1193,7 @@
         <tr>
           <td>url</td>
           <td><nobr>http://this.is.an.url/stream.mp3</nobr></td>
-          <td>MANDATORY, the url of the station</td>
+          <td>MANDATORY, the url of the station. Online check needs to turn out ok.</td>
         </tr>
         <tr>
           <td>homepage</td>
