@@ -1118,6 +1118,7 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
 
     $stmt = $db->prepare('UPDATE Station SET Creation=NOW(),ChangeUuid=uuid()'.$columnStr.',LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec,UrlCache=:cacheurl, LastCheckOKTime=NOW(), Hls=:hls WHERE StationID=:id');
     $stmt->execute($data);
+    insertCheckByDbId($db, $stationid, $codec, $bitrate, $hls, true, $audiofile);
 
     if ($stmt->rowCount() !== 1){
         sendResult($format, false, "could not find station with matching id");
