@@ -1100,7 +1100,23 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
     $data["ip"] = $ip;
     $columnStr .= ",IP=:ip";
 
-    $stmt = $db->prepare('UPDATE Station SET Creation=NOW(),ChangeUuid=uuid()'.$columnStr.' WHERE StationID=:id');
+    $audiofile = checkStation($url, $bitrate, $codec, $name, $genre, $homepage, $hls, $log);
+    if ($audiofile === false) {
+        $returnValue = array(
+            'id' => "".$stationid
+        );
+        $returnValue["stream_check_done"] = "true";
+        $returnValue["stream_check_ok"] = "false";
+        sendResultParameters($format, false, "could not verify stream url, probly it is broken. not saved.", $returnValue);
+        return false;
+    }
+
+    $data['bitrate'] = $bitrate;
+    $data['codec'] = $codec;
+    $data['cacheurl'] = $audiofile;
+    $data['hls'] = $hls;
+
+    $stmt = $db->prepare('UPDATE Station SET Creation=NOW(),ChangeUuid=uuid()'.$columnStr.',LastCheckTime=NOW(), LastCheckOK=TRUE,Bitrate=:bitrate,Codec=:codec,UrlCache=:cacheurl, LastCheckOKTime=NOW(), Hls=:hls WHERE StationID=:id');
     $stmt->execute($data);
 
     if ($stmt->rowCount() !== 1){
@@ -1112,29 +1128,21 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
         $returnValue = array(
             'id' => "".$stationid
         );
-        if ($url !== null){
             $returnValue["stream_check_done"] = "true";
-            $working = checkStationConnectionById($db, $stationid, $url, $bitrate, $codec, $logConnection);
-            $returnValue["stream_check_ok"] = $working ? "true" : "false";
-
-            if ($working){
+        $returnValue["stream_check_ok"] = "true";
                 $returnValue['stream_check_bitrate'] = "".$bitrate;
                 $returnValue['stream_check_codec'] = $codec;
-            }
-        }else{
-            $returnValue["stream_check_done"] = "false";
-        }
 
-        if ($homepage !== null && ($favicon === "" || $favicon === null)){
+        /*if ($homepage !== null && ($favicon === "" || $favicon === null)){
             $faviconCheck = autosetFavicon($db, $stationid, $homepage, $favicon, $logFavicon);
             $returnValue["favicon_check_ok"] =  $faviconCheck ? "true" : "false";
             if ($faviconCheck){
                 $returnValue["favicon_check_url"] = $favicon;
             }
             $returnValue["favicon_check_done"] = "true";
-        }else{
+        }else{*/
             $returnValue["favicon_check_done"] = "false";
-        }
+        //}
 
         sendResultParameters($format, true, "changed station successfully", $returnValue);
         return true;
