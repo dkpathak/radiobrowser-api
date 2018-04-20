@@ -7,17 +7,17 @@ require 'db.php';
 $db = openDB();
 
 try {
-    cleanAllStations($db);
+    cleanAllStations($db,'Bull headed German%','Name');
+    cleanAllStations($db,'Bull headed German%','Country');
 } catch (PDOException $ex) {
     echo 'An Error occured!'.$ex->getMessage();
 }
 
-function cleanAllStations($db)
+function cleanAllStations($db, $needle, $column)
 {
     ini_set('default_socket_timeout', 10);
-    $needle ="Bull headed German%";
 
-    $select_stmt = $db->query('SELECT StationID, Name, Url FROM Station WHERE Name LIKE "'.$needle.'"');
+    $select_stmt = $db->query('SELECT StationID, Name, Url,Country FROM Station WHERE '.$column.' LIKE "'.$needle.'"');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
@@ -28,13 +28,14 @@ function cleanAllStations($db)
 
         echo 'Checking: '.$row['Url']."..\n";
         echo 'Name: '.$row['Name']."\n";
-        revertSingleStation($db, $stationid,$needle);
+        echo $column.': '.$row[$column]."\n";
+        revertSingleStation($db, $stationid,$column,$needle);
         echo "\n\n";
     }
 }
 
-function revertSingleStation($db,$stationid, $needle){
-    $select_stmt = $db->query('SELECT StationID, Name, Url, Creation,Favicon,Homepage,StationChangeID,ChangeUUID,Country,Subcountry,Language,Tags FROM StationHistory WHERE StationID='.$stationid.' AND Name NOT LIKE "'.$needle.'" ORDER BY Creation DESC LIMIT 1');
+function revertSingleStation($db,$stationid, $column, $needle){
+    $select_stmt = $db->query('SELECT StationID, Name, Url, Creation,Favicon,Homepage,StationChangeID,ChangeUUID,Country,Subcountry,Language,Tags FROM StationHistory WHERE StationID='.$stationid.' AND '.$column.' NOT LIKE "'.$needle.'" ORDER BY Creation DESC LIMIT 1');
     if (!$select_stmt) {
         echo str(mysql_error());
         exit;
@@ -45,6 +46,7 @@ function revertSingleStation($db,$stationid, $needle){
         echo "revert to..\n";
         echo "Name: ".$row["Name"]."\n";
         echo "Homepage: ".$row["Homepage"]."\n";
+        echo "Country: ".$row["Country"]."\n";
         echo "Favicon: ".$row["Favicon"]."\n";
         echo "Creation: ".$row["Creation"]."\n";
 
