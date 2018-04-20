@@ -1034,6 +1034,8 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
 
 function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
 {
+    sendResult($format, false, "edit is disabled for now, because of vandalism");
+    return;
     if ($format !== "xml" && $format !== "json"){
         sendResult($format, false, "unknown format");
         return false;
