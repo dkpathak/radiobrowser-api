@@ -1152,6 +1152,8 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
 
 function deleteStation($db, $format, $stationuuid)
 {
+    sendResult($format, false, "delete is disabled for now, because of vandalism");
+    return;
     if (trim($stationuuid) != '' && $stationuuid !== null) {
         $stmt = $db->prepare('UPDATE Station SET Name="",Url="",Country="",SubCountry="",Tags="",Homepage="",Favicon="",Language="",ChangeUuid=uuid(),Creation=NOW() WHERE StationUuid=:id');
         $result = $stmt->execute(['id' => $stationuuid]);
