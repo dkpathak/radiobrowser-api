@@ -158,6 +158,14 @@ function openDB()
           StationCountWorking INT DEFAULT 0) CHARSET=utf8 COLLATE=utf8_bin
           ');
     }
+    if (!tableExists($db, 'LanguageCache')) {
+        $db->query('CREATE TABLE LanguageCache(
+          LanguageName VARCHAR(100) COLLATE utf8_bin NOT NULL,
+          Primary Key (LanguageName),
+          StationCount INT DEFAULT 0,
+          StationCountWorking INT DEFAULT 0) CHARSET=utf8 COLLATE=utf8_bin
+          ');
+    }
 
     return $db;
 }
