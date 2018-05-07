@@ -16,7 +16,7 @@
         <div class="card mt-2 shadow p-3 mb-5">
             <div class="card-body">
               <h1 class="card-title">Community Radiostation Index</h1>
-              <h2 class="card-subtitle mb-2 text-muted">General</h2>
+              <h2 class="card-subtitle mb-2 text-muted" id="General">General</h2>
               <p class="card-text ">This webservice can be used freely but without guarantee to work. I am keeping it online since more than 2 years now. But downtimes are possible and i am not always home to fix it :) Please do not hesitate to send me ideas to improve the service!
                 <a href="segler_alex@web.de">segler_alex AT web DOT de</a>
                 PLEASE<br/>Send a <span class="text-danger">descriptive User-Agent</span> in your HTTP requests. This makes it easier for me to get in touch with developers to help with the usage of the API.
@@ -36,7 +36,7 @@
         </div>
         <div class="jumbotron mt-2 shadow p-3 mb-5">
           <div class="container">
-            <h1 class="display-4">List of countries</h1>
+            <h1 class="display-4" id="List_of_countries">List of countries</h1>
             <p class="lead">Will get a JSON encoded list of all countries in the database. If a filter is given,
               it will only only return the ones that contain the filter as substring, supported output formats: JSON, XML</p>
             <hr class="my-4">
@@ -116,7 +116,7 @@
         </div>
         <div class="jumbotron mt-2 shadow p-3 mb-5">
           <div class="container">
-            <h1 class="display-4">List of codecs</h1>
+            <h1 class="display-4" id="List_of_codecs">List of codecs</h1>
             <p class="lead">Will get a JSON encoded list of all codecs in the database. If a filter is given,
               it will only only return the ones that contain the filter as substring, Supported output formats: JSON, XML</p>
             <hr class="my-4">
@@ -199,7 +199,7 @@
 
           <div class="jumbotron mt-2 shadow p-3 mb-5">
               <div class="container">
-                <h1 class="display-4">List of states</h1>
+                <h1 class="display-4" id="List_of_states">List of states</h1>
                 <p class="lead">Will get a JSON encoded list of all states in the database. Countries are divided into states.
                   If a filter is given, it will only only return the ones that contain the filter as substring. If a country is given, it will only display states in this country,
                    supported output formats: JSON, XML</p>
@@ -290,7 +290,7 @@
           </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">List of languages</h1>
+          <h1 class="display-4" id="List_of_languages">List of languages</h1>
           <p class="lead">Will get a JSON encoded list of all languages in the database. If a filter is given,
             it will only only return the ones that contain the filter as substring, supported output formats: json, xml</p>
           <hr class="my-4">
@@ -368,7 +368,7 @@
         </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">List of tags</h1>
+          <h1 class="display-4" id="List_of_tags">List of tags</h1>
           <p class="lead">Will get a JSON encoded list of all tags in the database. If a filter is given,
             it will only only return the ones that contain the filter as substring, supported output formats: JSON, XML </p>
           <hr class="my-4">
@@ -445,9 +445,9 @@
         </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">List of radio stations</h1>
+          <h1 class="display-4" id="List_of_radio_stations">List of radio stations</h1>
           <p class="lead">Will get a list of radio stations that match the search. The variants with "exact" will only search for perfect matches. The others will match if the station attribute contains the searchterm.<br/>
-          Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
+          Please use <a href="#Playable_station_url">Playable station url</a> API call to get the real station url and also let the click be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
           <div class="syntax">
@@ -521,9 +521,9 @@
         </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Advanced station search</h1>
+          <h1 class="display-4" id="Advanced_station_search">Advanced station search</h1>
           <p class="lead">Will get a list of radio stations that match the search. It will match if the station attribute contains the searchterm.
-          Please use <a href="#station_url">Playable station url</a> API call to get the real station url and also let the click be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
+          Please use <a href="#Playable_station_url">Playable station url</a> API call to get the real station url and also let the click be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
           <div class="syntax">
@@ -652,7 +652,7 @@
         </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Search radio stations by url</h1>
+          <h1 class="display-4" id="Search_radio_stations_by_url">Search radio stations by url</h1>
           <p class="lead">Will get a list of radio stations that have an exact url match, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
@@ -684,8 +684,8 @@
         </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">List of all radio stations</h1>
-          <p class="lead">Will get a list of all radio stations. Please use <a href="#station_url">Playable station url</a>
+          <h1 class="display-4" id="List_of_all_radio_stations">List of all radio stations</h1>
+          <p class="lead">Will get a list of all radio stations. Please use <a href="#Playable_station_url">Playable station url</a>
             API call to get the real station url and also let the click be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
@@ -746,7 +746,7 @@
         </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Broken stations</h1>
+          <h1 class="display-4" id="Broken_stations">Broken stations</h1>
           <p class="lead">Returns a list of the stations that did not pass the connection test, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
@@ -766,7 +766,7 @@
         </div>
 
           <div class="jumbotron mt-2 shadow p-3 mb-5">
-            <h1 class="display-4">Stations that need improvement</h1>
+            <h1 class="display-4" id="Stations_that_need_improvement">Stations that need improvement</h1>
             <p class="lead">Returns a list of the stations that need improvement, which means they do not have e.g.: tags, country, state,.. information,
               supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
             <hr class="my-4">
@@ -787,7 +787,7 @@
           </div>
 
           <div class="jumbotron mt-2 shadow p-3 mb-5">
-            <h1 class="display-4">Stations by clicks</h1>
+            <h1 class="display-4" id="Stations_by_clicks">Stations by clicks</h1>
             <p class="lead">Returns a list of the stations that are clicked the most. You can add a parameter with the number of wanted stations,
             supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
             <hr class="my-4">
@@ -808,7 +808,7 @@
           </div>
 
           <div class="jumbotron mt-2 shadow p-3 mb-5">
-            <h1 class="display-4">Stations by votes</h1>
+            <h1 class="display-4" id="Stations_by_votes">Stations by votes</h1>
             <p class="lead">Returns a list of the highest voted stations. You can add a parameter with the number of wanted stations,
             supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
             <hr class="my-4">
@@ -830,7 +830,7 @@
           </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Stations by recent click</h1>
+          <h1 class="display-4" id="Stations by recent click">Stations by recent click</h1>
           <p class="lead">Returns a list of stations that got clicked recently, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL </p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
@@ -850,7 +850,7 @@
         </div>
 
           <div class="jumbotron mt-2 shadow p-3 mb-5">
-            <h1 class="display-4">Stations by recently changed/added</h1>
+            <h1 class="display-4" id="Stations_by_recently_changed/added">Stations by recently changed/added</h1>
             <p class="lead">Returns a list of stations that got added or changed recently, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL </p>
             <hr class="my-4">
             <div class="h5">Syntax:</div>
@@ -870,7 +870,7 @@
           </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Stations that got deleted</h1>
+          <h1 class="display-4" id="Stations_that_got_deleted">Stations that got deleted</h1>
           <p class="lead">Returns a list of stations that got deleted in the last 30 days. Also a single station can be retrieved by id.
             They are not visible through any other API calls. If you want to undelete a station call <a class="font-weight-bold" href="#station_undelete">Undelete Station</a>,
           supported output formats: JSON, XML</p>
@@ -892,7 +892,7 @@
         </div>
 
           <div class="jumbotron mt-2 shadow p-3 mb-5">
-            <h1 class="display-4">Old versions of stations</h1>
+            <h1 class="display-4" id="Old_versions_of_stations">Old versions of stations</h1>
             <p class="lead">Returns a list of old versions of stations from the last 30 days. Also the history of a single station can be retrieved by id.
               They are not visible through any other API calls. If you want to revert a station call <a class="font-weight-bold" href="#station_revert">Revert Station</a>.
             stationid can be an id or an stationuuid, supported output formats: JSON, XML</p>
@@ -934,7 +934,7 @@
           </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5" id="station_url">
-          <h1 class="display-4">Playable station url</h1>
+          <h1 class="display-4" id="Playable_station_url">Playable station url</h1>
           <p class="lead">Returns the playable url for the station.
           Any Playlist (PLS, ASX, M3U) decoding will be done for you.
           This API call will count as a click on the station,
@@ -981,7 +981,7 @@
 
 
           <div class="jumbotron mt-2 shadow p-3 mb-5">
-            <h1 class="display-4">Vote for station</h1>
+            <h1 class="display-4" id="Vote_for_station">Vote for station</h1>
             <p class="lead">Increase the vote count for the station by one. Can only be done by the same ip adress
               for one station every 10 minutes. Returns the changed station as result if it worked, supported output formats: JSON, XML</p>
             <hr class="my-4">
@@ -1017,7 +1017,7 @@
           </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Delete a station</h1>
+          <h1 class="display-4" id="Delete_a_station">Delete a station</h1>
           <p class="lead">The station will be deleted from the public list and moved to a deleted list. It will stay there for 30 days and
             then removed from the system. As long as it is in the deleted list it can be undeleted at any time, supported output formats: JSON, XML</p>
           <hr class="my-4">
@@ -1053,7 +1053,7 @@
         </div>
 
           <div class="jumbotron mt-2 shadow p-3 mb-5">
-            <h1 class="display-4">UnDelete a station</h1>
+            <h1 class="display-4" id="UnDelete_a_station">UnDelete a station</h1>
             <p class="lead">Undeletes a station which was deleted in the last 30 days, supported output formats: JSON, XML</p>
             <hr class="my-4">
             <div class="h5">Syntax:</div>
@@ -1089,7 +1089,7 @@
           </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5" id="station_revert">
-          <h1 class="display-4">Revert a station</h1>
+          <h1 class="display-4" id="Revert_a_station">Revert a station</h1>
           <p class="lead">Reverts a change to a station that was done in the last 30 days, supported output formats: JSON, XML</p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
@@ -1126,7 +1126,7 @@
         </div>
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Get a list of station check results</h1>
+          <h1 class="display-4" id="Get_a_list_of_station_check_results">Get a list of station check results</h1>
           <p class="lead">Get a list of station check results, supported output formats: JSON, XML</p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
@@ -1207,7 +1207,7 @@
 
 
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Add radio station</h1>
+          <h1 class="display-4" id="Add_radio_station">Add radio station</h1>
           <p class="lead">Add a radio station to the database, supported output formats: JSON, XML</p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
@@ -1308,11 +1308,8 @@
           </ul>
         </div>
 
-
-        <a id="edit_station"></a>
-        <a href="#edit_station" id="edit_anchor"><h2></h2></a>
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Edit a radio station</h1>
+          <h1 class="display-4" id="Edit_a_radio_station">Edit a radio station</h1>
           <p class="lead ">Edit a radio station. You can only change some of the values, even only one value, by sending just the parameter you want to change. The rest of the information of the edited station will stay the same.
           The Station is not saved, if the given url is not working, supported output formats: JSON, XML</p>
           <hr class="my-4">
@@ -1417,11 +1414,8 @@
           </ul>
         </div>
 
-
-        <a id="server_stats"></a>
-        <a href="#server_stats" id="server_anchor"><h2></h2></a>
         <div class="jumbotron mt-2 shadow p-3 mb-5">
-          <h1 class="display-4">Server stats</h1>
+          <h1 class="display-4" id="Server_stats">Server stats</h1>
           <p class="lead ">Webservice stats, supported output formats: JSON, XML</p>
           <hr class="my-4">
           <div class="h5">Syntax:</div>
