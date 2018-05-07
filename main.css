@@ -6,7 +6,9 @@
 j*/
 
 body {
-  background-color: #74AFAD;
+  background-color: #ede7df;
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+
 }
 h1 {
   font-family: 'Cutive Mono';
@@ -16,54 +18,39 @@ h2 {
 }
 
 a > h2 {
-  color: rgba(255, 255, 0, 0.5);
+  /* color: rgb(185, 185, 185); */
 }
-.content {
+/* .content {
   position: relative;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 30px;
-  padding-right: 30px;
-  padding-bottom: 30px;
+  margin: 30px auto 30px auto;
+  padding: 0px 30px 30px 30px;
   width: 1000px;
-  background-color: #558C89;
+  background-color: #5c666f;
   border: 1px black solid;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
+} */
 .header_sub {
   text-decoration: underline;
   margin-top: 12px;
-  font-family: 'Nova Mono';
+  font-family: proxima-nova, helvetica neue, sans-serif;
+  color: rgb(31, 189, 210);
 }
 .syntax {
-  font-family: 'VT323';
+  line-height: 1.4;
 }
 a {
   text-decoration: none;
-  color: #ECECEA;
+  color: rgb(148, 148, 148);
+  text-align: center;
 }
 a:hover {
   text-decoration: underline;
+  color: rgb(148, 148, 148);
 }
 
-table {
-  /*border: 1px black solid;*/
-}
-
-table > thead {
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-table > tbody > tr > td {
-  /*border-top: 1px black solid;*/
-}
-
-table > tbody > tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.2);
-}
-table > tbody > tr:nth-child(odd) {
-  background-color: rgba(0, 0, 0, 0.1);
+#format, #searchTerm{
+  font-style: italic;
+  font-weight: bold;
+  color: rgb(223, 223, 223);
 }
