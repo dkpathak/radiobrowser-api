@@ -5,76 +5,185 @@
   <meta charset="utf-8"/>
   <title>Radio Browser API</title>
   <link href='https://fonts.googleapis.com/css?family=VT323|Cutive+Mono|Nova+Mono' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
   <link rel="stylesheet" href="main.css">
 </head>
 
 <body>
-  <div class="content">
-    <a href="https://github.com/segler-alex/radiobrowser-api"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67"
-        alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
-    <h1>community radiostation index</h1>
-    <h2>ChangeLog</h2>
-    <H3>2018-04-12</H3>
-    <p>
-        <li>Online check for edit must turn out ok, for the station to be saved.</li>
-    </p>
-    <H3>2018-03-19</H3>
-    <p>
-        <li>Restricted station name to 400 chars</li>
-        <li>bugfix: initialize HLS on stream check</li>
-    </p>
-    <H3>2018-02-18</H3>
-    <p>
-        <li>Added api to get results of station checks.(<a href="/webservice#station_checks">Documentation</a>)</li>
-    </p>
-    <H3>2018-02-02</H3>
-    <p>
-        <li>Deactivated undelete, delete and revert for now. some bugs have to be investigated to activate it again.</li>
-    </p>
-    <H3>2018-01-30</H3>
-    <p>
-        <li>Properly encode JSON values with <a href="http://php.net/manual/de/function.json-encode.php">json_encode</a></li>
-        <li>Added stationuuid and changeuuid to station list entries. This will be used in future for cross server replication of entries. The api will migrate to also support uuids. Old ids will also be supported but on the long run at some point deprecated.</li>
-        <li>Added seconds parameter to <a href="/webservice#stations_changed">stations/changed</a> api. This api call does now also return the current active station in addition to the historical data in a single list. Before it only contained backups without the current state. This helps with keeping server sync simple.</li>
-    </p>
-    <H3>2017-12-14</H3>
-    <p>
-        <li>Sanitize urls (homepage, favicon, url) by replacing spaces with %20.</li>
-    </p>
-    <H3>2017-09-20</H3>
-    <p>
-        <li>save ip of sources of changes</li>
-    </p>
-    <H3>2017-08-19</H3>
-    <p>
-        <li>Clicks are now counted only once per day per ip address.</li>
-    </p>
-    <H3>2017-04-21</H3>
-    <p>
-        <li><a href="https://en.wikipedia.org/wiki/Turtle_(syntax)" target="_blank">Turtle/RDF</a> support for station lists added.<br/>
-           Example: <a href="http://www.radio-browser.info/webservice/ttl/stations/byname/bbc">http://www.radio-browser.info/webservice/ttl/stations/byname/bbc</a><br/>
-           Tested against: <a href="http://ttl.summerofcode.be/">http://ttl.summerofcode.be/</a>
-        </li>
-    </p>
-    <H3>2017-03-18</H3>
-    <p>
-        <li><a href="https://en.wikipedia.org/wiki/M3U#Internet_media_types" target="_blank">M3U</a>,
-          <a href="https://en.wikipedia.org/wiki/PLS_(file_format)" target="_blank">PLS</a> and <a href="https://en.wikipedia.org/wiki/XML_Shareable_Playlist_Format" target="_blank">XSPF</a>
-           playlist support for station lists.<br/>
-           This means you can paste an url like<br>
-           <a href="http://www.radio-browser.info/webservice/pls/stations/topclick/5">http://www.radio-browser.info/webservice/pls/stations/topclick/5</a><br/>
-           into your favourite audio player. (for example <a href="http://videolan.org">VLC</a>)
-        </li>
-    </p>
-    <H3>2017-03-03</H3>
-    <p>
-        <li><a href="https://en.wikipedia.org/wiki/HTTP_Live_Streaming" target="_blank">Hls</a> stream detection support. Streams have to be decoded on the client.</li>
-    </p>
-    <H3>2017-01-21</H3>
-    <p>
-        <li>Fixed " characters in name handling in some api calls. (e.g.: /webservice/v2/json/url)</li>
-    </p>
+  <div class="container">
+    <!-- <a href="https://github.com/segler-alex/radiobrowser-api"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67"
+        alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a> -->
+        <div class="card mt-2 shadow p-3 mb-5">
+          <div class="card-body">
+            <h1 class="card-title text-center">Community Radiostation Index</h1>
+            <h2 class="card-subtitle text-center mb-2 text-muted">ChangeLog</h2>
+            <section class="row mt-5">
+              <div class="mx-auto">
+                  <a href="https://github.com/segler-alex/radiobrowser" target="_blank" class="btn btn-primary mr-3">Fork on Github</a>
+                  <a href="docs.html" target="_blank" class="btn btn-info ml-3 mr-3">Developer API</a>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            April 12, 2018
+          </div>
+          <div class="card-body">
+            <ul>
+              <li>Online check for edit must turn out ok, for the station to be saved.</li>
+            </ul>            
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            March 19, 2018
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li>Restricted station name to 400 chars</li>
+                <li>bugfix: initialize HLS on stream check</li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            February 18, 2018
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li>Added api to get results of station checks.(<a href="/webservice#station_checks">Documentation</a>)</li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            February 2, 2018
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li>Deactivated undelete, delete and revert for now. some bugs have to be investigated to activate it again.</li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            January 30, 2018
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li>Properly encode JSON values with <a href="http://php.net/manual/de/function.json-encode.php">json_encode</a></li>
+                <li>Added stationuuid and changeuuid to station list entries. This will be used in future for cross server replication of entries. The api will migrate to also support uuids. Old ids will also be supported but on the long run at some point deprecated.</li>
+                <li>Added seconds parameter to <a href="/webservice#stations_changed">stations/changed</a> api. This api call does now also return the current active station in addition to the historical data in a single list. Before it only contained backups without the current state. This helps with keeping server sync simple.</li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            December 14, 2017
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li>Sanitize urls (homepage, favicon, url) by replacing spaces with %20.</li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            September 20, 2017
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li>save ip of sources of changes</li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            August 19, 2017
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li>Clicks are now counted only once per day per ip address.</li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            April 21, 2017
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li><a href="https://en.wikipedia.org/wiki/Turtle_(syntax)" target="_blank">Turtle/RDF</a> support for station lists added.<br/>
+                   Example: <a href="http://www.radio-browser.info/webservice/ttl/stations/byname/bbc">http://www.radio-browser.info/webservice/ttl/stations/byname/bbc</a><br/>
+                   Tested against: <a href="http://ttl.summerofcode.be/">http://ttl.summerofcode.be/</a>
+                </li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            March 18, 2017
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li><a href="https://en.wikipedia.org/wiki/M3U#Internet_media_types" target="_blank">M3U</a>,
+                  <a href="https://en.wikipedia.org/wiki/PLS_(file_format)" target="_blank">PLS</a> and <a href="https://en.wikipedia.org/wiki/XML_Shareable_Playlist_Format" target="_blank">XSPF</a>
+                   playlist support for station lists.<br/>
+                   This means you can paste an url like<br>
+                   <a href="http://www.radio-browser.info/webservice/pls/stations/topclick/5">http://www.radio-browser.info/webservice/pls/stations/topclick/5</a><br/>
+                   into your favourite audio player. (for example <a href="http://videolan.org">VLC</a>)
+                </li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            March 3, 2017
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li><a href="https://en.wikipedia.org/wiki/HTTP_Live_Streaming" target="_blank">Hls</a> stream detection support. Streams have to be decoded on the client.</li>
+              </ul>
+          </p>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header">
+            January 21, 2017
+          </div>
+          <div class="card-body">
+            <p class="card-text">
+              <ul>
+                <li>Fixed " characters in name handling in some api calls. (e.g.: /webservice/v2/json/url)</li>
+              </ul>
+          </p>
+          </div>
+        </div>
   </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
 </body>
 
 </html>
