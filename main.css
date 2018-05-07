@@ -10,32 +10,6 @@ body {
   font-family: "Segoe UI", Helvetica, Arial, sans-serif;
 
 }
-h1 {
-  font-family: 'Cutive Mono';
-}
-h2 {
-  font-family: 'Cutive Mono';
-}
-
-a > h2 {
-  /* color: rgb(185, 185, 185); */
-}
-/* .content {
-  position: relative;
-  margin: 30px auto 30px auto;
-  padding: 0px 30px 30px 30px;
-  width: 1000px;
-  background-color: #5c666f;
-  border: 1px black solid;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-} */
-.header_sub {
-  text-decoration: underline;
-  margin-top: 12px;
-  font-family: proxima-nova, helvetica neue, sans-serif;
-  color: rgb(31, 189, 210);
-}
 .syntax {
   line-height: 1.4;
 }
