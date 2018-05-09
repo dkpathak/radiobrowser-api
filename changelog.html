@@ -67,7 +67,7 @@
           <div class="card-body">
             <p class="card-text">
               <ul>
-                <li>Added api to get results of station checks.(<a href="/webservice#station_checks">Documentation</a>)</li>
+                <li>Added api to get results of station checks.(<a href="/webservice#Get_a_list_of_station_check_results">Documentation</a>)</li>
               </ul>
           </p>
           </div>
@@ -93,7 +93,7 @@
               <ul>
                 <li>Properly encode JSON values with <a href="http://php.net/manual/de/function.json-encode.php">json_encode</a></li>
                 <li>Added stationuuid and changeuuid to station list entries. This will be used in future for cross server replication of entries. The api will migrate to also support uuids. Old ids will also be supported but on the long run at some point deprecated.</li>
-                <li>Added seconds parameter to <a href="/webservice#stations_changed">stations/changed</a> api. This api call does now also return the current active station in addition to the historical data in a single list. Before it only contained backups without the current state. This helps with keeping server sync simple.</li>
+                <li>Added seconds parameter to <a href="/webservice#Stations_by_recently_changed">stations/changed</a> api. This api call does now also return the current active station in addition to the historical data in a single list. Before it only contained backups without the current state. This helps with keeping server sync simple.</li>
               </ul>
           </p>
           </div>
