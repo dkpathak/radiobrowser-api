@@ -65,7 +65,7 @@ if (isset($_GET['action'])) {
     $tagExact = convertToBool(getParameter('tagExact', 'false'));
 
     if ($action == 'tags') {
-        print_tags($db, $format, $term, $order, $reverse, $hideBroken);
+        print_n_to_m($db, $format, 'TagCache', 'TagName', 'tag', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'countries') {
         print_1_n($db, $format, 'Country', 'country', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'codecs') {
@@ -73,7 +73,8 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'states') {
         print_states($db, $format, $term, $country, $order, $reverse, $hideBroken);
     }elseif ($action == 'languages') {
-        print_1_n($db, $format, 'Language', 'language', $term, $order, $reverse, $hideBroken);
+        //print_1_n($db, $format, 'Language', 'language', $term, $order, $reverse, $hideBroken);
+        print_n_to_m($db, $format, 'LanguageCache', 'LanguageName', 'language', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'stats') {
         print_stats($db, $format);
     }elseif ($action == 'data_search_advanced') {
@@ -105,7 +106,7 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'data_search_bylanguage') {
         print_stations_list_data($db, $format, 'Language', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bylanguage_exact') {
-        print_stations_list_data_exact($db, $format, 'Language', $term, false, $order, $reverse, $offset, $limit);
+        print_stations_list_data_exact($db, $format, 'Language', $term, true, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bytag') {
         print_stations_list_data($db, $format, 'Tags', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bytag_exact') {
