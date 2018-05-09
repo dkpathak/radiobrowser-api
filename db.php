@@ -448,7 +448,7 @@ function print_result_stations_history($stmt, $format)
 
 function print_n_to_m($db, $format, $tableName, $column, $outputItemName, $search_term, $order, $reverse, $hideBroken)
 {
-    $stationCountColumn = strtolower($hideBroken) === "true" ? "StationCountWorking" : "StationCount";
+    $stationCountColumn = $hideBroken === true ? "StationCountWorking" : "StationCount";
     $reverseDb = filterOrderReverse($reverse);
     if ($order === "stationcount"){
         $orderDb = $stationCountColumn;

@@ -11,25 +11,25 @@ RewriteRule ^webservice/v2/(.*)/url/(.*)$ /?action=urlv2&format=$1&stationid=$2
 # VERSION 1
 # =========
 # http://site/webservice/<type>/countries
-RewriteRule ^webservice/(.*)/countries/(.*)$ /?term=$2&format=$1&action=countries
-RewriteRule ^webservice/(.*)/countries$ /?format=$1&action=countries
+RewriteRule ^webservice/(.*)/countries/(.*)$ /?term=$2&format=$1&action=countries [B,L,QSA]
+RewriteRule ^webservice/(.*)/countries$ /?format=$1&action=countries [B,L,QSA]
 
 # http://site/webservice/<type>/codecs
-RewriteRule ^webservice/(.*)/codecs/(.*)$ /?term=$2&format=$1&action=codecs
-RewriteRule ^webservice/(.*)/codecs$ /?format=$1&action=codecs
+RewriteRule ^webservice/(.*)/codecs/(.*)$ /?term=$2&format=$1&action=codecs [B,L,QSA]
+RewriteRule ^webservice/(.*)/codecs$ /?format=$1&action=codecs [B,L,QSA]
 
 # http://site/webservice/<type>/countries
-RewriteRule ^webservice/(.*)/states/(.*)/(.*)$ /?term=$3&country=$2&format=$1&action=states
-RewriteRule ^webservice/(.*)/states/(.*)$ /?term=$2&format=$1&action=states
-RewriteRule ^webservice/(.*)/states$ /?format=$1&action=states
+RewriteRule ^webservice/(.*)/states/(.*)/(.*)$ /?term=$3&country=$2&format=$1&action=states [B,L,QSA]
+RewriteRule ^webservice/(.*)/states/(.*)$ /?term=$2&format=$1&action=states [B,L,QSA]
+RewriteRule ^webservice/(.*)/states$ /?format=$1&action=states [B,L,QSA]
 
 # http://site/webservice/<type>/languages
-RewriteRule ^webservice/(.*)/languages/(.*)$ /?term=$2&format=$1&action=languages
-RewriteRule ^webservice/(.*)/languages$ /?format=$1&action=languages
+RewriteRule ^webservice/(.*)/languages/(.*)$ /?term=$2&format=$1&action=languages [B,L,QSA]
+RewriteRule ^webservice/(.*)/languages$ /?format=$1&action=languages [B,L,QSA]
 
 # http://site/webservice/<type>/tags
-RewriteRule ^webservice/(.*)/tags/(.*)$ /?format=$1&action=tags&term=$2
-RewriteRule ^webservice/(.*)/tags$ /?format=$1&action=tags
+RewriteRule ^webservice/(.*)/tags/(.*)$ /?format=$1&action=tags&term=$2 [B,L,QSA]
+RewriteRule ^webservice/(.*)/tags$ /?format=$1&action=tags [B,L,QSA]
 
 RewriteRule ^webservice$ /docs.html
 RewriteRule ^webservice/$ /docs.html
