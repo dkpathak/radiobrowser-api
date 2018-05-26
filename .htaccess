@@ -61,6 +61,7 @@ RewriteRule ^webservice/(.*)/stations/changed$ /?format=$1&action=data_search_ch
 RewriteRule ^webservice/(.*)/stations/search$ /?format=$1&action=data_search_advanced [B,L,QSA]
 RewriteRule ^webservice/(.*)/stations/byurl$ /?format=$1&action=data_search_byurl [B,L,QSD]
 RewriteRule ^webservice/(.*)/stations/byid/(.*)$ /?format=$1&term=$2&action=data_search_byid [B,L,QSD]
+RewriteRule ^webservice/(.*)/stations/byuuid/(.*)$ /?format=$1&term=$2&action=data_search_byuuid [B,L,QSD]
 RewriteRule ^webservice/(.*)/stations/byname/(.*)$ /?format=$1&term=$2&action=data_search_name [B,L,QSA]
 RewriteRule ^webservice/(.*)/stations/bynameexact/(.*)$ /?format=$1&term=$2&action=data_search_name_exact [B,L,QSA]
 RewriteRule ^webservice/(.*)/stations/bycodec/(.*)$ /?format=$1&term=$2&action=data_search_bycodec [B,L,QSA]
