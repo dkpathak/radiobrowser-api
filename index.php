@@ -113,6 +113,8 @@ if (isset($_GET['action'])) {
         print_stations_list_data_exact($db, $format, 'Tags', $term, true, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_byid') {
         print_stations_list_data_exact($db, $format, 'StationID', $term, false, $order, $reverse, $offset, $limit);
+    }elseif ($action == 'data_search_byuuid') {
+        print_stations_list_data_exact($db, $format, 'StationUuid', $term, false, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_byurl') {
         print_stations_list_data_url($db, $format, $url);
     }elseif ($action == 'data_search_broken') {
