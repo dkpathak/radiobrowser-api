@@ -8,22 +8,16 @@ j*/
 body {
   background-color: #ede7df;
   font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-
 }
 .syntax {
   line-height: 1.4;
 }
-a {
-  text-decoration: none;
-  color: rgb(148, 148, 148);
+.dropdown-item:hover{
+  background-color: #007bff;
+  color: white;
 }
-a:hover {
-  text-decoration: underline;
-  color: rgb(148, 148, 148);
-}
-
-#format, #searchTerm{
+.format, .searchTerm{
   font-style: italic;
   font-weight: bold;
-  color: rgb(223, 223, 223);
+  color: rgb(116, 116, 116);
 }
