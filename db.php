@@ -606,7 +606,7 @@ function filterOrderReverse($reverse){
     return "ASC";
 }
 
-function print_stations_list_data_advanced($db, $format, $name, $nameExact, $country, $countryExact, $state, $stateExact, $language, $languageExact, $tag, $tagExact, $bitrateMin, $bitrateMax, $order, $reverse, $hideBroken, $offset, $limit)
+function print_stations_list_data_advanced($db, $format, $name, $nameExact, $country, $countryExact, $state, $stateExact, $language, $languageExact, $tag, $tagExact, $tagList, $bitrateMin, $bitrateMax, $order, $reverse, $hideBroken, $offset, $limit)
 {
     $orderDb = filterOrderColumnName($order);
     $reverseDb = filterOrderReverse($reverse);
@@ -666,6 +666,15 @@ function print_stations_list_data_advanced($db, $format, $name, $nameExact, $cou
         }
     }
 
+    if ($tagList !== null) {
+      $where .= ' AND Tags REGEXP :tagList';
+      $tagList = (is_array($tagList)) ? $tagList : explode(',', $tagList);
+      $bindingValues[':tagList'] = array_reduce($tagList, function($carry, $item){
+        // exemple of regex to match all the tags provided in tagList: ^(?=.*?\bbossa\b)(?=.*?\bbluegrass\b)(?=.*?\brock\b).*$
+        // but mysql word boundaries are [[:<:]] and [[:>:]] instead of \b
+        return $carry .= '(?=.*?[[:<:]]'.trim($item).'[[:>:]])';
+      }, '^').'.*$';
+    }
 
     $stmt = $db->prepare('SELECT * FROM Station WHERE Source IS NULL '.$hideBrokenDb.' '.$where.' AND Bitrate>=:bitratemin AND Bitrate<=:bitratemax ORDER BY '.$orderDb.' '.$reverseDb.' LIMIT :limit OFFSET :offset');
     $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);

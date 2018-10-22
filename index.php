@@ -62,6 +62,7 @@ if (isset($_GET['action'])) {
     $languageExact = convertToBool(getParameter('languageExact', 'false'));
     $tags = getParameter('tags', null);
     $tag = getParameter('tag', null);
+    $tagList = getParameter('tagList', null);
     $tagExact = convertToBool(getParameter('tagExact', 'false'));
 
     if ($action == 'tags') {
@@ -78,7 +79,7 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'stats') {
         print_stats($db, $format);
     }elseif ($action == 'data_search_advanced') {
-        print_stations_list_data_advanced($db, $format, $name, $nameExact, $country, $countryExact, $state, $stateExact, $language, $languageExact, $tag, $tagExact, $bitrateMin, $bitrateMax, $order, $reverse, $hideBroken, $offset, $limit);
+        print_stations_list_data_advanced($db, $format, $name, $nameExact, $country, $countryExact, $state, $stateExact, $language, $languageExact, $tag, $tagExact, $tagList, $bitrateMin, $bitrateMax, $order, $reverse, $hideBroken, $offset, $limit);
     }elseif ($action == 'data_search_topvote') {
         print_stations_list_data_all($db, $format, "votes", "true", $offset, $limit);
     }elseif ($action == 'data_search_topclick') {
