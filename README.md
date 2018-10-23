@@ -69,7 +69,15 @@ wget http://www.radio-browser.info/backups/latest.sql.gz
 
 # start database and api
 docker network create radionetwork
-docker run -d --network radionetwork -v $(pwd)/latest.sql.gz:/docker-entrypoint-initdb.d/latest.sql.gz -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_DATABASE=radio -e MYSQL_USER=radiouser -e MYSQL_PASSWORD=password --name dbserver --hostname dbserver mariadb:10.1
+docker run -d --network radionetwork \
+    -v $(pwd)/latest.sql.gz:/docker-entrypoint-initdb.d/latest.sql.gz \
+    -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
+    -e MYSQL_DATABASE=radio \
+    -e MYSQL_USER=radiouser \
+    -e MYSQL_PASSWORD=password \
+    --name dbserver \
+    --hostname dbserver \
+    mariadb:10.1
 docker run -d --network radionetwork -p 80:80 --name radioapi radioapi
 
 # test it
