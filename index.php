@@ -160,6 +160,7 @@ if (isset($_GET['action'])) {
 <!doctype html>
 <html>
 	<head>
+        <meta http-equiv="refresh" content="0; URL=http://www.radio-browser.info/gui/">
 		<meta charset="utf-8">
 		<title>Community Radio Station Board</title>
 	</head>
