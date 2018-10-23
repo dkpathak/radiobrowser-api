@@ -6,7 +6,9 @@ Send me feature requests, bug reports or extend it yourself. I licenced it freel
 You can find the api documentation on http://www.radio-browser.info/webservice
 
 ## Setup
-### default install
+You can do a native setup or a docker setup
+
+### native setup
 Requirements:
 * apache
 * mod_php (modules: mysql, db, xml)
@@ -53,12 +55,12 @@ xdg-open http://localhost/webservice/xml/countries
 # or just open the link with your favourite browser
 ```
 
-### docker install
+### docker setup
 ```bash
 git clone https://github.com/segler-alex/radiobrowser-api
 docker build -t radioapi radiobrowser-api
 
 docker network create radionetwork
 docker run -d --network radionetwork -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_DATABASE=radio -e MYSQL_USER=radiouser -e MYSQL_PASSWORD=password --name dbserver --hostname dbserver mariadb:10.1
-docker run -d --network radionetwork --name radioapi radioapi
+docker run -d --network radionetwork -p 80:80 --name radioapi radioapi
 ```
