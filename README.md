@@ -23,12 +23,12 @@ Apache config file example
 	ServerName www.radio-browser.info
 
 	ServerAdmin webmaster@programmierecke.net
-	DocumentRoot /var/www/html
+	DocumentRoot /var/www/radio
 
 	ErrorLog ${APACHE_LOG_DIR}/error.radio.log
 	CustomLog ${APACHE_LOG_DIR}/access.radio.log combined
 
-	<Directory /var/www/html/>
+	<Directory /var/www/radio/>
 		AllowOverride All
 		Order allow,deny
 		allow from all
@@ -37,8 +37,11 @@ Apache config file example
 ```
 
 ```bash
+# clone repository
+git clone https://github.com/segler-alex/radiobrowser-api /var/www/radio
+
 # create database and user
-cat init.sql | mysql
+cat /var/www/radio/init.sql | mysql
 
 # import database from www.radio-browser.info
 wget http://www.radio-browser.info/backups/latest.sql.gz
