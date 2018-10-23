@@ -18,6 +18,9 @@ Requirements:
 # install packages (ubuntu 18.04)
 sudo apt install apache2 libapache2-mod-php php-db php-xml php-mysql
 sudo apt install default-mysql-server
+
+# enable apache modules
+sudo a2enmod rewrite headers
 ```
 
 Apache config file example
@@ -57,10 +60,19 @@ xdg-open http://localhost/webservice/xml/countries
 
 ### docker setup
 ```bash
+# build docker image
 git clone https://github.com/segler-alex/radiobrowser-api
 docker build -t radioapi radiobrowser-api
 
+# import database from www.radio-browser.info
+wget http://www.radio-browser.info/backups/latest.sql.gz
+
+# start database and api
 docker network create radionetwork
-docker run -d --network radionetwork -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_DATABASE=radio -e MYSQL_USER=radiouser -e MYSQL_PASSWORD=password --name dbserver --hostname dbserver mariadb:10.1
+docker run -d --network radionetwork -v latest.sql.gz:/docker-entrypoint-initdb.d/latest.sql.gz -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_DATABASE=radio -e MYSQL_USER=radiouser -e MYSQL_PASSWORD=password --name dbserver --hostname dbserver mariadb:10.1
 docker run -d --network radionetwork -p 80:80 --name radioapi radioapi
+
+# test it
+xdg-open http://localhost/webservice/xml/countries
+# or just open the link with your favourite browser
 ```
