@@ -549,7 +549,7 @@ function get_click_count_hours($db, $hours)
 
 function get_languages_count($db)
 {
-    $result = $db->query('SELECT COUNT(DISTINCT Language) FROM Station');
+    $result = $db->query('SELECT COUNT(*) FROM LanguageCache');
     if ($result) {
         return $result->fetchColumn(0);
     }
