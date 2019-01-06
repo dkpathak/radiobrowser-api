@@ -571,6 +571,8 @@ function print_stats($db, $format)
 {
     print_output_header($format);
     print_output_item_start($format, 'stats');
+    print_output_item_content($format, 'supported_version', 0);
+    print_output_item_dict_sep($format);
     print_output_item_content($format, 'stations', get_station_count($db));
     print_output_item_dict_sep($format);
     print_output_item_content($format, 'stations_broken', get_station_broken_count($db));
