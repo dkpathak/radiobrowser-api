@@ -573,19 +573,19 @@ function print_stats($db, $format)
     print_output_item_start($format, 'stats');
     print_output_item_content($format, 'supported_version', 0);
     print_output_item_dict_sep($format);
-    print_output_item_content($format, 'stations', get_station_count($db));
+    print_output_item_content($format, 'stations', intval(get_station_count($db)));
     print_output_item_dict_sep($format);
-    print_output_item_content($format, 'stations_broken', get_station_broken_count($db));
+    print_output_item_content($format, 'stations_broken', intval(get_station_broken_count($db)));
     print_output_item_dict_sep($format);
-    print_output_item_content($format, 'tags', get_tag_count($db));
+    print_output_item_content($format, 'tags', intval(get_tag_count($db)));
     print_output_item_dict_sep($format);
-    print_output_item_content($format, 'clicks_last_hour', get_click_count_hours($db, 1));
+    print_output_item_content($format, 'clicks_last_hour', intval(get_click_count_hours($db, 1)));
     print_output_item_dict_sep($format);
-    print_output_item_content($format, 'clicks_last_day', get_click_count_hours($db, 24));
+    print_output_item_content($format, 'clicks_last_day', intval(get_click_count_hours($db, 24)));
     print_output_item_dict_sep($format);
-    print_output_item_content($format, 'languages', get_languages_count($db));
+    print_output_item_content($format, 'languages', intval(get_languages_count($db)));
     print_output_item_dict_sep($format);
-    print_output_item_content($format, 'countries', get_countries_count($db));
+    print_output_item_content($format, 'countries', intval(get_countries_count($db)));
     print_output_item_end($format);
     print_output_footer($format);
 }
