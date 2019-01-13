@@ -1030,9 +1030,9 @@
       <div class="syntax">
         <ul class="list-unstyled ml-4">
           <li>http://www.radio-browser.info/webservice/json/stations/changed</li>
-          <li>http://www.radio-browser.info/webservice/json/stations/changed/stationid</li>
+          <li>http://www.radio-browser.info/webservice/json/stations/changed/stationuuid</li>
           <li>http://www.radio-browser.info/webservice/xml/stations/changed</li>
-          <li>http://www.radio-browser.info/webservice/xml/stations/changed/stationid</li>
+          <li>http://www.radio-browser.info/webservice/xml/stations/changed/stationuuid</li>
         </ul>
       </div>
       <div class="h5">Parameter:</div>
@@ -1048,17 +1048,17 @@
         </thead>
         <tbody>
           <tr>
-            <td>seconds</td>
-            <td>0</td>
-            <td>positive integer values</td>
-            <td>if >0 then it will only return history entries from the last 'seconds' seconds</td>
+            <td>lastchangeuuid</td>
+            <td></td>
+            <td>valid uuid</td>
+            <td>If defined then show only changes that happened after the change with this uuid</td>
           </tr>
         </tbody>
       </table>
       <div class="h5">Example:</div>
       <ul class="list-unstyled ml-4">
-        <li><a href="http://www.radio-browser.info/webservice/xml/stations/changed?seconds=3600" target="_blank">http://www.radio-browser.info/webservice/xml/stations/changed?seconds=3600</a></li>
-        <li><a href="http://www.radio-browser.info/webservice/json/stations/changed/123" target="_blank">http://www.radio-browser.info/webservice/json/stations/changed/123</a></li>
+        <li><a href="http://www.radio-browser.info/xml/stations/changed?lastchangeuuid=123" target="_blank">http://www.radio-browser.info/xml/stations/changed?lastchangeuuid=123</a></li>
+        <li><a href="http://www.radio-browser.info/json/stations/changed/123" target="_blank">http://www.radio-browser.info/json/stations/changed/123</a></li>
       </ul>
     </div>
 

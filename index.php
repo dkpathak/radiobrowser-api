@@ -44,6 +44,7 @@ if (isset($_GET['action'])) {
     $action = $_GET['action'];
     $hideBroken = convertToBool(getParameter('hidebroken', 'false'));
     $stationuuid = getParameter('stationuuid','');
+    $lastchangeuuid = getParameter('lastchangeuuid',null);
 
     $bitrateMin = intval(getParameter('bitrateMin','0'));
     $bitrateMax = intval(getParameter('bitrateMax','1000000'));
@@ -129,9 +130,9 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'data_search_deleted_all') {
         print_stations_list_deleted_all($db, $format);
     }elseif ($action == 'data_search_changed') {
-        print_stations_list_changed($db, $format, $stationid, $seconds);
+        print_stations_list_changed($db, $format, $stationid, $lastchangeuuid);
     }elseif ($action == 'data_search_changed_all') {
-        print_stations_list_changed_all($db, $format, $seconds);
+        print_stations_list_changed_all($db, $format, $lastchangeuuid);
     }elseif ($action == 'add') {
         addStation($db, $format, $name, $url, $homepage, $favicon, $country, $language, $tags, $state);
     }elseif ($action == 'edit') {
