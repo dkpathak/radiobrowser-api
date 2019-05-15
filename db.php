@@ -214,7 +214,7 @@ function insertCheck($db, $StationUuid, $Codec, $Bitrate, $Hls, $CheckOk, $url)
   }
 }
 
-function listChecks($db, $format, $seconds, $stationuuid)
+function listChecks($db, $format, $seconds, $stationuuid, $lastcheckuuid)
 {
     if ($format != 'xml' && $format != 'json') {
         echo "supported formats are: xml, json";
@@ -222,7 +222,11 @@ function listChecks($db, $format, $seconds, $stationuuid)
         http_response_code(406);
         return false;
     }
-
+    
+    $changeuuidDB='';
+    if ($lastcheckuuid){
+        $changeuuidDB = ' AND sc.CheckTime>=(SELECT CheckTime FROM StationCheck WHERE CheckUuid=:lastcheckuuid) AND sc.CheckUuid<>:lastcheckuuid';
+    }
     global $columnMappingChecks;
     $secondsDB = '';
     if ($seconds > 0){
@@ -233,7 +237,7 @@ function listChecks($db, $format, $seconds, $stationuuid)
         $stationidDB = ' AND StationUuid=:stationuuid';
     }
 
-    $query = 'SELECT StationUuid, CheckUuid, Source, Codec, Bitrate, Hls, CheckOK, CheckTime FROM StationCheck sc WHERE 1=1 '.$secondsDB.$stationidDB." ORDER BY CheckTime ASC";
+    $query = 'SELECT StationUuid, CheckUuid, Source, Codec, Bitrate, Hls, CheckOK, CheckTime FROM StationCheck sc WHERE 1=1 '.$secondsDB.$stationidDB.$changeuuidDB." ORDER BY CheckTime ASC";
     $stmt = $db->prepare($query);
 
     if ($seconds > 0){
@@ -241,6 +245,9 @@ function listChecks($db, $format, $seconds, $stationuuid)
     }
     if (!is_null($stationuuid)){
         $stmt->bindValue(':stationuuid', $stationuuid, PDO::PARAM_STR);
+    }
+    if ($lastcheckuuid){
+        $stmt->bindValue(':lastcheckuuid', $lastcheckuuid, PDO::PARAM_STR);
     }
 
     $result = $stmt->execute();

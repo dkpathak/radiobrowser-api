@@ -45,7 +45,7 @@ if (isset($_GET['action'])) {
     $hideBroken = convertToBool(getParameter('hidebroken', 'false'));
     $stationuuid = getParameter('stationuuid','');
     $lastchangeuuid = getParameter('lastchangeuuid',null);
-
+    $lastcheckuuid = getParameter('lastcheckuuid',null);
     $bitrateMin = intval(getParameter('bitrateMin','0'));
     $bitrateMax = intval(getParameter('bitrateMax','1000000'));
     $seconds    = intval(getParameter('seconds','0'));
@@ -152,9 +152,9 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'extract_images') {
         listExtractedImages($format, $url);
     }elseif ($action == 'data_checks_all') {
-        listChecks($db, $format, $seconds, NULL);
+        listChecks($db, $format, $seconds, NULL, $lastcheckuuid);
     }elseif ($action == 'data_checks') {
-        listChecks($db, $format, $seconds, $stationuuid);
+        listChecks($db, $format, $seconds, $stationuuid, $lastcheckuuid);
     }
 } else {
     ?>
