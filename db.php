@@ -224,9 +224,22 @@ function listChecks($db, $format, $seconds, $stationuuid, $lastcheckuuid)
         return false;
     }
     
-    $changeuuidDB='';
+    $changeuuidDB = '';
+    $minchecktime = '';
     if ($lastcheckuuid){
-        $changeuuidDB = ' AND sc.CheckTime>=(SELECT CheckTime FROM StationCheck WHERE CheckUuid=:lastcheckuuid) AND sc.CheckUuid<>:lastcheckuuid';
+        $query = 'SELECT CheckTime FROM StationCheck WHERE CheckUuid=:lastcheckuuid';
+        $stmt = $db->prepare($query);
+        $stmt->bindValue(':lastcheckuuid', $lastcheckuuid, PDO::PARAM_STR);
+
+        // display only all checks after the given check, but only if the given check could be found
+        $result = $stmt->execute();
+        if ($result) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $changeuuidDB = ' AND sc.CheckTime>=:minchecktime AND sc.CheckUuid<>:lastcheckuuid';
+                $minchecktime = $row["CheckTime"];
+                break;
+            }
+        }
     }
     global $columnMappingChecks;
     $secondsDB = '';
@@ -249,6 +262,7 @@ function listChecks($db, $format, $seconds, $stationuuid, $lastcheckuuid)
     }
     if ($lastcheckuuid){
         $stmt->bindValue(':lastcheckuuid', $lastcheckuuid, PDO::PARAM_STR);
+        $stmt->bindValue(':minchecktime', $minchecktime, PDO::PARAM_STR);
     }
 
     $result = $stmt->execute();
