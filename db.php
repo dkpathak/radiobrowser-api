@@ -12,6 +12,7 @@ $columnMappingChecks = [
     'bitrate' => 'Bitrate',
     'hls' => 'Hls',
     'ok' => 'CheckOK',
+    'urlcache' => 'UrlCache',
     'timestamp' => 'CheckTime'
 ];
 
@@ -237,7 +238,7 @@ function listChecks($db, $format, $seconds, $stationuuid, $lastcheckuuid)
         $stationidDB = ' AND StationUuid=:stationuuid';
     }
 
-    $query = 'SELECT StationUuid, CheckUuid, Source, Codec, Bitrate, Hls, CheckOK, CheckTime FROM StationCheck sc WHERE 1=1 '.$secondsDB.$stationidDB.$changeuuidDB." ORDER BY CheckTime ASC";
+    $query = 'SELECT StationUuid, CheckUuid, Source, Codec, Bitrate, Hls, CheckOK, CheckTime, UrlCache FROM StationCheck sc WHERE 1=1 '.$secondsDB.$stationidDB.$changeuuidDB." ORDER BY CheckTime ASC";
     $stmt = $db->prepare($query);
 
     if ($seconds > 0){
