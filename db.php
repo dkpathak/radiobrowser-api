@@ -1482,8 +1482,16 @@ function print_station_real_url($db, $format, $stationid){
         return false;
     }
 
-    $stmt = $db->prepare('SELECT Name, Url, UrlCache FROM Station WHERE LastCheckOK=TRUE AND StationID=:stationid');
-    $stmt->execute(['stationid'=>$stationid]);
+    $stationid_int = intval($stationid);
+    if (strval(intval($stationid)) != strval($stationid)){
+        $stmt = $db->prepare('SELECT Name, Url, UrlCache FROM Station WHERE LastCheckOK=TRUE AND StationUuid=:stationid');
+        $stmt->bindValue(':stationid', $stationid, PDO::PARAM_STR);
+    }else{
+        $stmt = $db->prepare('SELECT Name, Url, UrlCache FROM Station WHERE LastCheckOK=TRUE AND StationID=:stationid');
+        $stmt->bindValue(':stationid', $stationid_int, PDO::PARAM_INT);
+    }
+
+    $result = $stmt->execute();
     if ($stmt->rowCount() !== 1) {
         sendResult($format, false, "did not find station with matching id");
         return false;
