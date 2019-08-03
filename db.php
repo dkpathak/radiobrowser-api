@@ -530,7 +530,7 @@ function print_states($db, $format, $search_term, $country, $order, $reverse, $h
 
 function get_station_count($db)
 {
-    $result = $db->query('SELECT COUNT(*) FROM Station WHERE Source is NULL');
+    $result = $db->query('SELECT COUNT(*) FROM Station WHERE Source is NULL AND LastCheckOK=TRUE');
     if ($result) {
         return $result->fetchColumn(0);
     }
