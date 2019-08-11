@@ -77,10 +77,50 @@ docker run -d --network radionetwork \
     -e MYSQL_PASSWORD=password \
     --name dbserver \
     --hostname dbserver \
-    mariadb:10.1
+	mariadb:10.1 \
+	--character-set-server=utf8mb4 \
+	--collation-server=utf8mb4_unicode_ci
 docker run -d --network radionetwork -p 80:80 --name radioapi radioapi
 
 # test it
 xdg-open http://localhost/webservice/xml/countries
 # or just open the link with your favourite browser
 ```
+
+## Development
+### Simple (with docker)
+You don't have to setup apache, php and mysql yourself.
+First you have to change a line in db.php
+```php
+// from
+$db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', 'password');
+// to
+$db = new PDO('mysql:host=dbserver;dbname=radio', 'radiouser', 'password');
+```
+
+```bash
+# import database from www.radio-browser.info
+wget http://www.radio-browser.info/backups/latest.sql.gz
+# start database and api
+docker network create radionetwork
+docker run -d --network radionetwork \
+	-p 3306:3306 \
+	--rm \
+	-v $(pwd)/latest.sql.gz:/docker-entrypoint-initdb.d/latest.sql.gz \
+	-e MYSQL_ROOT_PASSWORD=12345678 \
+    -e MYSQL_DATABASE=radio \
+    -e MYSQL_USER=radiouser \
+    -e MYSQL_PASSWORD=password \
+    --name dbserver \
+	--hostname dbserver \
+	mariadb:10.1 \
+	--character-set-server=utf8mb4 \
+	--collation-server=utf8mb4_unicode_ci
+# wait some time until db import was successfull
+# you can check on it by looking at the logs (press CTRL-C to get out)
+docker logs -f dbserver
+
+# run server and mount current working dir inside
+docker run --rm --name api --network radionetwork -p 8080:80 -v $(pwd):/var/www/html/ api
+```
+Now you can just edit the files directly inplace and see the result.
