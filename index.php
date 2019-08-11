@@ -56,6 +56,7 @@ if (isset($_GET['action'])) {
     $homepage = getParameter('homepage', null);
     $favicon = getParameter('favicon', null);
     $country = getParameter('country', null);
+    $countrycode = getParameter('countrycode', null);
     $countryExact = convertToBool(getParameter('countryExact', 'false'));
     $state = getParameter('state', null);
     $stateExact = convertToBool(getParameter('stateExact', 'false'));
@@ -134,9 +135,9 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'data_search_changed_all') {
         print_stations_list_changed_all($db, $format, $lastchangeuuid);
     }elseif ($action == 'add') {
-        addStation($db, $format, $name, $url, $homepage, $favicon, $country, $language, $tags, $state);
+        addStation($db, $format, $name, $url, $homepage, $favicon, $country, $countrycode, $language, $tags, $state);
     }elseif ($action == 'edit') {
-        editStation($db, $format, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state);
+        editStation($db, $format, $stationid, $name, $url, $homepage, $favicon, $country, $countrycode, $language, $tags, $state);
     }elseif ($action == 'delete') {
         deleteStation($db, $format, $stationid);
     }elseif ($action == 'undelete') {

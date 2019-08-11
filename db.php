@@ -26,6 +26,7 @@ $columnMapping = [
     'favicon' => 'Favicon',
     'tags' => 'Tags',
     'country' => 'Country',
+    'countrycode' => 'CountryCode',
     'state' => 'Subcountry',
     'language' => 'Language',
     'votes' => 'Votes',
@@ -54,6 +55,7 @@ $columnMappingHistory = [
     'favicon' => 'Favicon',
     'tags' => 'Tags',
     'country' => 'Country',
+    'countrycode' => 'CountryCode',
     'state' => 'Subcountry',
     'language' => 'Language',
     'votes' => 'Votes',
@@ -81,6 +83,7 @@ function openDB()
           Favicon TEXT,
           Creation TIMESTAMP,
           Country VARCHAR(50),
+          CountryCode VARCHAR(2),
           Subcountry VARCHAR(50),
           Language VARCHAR(50),
           Tags TEXT,
@@ -127,6 +130,7 @@ function openDB()
           Favicon TEXT,
           Creation TIMESTAMP,
           Country VARCHAR(50),
+          CountryCode VARCHAR(2),
           Subcountry VARCHAR(50),
           Language VARCHAR(50),
           Tags TEXT,
@@ -976,15 +980,15 @@ function print_output_item_content($format, $key, $value)
 function backupStationById($db, $stationid)
 {
     // backup old content
-    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid FROM Station WHERE StationID=:id');
+    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,CountryCode,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid) SELECT StationID,Name,Url,Homepage,Favicon,Country,CountryCode,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid FROM Station WHERE StationID=:id');
     $result = $stmt->execute(['id' => $stationid]);
 }
 
 function backupStationByUuid($db, $stationuuid)
 {
     // backup old content
-    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid)
-                          SELECT StationID,Name,Url,Homepage,Favicon,Country,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid FROM Station WHERE StationUuid=:id');
+    $stmt = $db->prepare('INSERT INTO StationHistory(StationID,Name,Url,Homepage,Favicon,Country,CountryCode,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid)
+                          SELECT StationID,Name,Url,Homepage,Favicon,Country,CountryCode,SubCountry,Language,Tags,Votes,NegativeVotes,Creation,IP,StationUuid,ChangeUuid FROM Station WHERE StationUuid=:id');
     $result = $stmt->execute(['id' => $stationuuid]);
 }
 
@@ -1006,7 +1010,7 @@ function autosetFavicon($db, $stationid, $homepage, &$favicon, &$log){
     return false;
 }
 
-function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
+function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $countrycode, $language, $tags, $state)
 {
     if ($format !== "xml" && $format !== "json"){
         sendResult($format, false, "unknown format");
@@ -1035,11 +1039,12 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
     $data["homepage"] = $homepage === null ? "" : $homepage;
     $data["favicon"] = $favicon === null ? "" : $favicon;
     $data["country"] = $country === null ? "" : $country;
+    $data["countrycode"] = $countrycode === null ? "" : $countrycode;
     $data["language"] = $language === null ? "" : $language;
     $data["tags"] = $tags === null ? "" : $tags;
     $data["state"] = $state === null ? "" : $state;
 
-    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Creation,Homepage,Favicon,Country,Language,Tags,Subcountry,IP, StationUuid, ChangeUuid) VALUES(:name,:url,NOW(),:homepage,:favicon,:country,:language,:tags,:state,:ip, uuid(), uuid())');
+    $stmt = $db->prepare('INSERT INTO Station(Name,Url,Creation,Homepage,Favicon,Country,CountryCode,Language,Tags,Subcountry,IP, StationUuid, ChangeUuid) VALUES(:name,:url,NOW(),:homepage,:favicon,:country,:countrycode,:language,:tags,:state,:ip, uuid(), uuid())');
     $stmt->execute($data);
 
     if ($stmt->rowCount() !== 1) {
@@ -1075,7 +1080,7 @@ function addStation($db, $format, $name, $url, $homepage, $favicon, $country, $l
     }
 }
 
-function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon, $country, $language, $tags, $state)
+function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon, $country, $countrycode, $language, $tags, $state)
 {
     sendResult($format, false, "edit is disabled for now, because of vandalism");
     return;
@@ -1123,6 +1128,10 @@ function editStation($db, $format, $stationid, $name, $url, $homepage, $favicon,
         $columnStr .= ",Favicon=:favicon";
     }
 
+    if ($countrycode !== null) {
+        $data["countrycode"] = $countrycode;
+        $columnStr .= ",CountryCode=:countrycode";
+    }
     if ($country !== null) {
         $data["country"] = $country;
         $columnStr .= ",Country=:country";
