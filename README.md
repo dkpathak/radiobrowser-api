@@ -23,7 +23,6 @@ sudo apt install default-mysql-server
 sudo a2enmod rewrite headers
 ```
 
-# mysql config
 Mysql/MariaDB needs to be in utf8mb4 mode. Ensure that the following 2 lines exist in your database config: (somewhere in /etc/mysql)
 ```
 character-set-server  = utf8mb4
