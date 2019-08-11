@@ -19,6 +19,13 @@ Requirements:
 sudo apt install apache2 libapache2-mod-php php-db php-xml php-mysql
 sudo apt install default-mysql-server
 
+# mysql config
+Mysql/MariaDB needs to be in utf8mb4 mode. Ensure that the following 2 lines exist in your database config: (somewhere in /etc/mysql)
+```
+character-set-server  = utf8mb4
+collation-server      = utf8mb4_general_ci
+```
+
 # enable apache modules
 sudo a2enmod rewrite headers
 ```
@@ -97,7 +104,7 @@ $db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', 'password');
 // to
 $db = new PDO('mysql:host=dbserver;dbname=radio', 'radiouser', 'password');
 ```
-The do some docker magic:
+Then do some docker magic:
 ```bash
 # build image
 docker build . -t api
