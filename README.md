@@ -99,6 +99,8 @@ $db = new PDO('mysql:host=dbserver;dbname=radio', 'radiouser', 'password');
 ```
 The do some docker magic:
 ```bash
+# build image
+docker build . -t api
 # import database from www.radio-browser.info
 wget http://www.radio-browser.info/backups/latest.sql.gz
 # start database and api
