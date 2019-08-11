@@ -70,13 +70,13 @@ wget http://www.radio-browser.info/backups/latest.sql.gz
 # start database and api
 docker network create radionetwork
 docker run -d --network radionetwork \
-    -v $(pwd)/latest.sql.gz:/docker-entrypoint-initdb.d/latest.sql.gz \
-    -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
-    -e MYSQL_DATABASE=radio \
-    -e MYSQL_USER=radiouser \
-    -e MYSQL_PASSWORD=password \
-    --name dbserver \
-    --hostname dbserver \
+	-v $(pwd)/latest.sql.gz:/docker-entrypoint-initdb.d/latest.sql.gz \
+	-e MYSQL_RANDOM_ROOT_PASSWORD=yes \
+	-e MYSQL_DATABASE=radio \
+	-e MYSQL_USER=radiouser \
+	-e MYSQL_PASSWORD=password \
+	--name dbserver \
+	--hostname dbserver \
 	mariadb:10.1 \
 	--character-set-server=utf8mb4 \
 	--collation-server=utf8mb4_unicode_ci
@@ -97,7 +97,7 @@ $db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', 'password');
 // to
 $db = new PDO('mysql:host=dbserver;dbname=radio', 'radiouser', 'password');
 ```
-
+The do some docker magic:
 ```bash
 # import database from www.radio-browser.info
 wget http://www.radio-browser.info/backups/latest.sql.gz
@@ -108,10 +108,10 @@ docker run -d --network radionetwork \
 	--rm \
 	-v $(pwd)/latest.sql.gz:/docker-entrypoint-initdb.d/latest.sql.gz \
 	-e MYSQL_ROOT_PASSWORD=12345678 \
-    -e MYSQL_DATABASE=radio \
-    -e MYSQL_USER=radiouser \
-    -e MYSQL_PASSWORD=password \
-    --name dbserver \
+	-e MYSQL_DATABASE=radio \
+	-e MYSQL_USER=radiouser \
+	-e MYSQL_PASSWORD=password \
+	--name dbserver \
 	--hostname dbserver \
 	mariadb:10.1 \
 	--character-set-server=utf8mb4 \
