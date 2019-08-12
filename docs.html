@@ -19,7 +19,8 @@
         <li class="nav-item dropdown">
           <a class="nav-link navbar-light dropdown-toggle" href="" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Lists</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#List_of_countries">List of countries</a></li>
+            <li><a class="dropdown-item" href="#List_of_countries">List of countries (deprecated)</a></li>
+            <li><a class="dropdown-item" href="#List_of_countrycodes">List of countrycodes</a></li>
             <li><a class="dropdown-item" href="#List_of_codecs">List of codecs</a></li>
             <li><a class="dropdown-item" href="#List_of_states">List of states</a></li>
             <li><a class="dropdown-item" href="#List_of_languages">List of languages</a></li>
@@ -87,7 +88,7 @@
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_countries">
       <div class="container">
         <h1 class="display-4">List of countries</h1>
-        <p class="lead">Will get a JSON encoded list of all countries in the database. If a filter is given, it will only only return the ones that contain the filter as substring, supported output formats: JSON, XML</p>
+        <p class="lead">(DEPRECATED: use countrycodes instead) Will get a JSON encoded list of all countries in the database. If a filter is given, it will only only return the ones that contain the filter as substring, supported output formats: JSON, XML</p>
         <hr class="my-4">
         <div class="h5">Syntax:</div>
         <div class="syntax">
@@ -159,6 +160,85 @@
           <ul class="list-unstyled ml-4">
             <li><a href="http://www.radio-browser.info/webservice/json/countries" target="_blank">http://www.radio-browser.info/webservice/json/countries</a></li>
             <li><a href="http://www.radio-browser.info/webservice/xml/countries/aus" target="_blank">http://www.radio-browser.info/webservice/xml/countries/aus</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_countrycodes">
+      <div class="container">
+        <h1 class="display-4">List of countrycodes</h1>
+        <p class="lead">Will get a JSON encoded list of all countrycodes in the database. If a filter is given, it will only only return the ones that contain the filter as substring, supported output formats: JSON, XML</p>
+        <hr class="my-4">
+        <div class="h5">Syntax:</div>
+        <div class="syntax">
+          <ul class="list-unstyled ml-4">
+            <li class="ml-3">http://www.radio-browser.info/webservice/json/countrycodes</li>
+            <li class="ml-3">http://www.radio-browser.info/webservice/json/countrycodes/&lt;filter&gt;</li>
+            <li class="ml-3">http://www.radio-browser.info/webservice/xml/countrycodes</li>
+            <li class="ml-3">http://www.radio-browser.info/webservice/xml/countrycodes/&lt;filter&gt;</li>
+          </ul>
+          <div class="h5">Parameter:</div>
+          This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
+          <table class="table mt-2 table-striped">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Default value</th>
+                <th scope="col">Possible values</th>
+                <th scope="col">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>order</td>
+                <td>value</td>
+                <td>value, stationcount</td>
+                <td>name of the attribute the result list will be sorted by</td>
+              </tr>
+              <tr>
+                <td>reverse</td>
+                <td>false</td>
+                <td>true, false</td>
+                <td>rerverses the result list if set to true</td>
+              </tr>
+              <tr>
+                <td>hidebroken</td>
+                <td>false</td>
+                <td>true, false</td>
+                <td>do not count broken stations</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="h5">Result JSON:</div>
+          <div class="well well-sm bg-light border border-secondary rounded">
+            <pre class="mt-4">
+                [
+                {
+                  &quot;value&quot;: &quot;Albania&quot;,
+                  &quot;stationcount&quot;: &quot;1&quot;
+                },
+                {
+                  &quot;value&quot;: &quot;Argentina&quot;,
+                  &quot;stationcount&quot;: &quot;5&quot;
+                },
+                ..
+                ]
+                </pre>
+          </div>
+          <div class="h5 mt-3">Result XML:</div>
+          <div class="well well-sm bg-light border border-secondary rounded">
+            <pre class="mt-4">
+                &lt;result&gt;
+                &lt;country value=&quot;AT&quot; stationcount=&quot;1&quot;/&gt;
+                &lt;country value=&quot;AU&quot; stationcount=&quot;5&quot;/&gt;
+                ..
+                &lt;/result&gt;
+                </pre>
+          </div>
+          <div class="h5 mt-3">Example:</div>
+          <ul class="list-unstyled ml-4">
+            <li><a href="http://www.radio-browser.info/webservice/json/countrycodes" target="_blank">http://www.radio-browser.info/webservice/json/countrycodes</a></li>
+            <li><a href="http://www.radio-browser.info/webservice/xml/countrycodes/at" target="_blank">http://www.radio-browser.info/webservice/xml/countrycodes/aus</a></li>
           </ul>
         </div>
       </div>
