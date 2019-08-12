@@ -71,6 +71,8 @@ if (isset($_GET['action'])) {
         print_n_to_m($db, $format, 'TagCache', 'TagName', 'tag', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'countries') {
         print_1_n($db, $format, 'Country', 'country', $term, $order, $reverse, $hideBroken);
+    }elseif ($action == 'countrycodes') {
+        print_1_n($db, $format, 'CountryCode', 'countrycode', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'codecs') {
         print_1_n($db, $format, 'Codec', 'codec', $term, $order, $reverse, $hideBroken);
     }elseif ($action == 'states') {
@@ -102,6 +104,8 @@ if (isset($_GET['action'])) {
         print_stations_list_data($db, $format, 'Country', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bycountry_exact') {
         print_stations_list_data_exact($db, $format, 'Country', $term, false, $order, $reverse, $offset, $limit);
+    }elseif ($action == 'data_search_bycountrycode_exact') {
+        print_stations_list_data_exact($db, $format, 'CountryCode', $term, false, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bystate') {
         print_stations_list_data($db, $format, 'Subcountry', $term, $order, $reverse, $offset, $limit);
     }elseif ($action == 'data_search_bystate_exact') {

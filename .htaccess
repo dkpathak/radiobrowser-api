@@ -14,6 +14,10 @@ RewriteRule ^webservice/v2/(.*)/url/(.*)$ /?action=urlv2&format=$1&stationid=$2
 RewriteRule ^webservice/(.*)/countries/(.*)$ /?term=$2&format=$1&action=countries [B,L,QSA]
 RewriteRule ^webservice/(.*)/countries$ /?format=$1&action=countries [B,L,QSA]
 
+# http://site/webservice/<type>/countrycodes
+RewriteRule ^webservice/(.*)/countrycodes/(.*)$ /?term=$2&format=$1&action=countrycodes [B,L,QSA]
+RewriteRule ^webservice/(.*)/countrycodes$ /?format=$1&action=countrycodes [B,L,QSA]
+
 # http://site/webservice/<type>/codecs
 RewriteRule ^webservice/(.*)/codecs/(.*)$ /?term=$2&format=$1&action=codecs [B,L,QSA]
 RewriteRule ^webservice/(.*)/codecs$ /?format=$1&action=codecs [B,L,QSA]
@@ -68,6 +72,7 @@ RewriteRule ^webservice/(.*)/stations/bycodec/(.*)$ /?format=$1&term=$2&action=d
 RewriteRule ^webservice/(.*)/stations/bycodecexact/(.*)$ /?format=$1&term=$2&action=data_search_bycodec_exact [B,L,QSA]
 RewriteRule ^webservice/(.*)/stations/bycountry/(.*)$ /?format=$1&term=$2&action=data_search_bycountry [B,L,QSA]
 RewriteRule ^webservice/(.*)/stations/bycountryexact/(.*)$ /?format=$1&term=$2&action=data_search_bycountry_exact [B,L,QSA]
+RewriteRule ^webservice/(.*)/stations/bycountrycodeexact/(.*)$ /?format=$1&term=$2&action=data_search_bycountrycode_exact [B,L,QSA]
 RewriteRule ^webservice/(.*)/stations/bystate/(.*)$ /?format=$1&term=$2&action=data_search_bystate [B,L,QSA]
 RewriteRule ^webservice/(.*)/stations/bystateexact/(.*)$ /?format=$1&term=$2&action=data_search_bystate_exact [B,L,QSA]
 RewriteRule ^webservice/(.*)/stations/bylanguage/(.*)$ /?format=$1&term=$2&action=data_search_bylanguage [B,L,QSA]
