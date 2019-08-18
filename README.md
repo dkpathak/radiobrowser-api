@@ -1,4 +1,14 @@
 # radiobrowser-api
+
+## Deprecation warning
+THIS PROJECT IS DEPRECATED!
+
+Please use https://github.com/segler-alex/radiobrowser-api-rust instead for future development. It is an all in one alternative to 
+* radiobrowser-api (https://github.com/segler-alex/radiobrowser-api)
+* stream-check (https://github.com/segler-alex/stream-check-rust)
+* radiobrowser-cleanup-tasks (https://github.com/segler-alex/radiobrowser-cleanup-tasks-rust)
+
+## About
 This is the radio browser server part, that provides the api on http://www.radio-browser.info
 
 Send me feature requests, bug reports or extend it yourself. I licenced it freely, you could also start your own server if you wish.
