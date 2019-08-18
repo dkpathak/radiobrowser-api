@@ -161,6 +161,10 @@ function checkStation($url, &$bitrate, &$codec, &$name, &$genre, &$homepage, &$h
                     $codec = 'FLAC';
                 } elseif ($contentType === 'application/flv') {
                     $codec = 'FLV';
+                } elseif ($contentType === 'video/x-flv') {
+                    $codec = 'FLV';
+                } elseif ($contentType === 'video/mpeg') {
+                    $codec = 'MPEG-TS';
                 } elseif ($contentType === 'application/octet-stream') {
                     $codec = 'UNKNOWN';
                 } elseif ($contentType === 'text/html') {
