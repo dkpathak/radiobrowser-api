@@ -27,13 +27,13 @@
             <li><a class="dropdown-item" href="#List_of_tags">List of tags</a></li>
             <li><a class="dropdown-item" href="#List_of_radio_stations">List of radio stations</a></li>
             <li><a class="dropdown-item" href="#List_of_all_radio_stations">List of all radio stations</a></li>
-            <li><a class="dropdown-item" href="#Get_a_list_of_station_check_results">Get a list of station check results</a></li>
+            <li><a class="dropdown-item" href="#List_of_station_check_results">List of station check results</a></li>
             <li>
               <div role="separator" class="dropdown-divider"></div>
             </li>
-            <li><a class="dropdown-item" href="#Playable_station_url">Playable station url</a></li>
+            <li><a class="dropdown-item" href="#Playable_station_url">Playable station URL</a></li>
             <li><a class="dropdown-item" href="#Advanced_station_search">Advanced station search</a></li>
-            <li><a class="dropdown-item" href="#Search_radio_stations_by_url">Search radio stations by url</a></li>
+            <li><a class="dropdown-item" href="#Search_radio_stations_by_url">Search radio stations by URL</a></li>
             <li>
               <div role="separator" class="dropdown-divider"></div>
             </li>
@@ -47,9 +47,9 @@
             <li><a class="dropdown-item" href="#Stations_by_votes">Stations by votes</a></li>
             <li><a class="dropdown-item" href="#Stations_by_recent_click">Stations by recent click</a></li>
             <li><a class="dropdown-item" href="#Stations_by_recently_changed">Stations by recently changed</a></li>
-            <li><a class="dropdown-item" href="#Stations_that_got_deleted">Stations that got deleted</a></li>
+            <li><a class="dropdown-item" href="#Stations_that_got_deleted">Deleted stations</a></li>
             <li><a class="dropdown-item" href="#Old_versions_of_stations">Old versions of stations</a></li>
-            <li><a class="dropdown-item" href="#Stations_that_need_improvement">Stations that need improvement</a></li>
+            <li><a class="dropdown-item" href="#Stations_that_need_improvements">Stations that need improvements</a></li>
             <li><a class="dropdown-item" href="#Broken_stations">Broken stations</a></li>
           </ul>
         </li>
@@ -58,7 +58,7 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#Vote_for_station">Vote for station</a></li>
             <li><a class="dropdown-item" href="#Delete_a_station">Delete a station</a></li>
-            <li><a class="dropdown-item" href="#UnDelete_a_station">UnDelete a station</a></li>
+            <li><a class="dropdown-item" href="#UnDelete_a_station">Undelete a station</a></li>
             <li><a class="dropdown-item" href="#Revert_a_station">Revert a station</a></li>
             <li><a class="dropdown-item" href="#Add_radio_station">Add radio station</a></li>
             <li><a class="dropdown-item" href="#Edit_a_radio_station">Edit a radio station</a></li>
@@ -69,12 +69,13 @@
     </nav>
     <div class="card mt-2 shadow p-3 mb-5" id="General">
       <div class="card-body">
-        <h1 class="card-title">Community Radiostation Index</h1>
+        <h1 class="card-title">Community Radio Station Index</h1>
         <h2 class="card-subtitle mb-2 text-muted">General</h2>
-        <p class="card-text ">This webservice can be used freely but without guarantee to work. I am keeping it online since more than 2 years now. But downtimes are possible and i am not always home to fix it :) Please do not hesitate to send me ideas to improve the service!
-          <a href="segler_alex@web.de">segler_alex AT web DOT de</a> PLEASE
-          <br/>Send a <span class="text-danger">descriptive User-Agent</span> in your HTTP requests. This makes it easier for me to get in touch with developers to help with the usage of the API. Something like <span class="text-info">"appname/appversion"</span>          so for example<span class="text-info"> "Cool Radio App/1.2".</span> This also helps me to know which apps are using this service that I can keep the list of apps up to date, so that I can tell people in which ways they can use this service.<br/>          If you know an app that is using this service which is not listed on <a class="badge badge-info" href="http://www.radio-browser.info">www.radio-browser.info</a> please drop me a note.<br/>Thank you! At the moment this service checks radio stations
-          by connecting to them at least every day and marks them accordingly. (LastCheckOK=0/1)<br/> If you do not find here what you were looking for, please create a feature request on Github or if you are a programmer fork it and make a pull request.
+        <p class="card-text ">This web service can be used freely but without guarantee to work. I have been keeping it online since December, 2015, but downtimes are possible and I am not always home to fix it :) Please do not hesitate to send me ideas to improve the service at
+          <a href="mailto:segler_alex@web.de">segler_alex AT web DOT de</a>.
+          <br/>Please send a <span class="text-danger">descriptive User-Agent</span> in your HTTP requests, which makes it easier for me to get in touch with developers to help with the usage of the API. Something like <span class="text-info">"appname/appversion"</span>,
+          for example<span class="text-info"> "Cool Radio App/1.2"</span>. This also helps me to know which apps are using this service, so I can keep the list of apps up to date and tell people in which ways they can use this service.<br/>          If you know an app that is using this service but not listed on <a class="badge badge-info" href="http://www.radio-browser.info">www.radio-browser.info</a>, please drop me a note.<br/>Thank you! At the moment this service checks radio stations
+          by connecting to them at least every day and marks them accordingly. (LastCheckOK=0/1)<br/> If you can't find what you are looking for here, please create a feature request on Github or if you are a programmer, fork it and make a pull request.
           Thanks for your help! Recent changes can be found in the Changelog.</p>
         <hr class="my-4">
         <section class="row">
@@ -85,10 +86,11 @@
         </section>
       </div>
     </div>
+    <div class="h5"><span class="text-danger">Please note that all the parameters listed below can be added by using an HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request, and they can also be sent with encoding "application/json" used by Angular.js, for example.</span></div>
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_countries">
       <div class="container">
         <h1 class="display-4">List of countries</h1>
-        <p class="lead">(DEPRECATED: use countrycodes instead) Will get a JSON encoded list of all countries in the database. If a filter is given, it will only only return the ones that contain the filter as substring, supported output formats: JSON, XML</p>
+        <p class="lead">(DEPRECATED: use countrycodes instead) A JSON-encoded list of all countries in the database. If a filter is given, it will only return the ones containing the filter as substring, supported output formats: JSON, XML</p>
         <hr class="my-4">
         <div class="h5">Syntax:</div>
         <div class="syntax">
@@ -99,13 +101,12 @@
             <li class="ml-3">http://www.radio-browser.info/webservice/xml/countries/&lt;filter&gt;</li>
           </ul>
           <div class="h5">Parameter:</div>
-          This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
           <table class="table mt-2 table-striped">
             <thead class="thead-dark">
               <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Default value</th>
-                <th scope="col">Possible values</th>
+                <th scope="col">Possible value</th>
                 <th scope="col">Description</th>
               </tr>
             </thead>
@@ -120,7 +121,7 @@
                 <td>reverse</td>
                 <td>false</td>
                 <td>true, false</td>
-                <td>rerverses the result list if set to true</td>
+                <td>reverse the result list if set to true</td>
               </tr>
               <tr>
                 <td>hidebroken</td>
@@ -166,8 +167,8 @@
     </div>
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_countrycodes">
       <div class="container">
-        <h1 class="display-4">List of countrycodes</h1>
-        <p class="lead">Will get a JSON encoded list of all countrycodes in the database. If a filter is given, it will only only return the ones that contain the filter as substring, supported output formats: JSON, XML</p>
+        <h1 class="display-4">List of country codes</h1>
+        <p class="lead">A JSON-encoded list of all country codes in the database. If a filter is given, it will only return the ones containing the filter as substring, supported output formats: JSON, XML</p>
         <hr class="my-4">
         <div class="h5">Syntax:</div>
         <div class="syntax">
@@ -178,13 +179,12 @@
             <li class="ml-3">http://www.radio-browser.info/webservice/xml/countrycodes/&lt;filter&gt;</li>
           </ul>
           <div class="h5">Parameter:</div>
-          This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
           <table class="table mt-2 table-striped">
             <thead class="thead-dark">
               <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Default value</th>
-                <th scope="col">Possible values</th>
+                <th scope="col">Possible value</th>
                 <th scope="col">Description</th>
               </tr>
             </thead>
@@ -199,7 +199,7 @@
                 <td>reverse</td>
                 <td>false</td>
                 <td>true, false</td>
-                <td>rerverses the result list if set to true</td>
+                <td>reverse the result list if set to true</td>
               </tr>
               <tr>
                 <td>hidebroken</td>
@@ -246,7 +246,7 @@
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_codecs">
       <div class="container">
         <h1 class="display-4">List of codecs</h1>
-        <p class="lead">Will get a JSON encoded list of all codecs in the database. If a filter is given, it will only only return the ones that contain the filter as substring, Supported output formats: JSON, XML</p>
+        <p class="lead">A JSON-encoded list of all codecs in the database. If a filter is given, it will only return the ones containing the filter as substring, supported output formats: JSON, XML</p>
         <hr class="my-4">
         <div class="h5">Syntax:</div>
         <div class="syntax">
@@ -258,13 +258,12 @@
           </ul>
         </div>
         <div class="h5 mt-2">Parameter:</div>
-        This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
         <table class="table mt-2 table-striped">
           <thead class="thead-dark">
             <tr>
               <th scope="row">Name</th>
               <th scope="row">Default value</th>
-              <th scope="row">Possible values</th>
+              <th scope="row">Possible value</th>
               <th scope="row">Description</th>
             </tr>
           </thead>
@@ -279,7 +278,7 @@
               <td>reverse</td>
               <td>false</td>
               <td>true, false</td>
-              <td>rerverses the result list if set to true</td>
+              <td>reverse the result list if set to true</td>
             </tr>
             <tr>
               <td>hidebroken</td>
@@ -327,7 +326,7 @@
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_states">
       <div class="container">
         <h1 class="display-4">List of states</h1>
-        <p class="lead">Will get a JSON encoded list of all states in the database. Countries are divided into states. If a filter is given, it will only only return the ones that contain the filter as substring. If a country is given, it will only display states in
+        <p class="lead">A JSON-encoded list of all states in the database. Countries are divided into states. If a filter is given, it will only return the ones containing the filter as substring. If a country is given, it will only display states in
           this country, supported output formats: JSON, XML</p>
         <hr class="my-4">
         <div class="h5">Syntax:</div>
@@ -342,14 +341,13 @@
           </ul>
         </div>
         <div class="h5">Parameter:</div>
-        This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
         <table class="table table-striped mt-2">
           <thead class="thead-dark">
             <tr>
               <th scope="row">Name</th>
               <th scope="row">Default value</th>
-              <th scope="row">Possible values</th>
-              <th scope="row">Dataescription</th>
+              <th scope="row">Possible value</th>
+              <th scope="row">Description</th>
             </tr>
           </thead>
           <tbody>
@@ -363,7 +361,7 @@
               <td>reverse</td>
               <td>false</td>
               <td>true, false</td>
-              <td>rerverses the result list if set to true</td>
+              <td>reverse the result list if set to true</td>
             </tr>
             <tr>
               <td>hidebroken</td>
@@ -419,7 +417,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_languages">
       <h1 class="display-4">List of languages</h1>
-      <p class="lead">Will get a JSON encoded list of all languages in the database. If a filter is given, it will only only return the ones that contain the filter as substring, supported output formats: json, xml</p>
+      <p class="lead">A JSON-encoded list of all languages in the database. If a filter is given, it will only return the ones containing the filter as substring, supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -431,13 +429,12 @@
         </ul>
       </div>
       <div class="h5">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
             <th scope="row">Default value</th>
-            <th scope="row">Possible values</th>
+            <th scope="row">Possible value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
@@ -452,7 +449,7 @@
             <td>reverse</td>
             <td>false</td>
             <td>true, false</td>
-            <td>reverses the result list if set to true</td>
+            <td>reverse the result list if set to true</td>
           </tr>
           <tr>
             <td>hidebroken</td>
@@ -498,7 +495,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_tags">
       <h1 class="display-4">List of tags</h1>
-      <p class="lead">Will get a JSON encoded list of all tags in the database. If a filter is given, it will only only return the ones that contain the filter as substring, supported output formats: JSON, XML </p>
+      <p class="lead">A JSON-encoded list of all tags in the database. If a filter is given, it will only return the ones containing the filter as substring, supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax"> http://www.radio-browser.info/webservice/xml/tags
@@ -508,13 +505,12 @@
         <br />
       </div>
       <div class="h5 mt-2">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
             <th scope="row">Default value</th>
-            <th scope="row">Possible values</th>
+            <th scope="row">Possible value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
@@ -529,7 +525,7 @@
             <td>reverse</td>
             <td>false</td>
             <td>true, false</td>
-            <td>rerverses the result list if set to true</td>
+            <td>reverse the result list if set to true</td>
           </tr>
           <tr>
             <td>hidebroken</td>
@@ -576,7 +572,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_radio_stations">
       <h1 class="display-4">List of radio stations</h1>
-      <p class="lead">Will get a list of radio stations that match the search. The variants with "exact" will only search for perfect matches. The others will match if the station attribute contains the searchterm.<br/> Please use <a href="#Playable_station_url">Playable station url</a>        API call to get the real station url and also let the click be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
+      <p class="lead">A list of radio stations that match the search. The variants with "exact" will only search for perfect matches, and others will search for the station whose attribute contains the search term.<br/> Please use <a href="#Playable_station_url">Playable station URL</a> API call to get the real station URL and also let the click be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -599,13 +595,12 @@
         </ul>
       </div>
       <div class="h5">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
             <th scope="row">Default value</th>
-            <th scope="row">Possible values</th>
+            <th scope="row">Possible value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
@@ -622,13 +617,13 @@
             <td>reverse</td>
             <td>false</td>
             <td>true, false</td>
-            <td>rerverses the result list if set to true</td>
+            <td>reverse the result list if set to true</td>
           </tr>
           <tr>
             <td>offset</td>
             <td>0</td>
             <td>0,1,2,3,4,..</td>
-            <td>starting value of the result list from the database, for example if you want to do paging on the serverside</td>
+            <td>starting value of the result list from the database. For example, if you want to do paging on the server side.</td>
           </tr>
           <tr>
             <td>limit</td>
@@ -649,7 +644,7 @@
     </div>
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_all_radio_stations">
       <h1 class="display-4">List of all radio stations</h1>
-      <p class="lead">Will get a list of all radio stations. Please use <a href="#Playable_station_url">Playable station url</a> API call to get the real station url and also let the click be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
+      <p class="lead">A list of all radio stations. Please use <a href="#Playable_station_url">Playable station URL</a> API call to get the real station URL and also let the click be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -659,13 +654,12 @@
         </ul>
       </div>
       <div class="h5 mt-2">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
             <th scope="row">Default value</th>
-            <th scope="row">Possible values</th>
+            <th scope="row">Possible value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
@@ -682,13 +676,13 @@
             <td>reverse</td>
             <td>false</td>
             <td>true, false</td>
-            <td>rerverses the result list if set to true</td>
+            <td>reverse the result list if set to true</td>
           </tr>
           <tr>
             <td>offset</td>
             <td>0</td>
             <td>0,1,2,3,4,..</td>
-            <td>starting value of the result list from the database, for example if you want to do paging on the serverside</td>
+            <td>starting value of the result list from the database. For example, if you want to do paging on the server side.</td>
           </tr>
           <tr>
             <td>limit</td>
@@ -706,9 +700,9 @@
     </div>
 
 
-    <div class="jumbotron mt-2 shadow p-3 mb-5" id="Get_a_list_of_station_check_results">
-      <h1 class="display-4">Get a list of station check results</h1>
-      <p class="lead">Get a list of station check results, supported output formats: JSON, XML</p>
+    <div class="jumbotron mt-2 shadow p-3 mb-5" id="List_of_station_check_results">
+      <h1 class="display-4">List of station check results</h1>
+      <p class="lead">A list of station check results, supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -718,13 +712,12 @@
         </ul>
       </div>
       <div class="h5">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
             <th scope="row">Default value</th>
-            <th scope="row">Possible values</th>
+            <th scope="row">Possible value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
@@ -733,19 +726,19 @@
             <td>lastcheckuuid</td>
             <td></td>
             <td>UUID</td>
-            <td>If set, list only checks AFTER the check with the given id.</td>
+            <td>If set, only list check result AFTER the one with the given ID.</td>
           </tr>
           <tr>
             <td>stationuuid</td>
             <td></td>
             <td>UUID</td>
-            <td>If set, list only checks for the matching station.</td>
+            <td>If set, only list check result of the matching station.</td>
           </tr>
           <tr>
             <td>seconds</td>
             <td>0</td>
             <td>positive integer values</td>
-            <td>if >0 then it will only return history entries from the last 'seconds' seconds</td>
+            <td>if >0, it will only return history entries from the last 'seconds' seconds.</td>
           </tr>
         </tbody>
       </table>
@@ -793,8 +786,8 @@
     </div>
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Playable_station_url">
-      <h1 class="display-4">Playable station url</h1>
-      <p class="lead">Returns the playable url for the station. Any Playlist (PLS, ASX, M3U) decoding will be done for you. This API call will count as a click on the station, supported output formats: JSON, XML ,PLS ,M3U</p>
+      <h1 class="display-4">Playable station URL</h1>
+      <p class="lead">The playable URL for the station. Any playlist (PLS, ASX, M3U) decoding will be done for you. This API call will count as a click on the station, supported output formats: JSON, XML ,PLS ,M3U</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -838,7 +831,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Advanced_station_search">
       <h1 class="display-4">Advanced station search</h1>
-      <p class="lead">Will get a list of radio stations that match the search. It will match if the station attribute contains the searchterm. Please use <a href="#Playable_station_url">Playable station url</a> API call to get the real station url and also let the click
+      <p class="lead">A list of radio stations that match the search. It will search for the station whose attribute contains the search term. Please use <a href="#Playable_station_url">Playable station URL</a> API call to get the real station URL and also let the click
         be counted, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
@@ -849,13 +842,12 @@
         </ul>
       </div>
       <div class="h5 mt-2">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
             <th scope="row">Default value</th>
-            <th scope="row">Possible values</th>
+            <th scope="row">Possible value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
@@ -924,19 +916,19 @@
             <td>tagList</td>
             <td></td>
             <td>STRING, STRING, ...</td>
-            <td>OPTIONAL. , a comma separated list of tag. It can also be an array of string in json HTTP POST parameters. All tags in list have to match.</td>
+            <td>OPTIONAL. , a comma-separated list of tag. It can also be an array of string in JSON HTTP POST parameters. All tags in list have to match.</td>
           </tr>
           <tr>
             <td>bitrateMin</td>
             <td>0</td>
             <td>POSITIVE INTEGER</td>
-            <td>OPTIONAL, minimum of kbps for Bitrate field of stations in result</td>
+            <td>OPTIONAL, minimum of kbps for bitrate field of stations in result</td>
           </tr>
           <tr>
             <td>bitrateMax</td>
             <td>1000000</td>
             <td>POSITIVE INTEGER</td>
-            <td>OPTIONAL, maximum of kbps for Bitrate field of stations in result</td>
+            <td>OPTIONAL, maximum of kbps for bitrate field of stations in result</td>
           </tr>
           <tr>
             <td>order</td>
@@ -950,13 +942,13 @@
             <td>reverse</td>
             <td>false</td>
             <td>true, false</td>
-            <td>OPTIONAL, rerverses the result list if set to true</td>
+            <td>OPTIONAL, reverse the result list if set to true</td>
           </tr>
           <tr>
             <td>offset</td>
             <td>0</td>
             <td>POSITIVE INTEGER</td>
-            <td>OPTIONAL, starting value of the result list from the database, for example if you want to do paging on the serverside</td>
+            <td>OPTIONAL, starting value of the result list from the database. For example, if you want to do paging on the server side.</td>
           </tr>
           <tr>
             <td>limit</td>
@@ -973,28 +965,27 @@
     </div>
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Search_radio_stations_by_url">
-      <h1 class="display-4">Search radio stations by url</h1>
-      <p class="lead">Will get a list of radio stations that have an exact url match, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
+      <h1 class="display-4">Search radio stations by URL</h1>
+      <p class="lead">A list of radio stations that have an exact URL match, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">http://www.radio-browser.info/webservice/xml/stations/byurl
         <br /> http://www.radio-browser.info/webservice/json/stations/byurl
       </div>
       <div class="h5">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
-            <th scope="row">Example values</th>
+            <th scope="row">Example value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>url</td>
+            <td>URL</td>
             <td>http://this.is.a.link/test.mp3</td>
-            <td>MANDATORY, url of the station</td>
+            <td>MANDATORY, URL of the station</td>
           </tr>
         </tbody>
       </table>
@@ -1008,7 +999,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Stations_by_clicks">
       <h1 class="display-4">Stations by clicks</h1>
-      <p class="lead">Returns a list of the stations that are clicked the most. You can add a parameter with the number of wanted stations, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
+      <p class="lead">A list of the stations that are clicked the most. You can add a parameter with the number of wanted stations, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -1028,7 +1019,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5">
       <h1 class="display-4" id="Stations_by_votes">Stations by votes</h1>
-      <p class="lead">Returns a list of the highest voted stations. You can add a parameter with the number of wanted stations, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
+      <p class="lead">A list of the highest-voted stations. You can add a parameter with the number of wanted stations, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -1049,7 +1040,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Stations_by_recent_click">
       <h1 class="display-4">Stations by recent click</h1>
-      <p class="lead">Returns a list of stations that got clicked recently, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL </p>
+      <p class="lead">A list of stations that were clicked recently, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -1069,7 +1060,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Stations_by_recently_changed">
       <h1 class="display-4">Stations by recently changed/added</h1>
-      <p class="lead">Returns a list of stations that got added or changed recently, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL </p>
+      <p class="lead">A list of stations that were added or changed recently, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -1088,8 +1079,8 @@
     </div>
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Stations_that_got_deleted">
-      <h1 class="display-4">Stations that got deleted</h1>
-      <p class="lead">Returns a list of stations that got deleted in the last 30 days. Also a single station can be retrieved by id. They are not visible through any other API calls. If you want to undelete a station call <a class="font-weight-bold" href="#UnDelete_a_station">Undelete Station</a>,
+      <h1 class="display-4">Deleted stations</h1>
+      <p class="lead">A list of stations that were deleted in the last 30 days, and you can also retrieve a single station by its ID. They are not visible through any other API calls. If you want to undelete a station, call <a class="font-weight-bold" href="#UnDelete_a_station">Undelete a station</a>,
         supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
@@ -1110,7 +1101,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Old_versions_of_stations">
       <h1 class="display-4">Old versions of stations</h1>
-      <p class="lead">Returns a list of old versions of stations from the last 30 days. Also the history of a single station can be retrieved by id. They are not visible through any other API calls. If you want to revert a station call <a class="font-weight-bold" href="#Revert_a_station">Revert Station</a>.
+      <p class="lead">A list of old versions of stations from the last 30 days, and you can also retrieve the history of a single station by its ID. They are not visible through any other API calls. If you want to revert a station, call <a class="font-weight-bold" href="#Revert_a_station">Revert a station</a>.
         stationid can be an id or an stationuuid, supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
@@ -1123,13 +1114,12 @@
         </ul>
       </div>
       <div class="h5">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
             <th scope="row">Default value</th>
-            <th scope="row">Possible values</th>
+            <th scope="row">Possible value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
@@ -1138,7 +1128,7 @@
             <td>lastchangeuuid</td>
             <td></td>
             <td>valid uuid</td>
-            <td>If defined then show only changes that happened after the change with this uuid</td>
+            <td>If defined, only show changes that happened after the one with this UUID.</td>
           </tr>
         </tbody>
       </table>
@@ -1149,9 +1139,9 @@
       </ul>
     </div>
 
-    <div class="jumbotron mt-2 shadow p-3 mb-5" id="Stations_that_need_improvement">
-      <h1 class="display-4">Stations that need improvement</h1>
-      <p class="lead">Returns a list of the stations that need improvement, which means they do not have e.g.: tags, country, state,.. information, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
+    <div class="jumbotron mt-2 shadow p-3 mb-5" id="Stations_that_need_improvements">
+      <h1 class="display-4">Stations that need improvements</h1>
+      <p class="lead">A list of the stations that need improvements, which means they do not have e.g. tags, country, state information, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -1171,7 +1161,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Broken_stations">
       <h1 class="display-4">Broken stations</h1>
-      <p class="lead">Returns a list of the stations that did not pass the connection test, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
+      <p class="lead">A list of the stations that did not pass the connection test, supported output formats: JSON, XML, M3U, PLS, XSPF, TTL</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -1191,7 +1181,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Vote_for_station">
       <h1 class="display-4">Vote for station</h1>
-      <p class="lead">Increase the vote count for the station by one. Can only be done by the same ip adress for one station every 10 minutes. Returns the changed station as result if it worked, supported output formats: JSON, XML</p>
+      <p class="lead">Increase the vote count for the station by one. Can only be done by the same IP address for one station every 10 minutes. If it works, the changed station will be returned as result, supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -1226,7 +1216,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Delete_a_station">
       <h1 class="display-4">Delete a station</h1>
-      <p class="lead">The station will be deleted from the public list and moved to a deleted list. It will stay there for 30 days and then removed from the system. As long as it is in the deleted list it can be undeleted at any time, supported output formats: JSON,
+      <p class="lead">The station will be deleted from the public list and moved to a deleted list. It will stay there for 30 days and then removed from the system. As long as it is in the deleted list, it can be undeleted at any time, supported output formats: JSON,
         XML
       </p>
       <hr class="my-4">
@@ -1262,8 +1252,8 @@
     </div>
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="UnDelete_a_station">
-      <h1 class="display-4">UnDelete a station</h1>
-      <p class="lead">Undeletes a station which was deleted in the last 30 days, supported output formats: JSON, XML</p>
+      <h1 class="display-4">Undelete a station</h1>
+      <p class="lead">Undelete a station which was deleted in the last 30 days, supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -1299,7 +1289,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Revert_a_station">
       <h1 class="display-4">Revert a station</h1>
-      <p class="lead">Reverts a change to a station that was done in the last 30 days, supported output formats: JSON, XML</p>
+      <p class="lead">Revert a change to a station that was done in the last 30 days, supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
@@ -1346,12 +1336,11 @@
         </ul>
       </div>
       <div class="h5">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
-            <th scope="row">Example values</th>
+            <th scope="row">Example value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
@@ -1362,23 +1351,23 @@
             <td>MANDATORY, the name of the radio station. Max 400 chars.</td>
           </tr>
           <tr>
-            <td>url</td>
+            <td>URL</td>
             <td>
               <nobr>http://this.is.an.url/stream.mp3</nobr>
             </td>
-            <td>MANDATORY, the url of the station</td>
+            <td>MANDATORY, the URL of the station</td>
           </tr>
           <tr>
             <td>homepage</td>
             <td>http://this.is.an.url/</td>
-            <td>the homepage url of the station</td>
+            <td>the homepage URL of the station</td>
           </tr>
           <tr>
             <td>favicon</td>
             <td>
               <nobr>http://this.is.an.url/favicon.ico</nobr>
             </td>
-            <td>the url of an image file (jpg or png)</td>
+            <td>the URL of an image file (jpg or png)</td>
           </tr>
           <tr>
             <td>country</td>
@@ -1393,12 +1382,12 @@
           <tr>
             <td>language</td>
             <td>English</td>
-            <td>The main language which is used in spoken text parts of the radio station.</td>
+            <td>The main language used in spoken text parts of the radio station</td>
           </tr>
           <tr>
             <td>tags</td>
             <td>pop,rock</td>
-            <td>A list of tags separated by commas, which describe the station.</td>
+            <td>A list of tags separated by commas to describe the station</td>
           </tr>
         </tbody>
       </table>
@@ -1445,7 +1434,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Edit_a_radio_station">
       <h1 class="display-4">Edit a radio station</h1>
-      <p class="lead ">Edit a radio station. You can only change some of the values, even only one value, by sending just the parameter you want to change. The rest of the information of the edited station will stay the same. The Station is not saved, if the given url
+      <p class="lead ">Edit a radio station. You can only change some of the values, even only one value, by sending just the parameter you want to change, and the rest of the edited station information will stay the same. The station will not be saved if the given URL
         is not working, supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
@@ -1456,12 +1445,11 @@
         </ul>
       </div>
       <div class="h5">Parameter:</div>
-      This parameters can be added by using a HTTP POST request with the encoding "x-www-form-urlencoded" instead of GET request. The parameters can also be sent with encoding "application/json" that is used for example by Angular.js
       <table class="table mt-2 table-striped">
         <thead class="thead-dark">
           <tr>
             <th scope="row">Name</th>
-            <th scope="row">Example values</th>
+            <th scope="row">Example value</th>
             <th scope="row">Description</th>
           </tr>
         </thead>
@@ -1472,23 +1460,23 @@
             <td>MANDATORY, the name of the radio station. Max 400 chars.</td>
           </tr>
           <tr>
-            <td>url</td>
+            <td>URL</td>
             <td>
               <nobr>http://this.is.an.url/stream.mp3</nobr>
             </td>
-            <td>MANDATORY, the url of the station. Online check needs to turn out ok.</td>
+            <td>MANDATORY, the URL of the station. Online check needs to turn out OK.</td>
           </tr>
           <tr>
             <td>homepage</td>
             <td>http://this.is.an.url/</td>
-            <td>the homepage url of the station</td>
+            <td>the homepage URL of the station</td>
           </tr>
           <tr>
             <td>favicon</td>
             <td>
               <nobr>http://this.is.an.url/favicon.ico</nobr>
             </td>
-            <td>the url of an image file (jpg or png)</td>
+            <td>the URL of an image file (jpg or png)</td>
           </tr>
           <tr>
             <td>country</td>
@@ -1503,12 +1491,12 @@
           <tr>
             <td>language</td>
             <td>English</td>
-            <td>The main language which is used in spoken text parts of the radio station.</td>
+            <td>The main language used in spoken text parts of the radio station</td>
           </tr>
           <tr>
             <td>tags</td>
             <td>pop,rock</td>
-            <td>A list of tags separated by commas, which describe the station.</td>
+            <td>A list of tags separated by commas to describe the station</td>
           </tr>
         </tbody>
       </table>
@@ -1555,7 +1543,7 @@
 
     <div class="jumbotron mt-2 shadow p-3 mb-5" id="Server_stats">
       <h1 class="display-4">Server stats</h1>
-      <p class="lead ">Webservice stats, supported output formats: JSON, XML</p>
+      <p class="lead ">Web service stats, supported output formats: JSON, XML</p>
       <hr class="my-4">
       <div class="h5">Syntax:</div>
       <div class="syntax">
