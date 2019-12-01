@@ -36,7 +36,8 @@ if ($audiofile !== false) {
         echo "\"ok\":\"true\",";
         echo "\"message\":\"retrieved station url successfully\",";
         echo "\"id\":\"$stationid\",";
-        echo "\"name\":\"$stationname\",";
+        //echo "\"name\":\"$stationname\",";
+        echo "\"name\":".json_encode($stationname).",";
         echo '"url":"'.$audiofile.'"';
         echo '}]';
         clickedStationID($db, $stationid);
