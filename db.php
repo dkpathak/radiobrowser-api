@@ -428,6 +428,7 @@ function print_list($stmt, $format, $columns, $itemname)
             echo "\r\n";
             ++$i;
         }
+        echo "NumberOfEntries=".($i-1);
         echo "Version=2";
     }else if ($format == 'xspf'){
         echo '<'.'?xml version="1.0" encoding="UTF-8"?'.'>';
@@ -1533,7 +1534,7 @@ function print_station_real_url($db, $format, $stationid){
             header('Pragma: public');
 
             echo "[playlist]\n";
-
+            echo "NumberOfEntries=1";
             echo 'File1='.$audiofile."\n";
             echo 'Title1='.$stationname;
             clickedStationID($db, $stationid);

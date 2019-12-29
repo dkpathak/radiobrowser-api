@@ -52,7 +52,7 @@ if ($audiofile !== false) {
         header('Pragma: public');
 
         echo "[playlist]\n";
-
+        echo "NumberOfEntries=1";
         echo 'File1='.$audiofile."\n";
         echo 'Title1='.$stationname;
         clickedStationID($db, $stationid);
