@@ -429,7 +429,7 @@ function print_list($stmt, $format, $columns, $itemname)
             ++$i;
         }
         echo "NumberOfEntries=".($i-1)."\r\n";
-        echo "Version=2";
+        echo "Version=2\r\n";
     }else if ($format == 'xspf'){
         echo '<'.'?xml version="1.0" encoding="UTF-8"?'.'>';
         echo '<playlist version="1" xmlns="http://xspf.org/ns/0/"><trackList>';
