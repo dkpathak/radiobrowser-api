@@ -1501,7 +1501,7 @@ function clickedStationID($db, $id)
     }
 
     $stmt = $db->prepare('INSERT INTO StationClick(StationID,IP,StationUuid,ClickUuid) VALUES(:id,:ip,:stationuuid,uuid())');
-    $result = $stmt->execute(['id' => $id, 'ip' => $ip, 'stationuuid' => $stationuuid, '']);
+    $result = $stmt->execute(['id' => $id, 'ip' => $ip, 'stationuuid' => $stationuuid]);
 
     $stmt = $db->prepare('UPDATE Station SET ClickTimestamp=NOW() WHERE StationID=:id');
     $result2 = $stmt->execute(['id' => $id]);
