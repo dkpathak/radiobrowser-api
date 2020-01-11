@@ -46,6 +46,7 @@ if (isset($_GET['action'])) {
     $stationuuid = getParameter('stationuuid','');
     $lastchangeuuid = getParameter('lastchangeuuid',null);
     $lastcheckuuid = getParameter('lastcheckuuid',null);
+    $lastclickuuid = getParameter('lastclickuuid',null);
     $bitrateMin = intval(getParameter('bitrateMin','0'));
     $bitrateMax = intval(getParameter('bitrateMax','1000000'));
     $seconds    = intval(getParameter('seconds','0'));
@@ -161,9 +162,9 @@ if (isset($_GET['action'])) {
     }elseif ($action == 'data_checks') {
         listChecks($db, $format, $seconds, $stationuuid, $lastcheckuuid);
     }elseif ($action == 'data_clicks_all') {
-        listClicks($db, $format, $seconds, NULL, $lastcheckuuid);
+        listClicks($db, $format, $seconds, NULL, $lastclickuuid);
     }elseif ($action == 'data_clicks') {
-        listClicks($db, $format, $seconds, $stationuuid, $lastcheckuuid);
+        listClicks($db, $format, $seconds, $stationuuid, $lastclickuuid);
     }
 } else {
     ?>
