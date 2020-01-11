@@ -72,7 +72,7 @@ $columnMappingHistory = [
 
 function openDB()
 {
-    $db = new PDO('mysql:host=dbserver;dbname=radio', 'radiouser', 'password');
+    $db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', 'password');
     // use exceptions for error handling
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     // create needed tables if they do not exist
