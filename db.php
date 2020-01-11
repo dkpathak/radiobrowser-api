@@ -16,6 +16,12 @@ $columnMappingChecks = [
     'timestamp' => 'CheckTime'
 ];
 
+$columnMappingClicks = [
+    'stationuuid' => 'StationUuid',
+    'clickuuid' => 'ClickUuid',
+    'clicktimestamp' => 'ClickTimestamp'
+];
+
 $columnMapping = [
     'id' => 'StationID',
     'changeuuid' => 'ChangeUuid',
@@ -66,7 +72,7 @@ $columnMappingHistory = [
 
 function openDB()
 {
-    $db = new PDO('mysql:host=localhost;dbname=radio', 'radiouser', 'password');
+    $db = new PDO('mysql:host=dbserver;dbname=radio', 'radiouser', 'password');
     // use exceptions for error handling
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     // create needed tables if they do not exist
@@ -152,6 +158,8 @@ function openDB()
           Primary Key (ClickID),
           IP VARCHAR(50) NOT NULL,
           StationID INT,
+          StationUuid Char(36),
+          ClickUuid Char(36),
           ClickTimestamp TIMESTAMP)
           ');
     }
@@ -279,6 +287,74 @@ function listChecks($db, $format, $seconds, $stationuuid, $lastcheckuuid)
                 print_output_item_arr_sep($format);
             }
             print_object($row, $format, $columnMappingChecks, "check");
+            ++$i;
+        }
+        print_output_arr_end($format);
+        print_output_footer($format);
+    }
+    return true;
+}
+
+function listClicks($db, $format, $seconds, $stationuuid, $lastclickuuid)
+{
+    if ($format != 'xml' && $format != 'json') {
+        echo "supported formats are: xml, json";
+        echo $message;
+        http_response_code(406);
+        return false;
+    }
+    
+    $changeuuidDB = '';
+    $minchecktime = '';
+    if ($lastclickuuid){
+        $query = 'SELECT ClickTimestamp FROM StationClick WHERE ClickUuid=:lastclickuuid';
+        $stmt = $db->prepare($query);
+        $stmt->bindValue(':lastclickuuid', $lastclickuuid, PDO::PARAM_STR);
+
+        // display only all clicks after the given click, but only if the given click could be found
+        $result = $stmt->execute();
+        if ($result) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $changeuuidDB = ' AND sc.ClickTimestamp>=:minchecktime AND sc.ClickUuid<>:lastclickuuid';
+                $minchecktime = $row["ClickTimestamp"];
+                break;
+            }
+        }
+    }
+    global $columnMappingClicks;
+    $secondsDB = '';
+    if ($seconds > 0){
+        $secondsDB = ' AND TIME_TO_SEC(TIMEDIFF(Now(),sc.ClickTimestamp))<:seconds';
+    }
+    $stationidDB = '';
+    if (!is_null($stationuuid)){
+        $stationidDB = ' AND StationUuid=:stationuuid';
+    }
+
+    $query = 'SELECT StationUuid, ClickUuid, ClickTimestamp FROM StationClick sc WHERE 1=1 '.$secondsDB.$stationidDB.$changeuuidDB." ORDER BY ClickTimestamp ASC";
+    $stmt = $db->prepare($query);
+
+    if ($seconds > 0){
+        $stmt->bindValue(':seconds', $seconds, PDO::PARAM_INT);
+    }
+    if (!is_null($stationuuid)){
+        $stmt->bindValue(':stationuuid', $stationuuid, PDO::PARAM_STR);
+    }
+    if ($lastclickuuid){
+        $stmt->bindValue(':lastclickuuid', $lastclickuuid, PDO::PARAM_STR);
+        $stmt->bindValue(':minchecktime', $minchecktime, PDO::PARAM_STR);
+    }
+
+    $result = $stmt->execute();
+    if ($result) {
+        print_output_header($format);
+        print_output_arr_start($format);
+        $i = 0;
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if ($i > 0) {
+                print_output_item_arr_sep($format);
+            }
+            print_object($row, $format, $columnMappingClicks, "click");
             ++$i;
         }
         print_output_arr_end($format);
@@ -1394,6 +1470,19 @@ function IPVoteChecker($db, $id)
     return false;
 }
 
+function station_id_to_uuid($db, $id)
+{
+    $stmt = $db->prepare('SELECT StationUuid FROM Station WHERE StationID=:id');
+    $result = $stmt->execute(['id' => $id]);
+    $count = $stmt->rowCount();
+    if ($result) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return $row["StationUuid"];
+        }
+    }
+    return false;
+}
+
 function clickedStationID($db, $id)
 {
     $ip = $_SERVER['REMOTE_ADDR'];
@@ -1406,8 +1495,13 @@ function clickedStationID($db, $id)
         return false;
     }
 
-    $stmt = $db->prepare('INSERT INTO StationClick(StationID,IP) VALUES(:id,:ip)');
-    $result = $stmt->execute(['id' => $id, 'ip' => $ip]);
+    $stationuuid = station_id_to_uuid($db, $id);
+    if (!$stationuuid) {
+        return false;
+    }
+
+    $stmt = $db->prepare('INSERT INTO StationClick(StationID,IP,StationUuid,ClickUuid) VALUES(:id,:ip,:stationuuid,uuid())');
+    $result = $stmt->execute(['id' => $id, 'ip' => $ip, 'stationuuid' => $stationuuid, '']);
 
     $stmt = $db->prepare('UPDATE Station SET ClickTimestamp=NOW() WHERE StationID=:id');
     $result2 = $stmt->execute(['id' => $id]);

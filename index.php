@@ -160,6 +160,10 @@ if (isset($_GET['action'])) {
         listChecks($db, $format, $seconds, NULL, $lastcheckuuid);
     }elseif ($action == 'data_checks') {
         listChecks($db, $format, $seconds, $stationuuid, $lastcheckuuid);
+    }elseif ($action == 'data_clicks_all') {
+        listClicks($db, $format, $seconds, NULL, $lastcheckuuid);
+    }elseif ($action == 'data_clicks') {
+        listClicks($db, $format, $seconds, $stationuuid, $lastcheckuuid);
     }
 } else {
     ?>

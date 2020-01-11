@@ -86,6 +86,10 @@ RewriteRule ^webservice/(.*)/stations$ /?format=$1&action=data_stations_all [B,L
 RewriteRule ^webservice/(.*)/checks/(.*)$ /?format=$1&stationuuid=$2&action=data_checks [B,L,QSA]
 RewriteRule ^webservice/(.*)/checks$ /?format=$1&action=data_checks_all [B,L,QSA]
 
+# station clicks
+RewriteRule ^webservice/(.*)/clicks/(.*)$ /?format=$1&stationuuid=$2&action=data_clicks [B,L,QSA]
+RewriteRule ^webservice/(.*)/clicks$ /?format=$1&action=data_clicks_all [B,L,QSA]
+
 # compatibility with old rhytmbox-radio-browser
 RewriteRule ^xml.php$ /?format=xml&action=data_stations_all
 RewriteRule ^topclick.php$ /?format=xml&action=data_search_topclick
