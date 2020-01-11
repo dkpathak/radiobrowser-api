@@ -331,7 +331,7 @@ function listClicks($db, $format, $seconds, $stationuuid, $lastclickuuid)
         $stationidDB = ' AND StationUuid=:stationuuid';
     }
 
-    $query = 'SELECT StationUuid, ClickUuid, ClickTimestamp FROM StationClick sc WHERE 1=1 '.$secondsDB.$stationidDB.$changeuuidDB." ORDER BY ClickTimestamp ASC";
+    $query = 'SELECT StationUuid, ClickUuid, ClickTimestamp FROM StationClick sc WHERE 1=1 '.$secondsDB.$stationidDB.$changeuuidDB." ORDER BY ClickTimestamp ASC LIMIT 100000";
     $stmt = $db->prepare($query);
 
     if ($seconds > 0){
