@@ -491,6 +491,7 @@ function print_list($stmt, $format, $columns, $itemname)
     }else if ($format == 'm3u'){
         echo "#EXTM3U\r\n";
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            echo "#RADIOBROWSERUUID:".$row["StationUuid"]."\r\n";
             echo "#EXTINF:-1,".$row["Name"]."\r\n";
             echo $row["Url"]."\r\n";
             echo "\r\n";
@@ -1588,10 +1589,10 @@ function print_station_real_url($db, $format, $stationid){
 
     $stationid_int = intval($stationid);
     if (strval(intval($stationid)) != strval($stationid)){
-        $stmt = $db->prepare('SELECT Name, Url, UrlCache FROM Station WHERE LastCheckOK=TRUE AND StationUuid=:stationid');
+        $stmt = $db->prepare('SELECT Name, Url, UrlCache, StationUuid FROM Station WHERE LastCheckOK=TRUE AND StationUuid=:stationid');
         $stmt->bindValue(':stationid', $stationid, PDO::PARAM_STR);
     }else{
-        $stmt = $db->prepare('SELECT Name, Url, UrlCache FROM Station WHERE LastCheckOK=TRUE AND StationID=:stationid');
+        $stmt = $db->prepare('SELECT Name, Url, UrlCache, StationUuid FROM Station WHERE LastCheckOK=TRUE AND StationID=:stationid');
         $stmt->bindValue(':stationid', $stationid_int, PDO::PARAM_INT);
     }
 
@@ -1643,6 +1644,7 @@ function print_station_real_url($db, $format, $stationid){
             header('Pragma: public');
 
             echo "#EXTM3U\n";
+            echo "#RADIOBROWSERUUID:".$row["StationUuid"]."\r\n";
             echo "#EXTINF:1,".$stationname."\n";
             echo "".$audiofile."\n";
             clickedStationID($db, $stationid);
